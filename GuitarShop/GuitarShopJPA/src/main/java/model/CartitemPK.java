@@ -12,16 +12,15 @@ public class CartitemPK implements Serializable {
 	//default serial version id, required for serializable classes.
 	private static final long serialVersionUID = 1L;
 
-	@Column(name="cart_id", insertable=false, updatable=false)
+	@Column(name="cart_id")
 	private int cartId;
 
-	@Column(name="prod_id", insertable=false, updatable=false)
+	@Column(name="prod_id")
 	private int prodId;
 
 	public CartitemPK() {
 	}
-	
-	public CartitemPK(int cartId, int prodId) {
+	public CartitemPK(Integer cartId, Integer prodId) {
 		this.cartId = cartId;
 		this.prodId = prodId;
 	}

@@ -25,7 +25,7 @@ public class Product implements Serializable {
 	@Column(name="product_name")
 	private String productName;
 
-	private int stok;
+	private int stock;
 
 	//bi-directional many-to-one association to Cartitem
 	@OneToMany(mappedBy="product")
@@ -34,7 +34,7 @@ public class Product implements Serializable {
 	//bi-directional many-to-one association to Type
 	@ManyToOne
 	@JoinColumn(name="type")
-	private Type type;
+	private Type typeBean;
 
 	public Product() {
 	}
@@ -63,12 +63,12 @@ public class Product implements Serializable {
 		this.productName = productName;
 	}
 
-	public int getStok() {
-		return this.stok;
+	public int getStock() {
+		return this.stock;
 	}
 
-	public void setStok(int stok) {
-		this.stok = stok;
+	public void setStock(int stock) {
+		this.stock = stock;
 	}
 
 	public List<Cartitem> getCartitems() {
@@ -93,12 +93,12 @@ public class Product implements Serializable {
 		return cartitem;
 	}
 
-	public Type getType() {
-		return this.type;
+	public Type getTypeBean() {
+		return this.typeBean;
 	}
 
-	public void setType(Type typeBean) {
-		this.type = typeBean;
+	public void setTypeBean(Type typeBean) {
+		this.typeBean = typeBean;
 	}
 
 }

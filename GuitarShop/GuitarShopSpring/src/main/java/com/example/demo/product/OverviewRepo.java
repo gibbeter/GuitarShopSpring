@@ -7,12 +7,14 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import model.Overview;
+import model.OverviewPK;
 import model.Product;
 import model.User;
 
-public interface ProductRepo extends JpaRepository<Product, Integer>{
+public interface OverviewRepo extends JpaRepository<Overview, OverviewPK>{
 	
-	@Query("select p from Product p where p.typeBean.name =?1")
-	List<Product> findByType(String type);
-
+	@Query("select o from Overview o where o.id.productId =?1")
+	List<Overview> findByProduct(Integer prodId);
+	
 }

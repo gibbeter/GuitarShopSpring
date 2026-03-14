@@ -22,7 +22,7 @@ public class Type implements Serializable {
 	private String name;
 
 	//bi-directional many-to-one association to Product
-	@OneToMany(mappedBy="type")
+	@OneToMany(mappedBy="typeBean")
 	private List<Product> products;
 
 	public Type() {
@@ -54,14 +54,14 @@ public class Type implements Serializable {
 
 	public Product addProduct(Product product) {
 		getProducts().add(product);
-		product.setType(this);
+		product.setTypeBean(this);
 
 		return product;
 	}
 
 	public Product removeProduct(Product product) {
 		getProducts().remove(product);
-		product.setType(null);
+		product.setTypeBean(null);
 
 		return product;
 	}

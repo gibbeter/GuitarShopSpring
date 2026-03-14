@@ -9,6 +9,7 @@ import jakarta.persistence.*;
  * 
  */
 @Entity
+@Table(name="CartItem")
 @NamedQuery(name="Cartitem.findAll", query="SELECT c FROM Cartitem c")
 public class Cartitem implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -20,14 +21,12 @@ public class Cartitem implements Serializable {
 
 	//bi-directional many-to-one association to Cart
 	@ManyToOne
-	@MapsId("cartId")
-	@JoinColumn(name="cart_id")
+	@JoinColumn(name="cart_id", insertable=false, updatable=false)
 	private Cart cart;
 
 	//bi-directional many-to-one association to Product
 	@ManyToOne
-	@MapsId("prodId")
-	@JoinColumn(name="prod_id")
+	@JoinColumn(name="prod_id", insertable=false, updatable=false)
 	private Product product;
 
 	public Cartitem() {

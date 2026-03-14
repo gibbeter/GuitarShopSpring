@@ -22,6 +22,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.ValidationException;
+import model.OverviewPK;
 import model.Type;
 
 @Controller
@@ -30,6 +31,9 @@ public class ProductController {
 	
 	@Autowired
 	ProductService productService;
+	
+	@Autowired
+	OverviewService overviewService;
 	
 	@GetMapping("redirectToStorage")
 	public String redirectToStorage(Model m) {
@@ -82,15 +86,19 @@ public class ProductController {
 	
 	
 	@GetMapping("redirectToProductPage")
-	public String redirectToProduct(@RequestParam(value = "prodId", required = false) Optional<Integer> id, HttpServletRequest req, Model m) {
+	public String redirectToProduct(@RequestParam(value = "prodId", required = false) Optional<Integer> prodId, @RequestParam(value = "overStatus", required = false) Optional<String> overStatus, HttpServletRequest req, Model m) {
 		try {
-			if(id.isPresent()) {
-				m.addAttribute("id", id.get());
-				m.addAttribute("product", productService.findProdById(id.get()));
+			if(prodId.isPresent()) {
+				m.addAttribute("prodId", prodId.get());
+				m.addAttribute("product", productService.findProdById(prodId.get()));
+				m.addAttribute("overviews", overviewService.findOverviews(prodId.get()));
 			}
 //			else {
 //				m.addAttribute("product", productService.findProducts());
 //			}
+			if(overStatus.isPresent()) {
+				m.addAttribute("overStatus", overStatus.get());
+			}
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
@@ -109,4 +117,36 @@ public class ProductController {
 		m.addAttribute("types", productService.findTypes());
 		return "pages/storage";
 	}
+	
+	@ModelAttribute("overviewDTO")
+	public OverviewDTO getOverviewDTO() {
+		return new OverviewDTO();
+	}
+	
+	@PostMapping("postOverview")
+	public void postOverview(@ModelAttribute("overviewDTO")OverviewDTO overDTO, @RequestParam("userId")Integer userId, @RequestParam("prodId")Integer prodId,
+							Model m, HttpServletResponse res) {
+		String overStatus;
+		if(overviewService.findOverview(userId, prodId) != null) {
+			m.addAttribute("overStatus", "You already left your overview for this product");
+			overStatus = "You already left your overview for this product";
+		}
+		else {
+			overDTO.setId(new OverviewPK(userId, prodId));
+			if(overviewService.newOverview(overDTO)) {
+				m.addAttribute("overStatus", "You overview was posted");
+				overStatus = "You overview was posted";
+			}
+			else {
+				m.addAttribute("overStatus", "Error occured during posting of your overview");
+				overStatus = "Error occured during posting of your overview";
+			}
+		}
+		try {
+			res.sendRedirect("redirectToProductPage?prodId="+prodId+"&overStatus="+overStatus);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
 }

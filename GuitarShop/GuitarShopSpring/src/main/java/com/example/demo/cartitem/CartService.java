@@ -55,8 +55,8 @@ public class CartService {
 			if(item != null) {
 				Product product = item.getProduct();
 				ProductDTO productDTO = new ProductDTO(product.getProdId(), product.getProductDesc(),
-													product.getProductName(), product.getStok(),
-													product.getType().getTypeId(), product.getType().getName());
+													product.getProductName(), product.getStock(),
+													product.getTypeBean().getTypeId(), product.getTypeBean().getName());
 //				CartDTO cartDTO = new CartDTO(item.getCart().getCartId(), item.getCart().getSumm(),
 //											item.getCart().getUserId(), item.getCart().getCartitems());
 				ItemDTO newI = new ItemDTO(item.getId(), item.getQuantity(), productDTO);
@@ -71,13 +71,16 @@ public class CartService {
 	
 	public List<ItemDTO> cartItemsToDTO(List<Cartitem> list){
 		List<ItemDTO> res = new ArrayList<>();
-		for(Cartitem item: list) {
-			Product product = item.getProduct();
-			ProductDTO productDTO = new ProductDTO(product.getProdId(), product.getProductDesc(),
-					product.getProductName(), product.getStok(),
-					product.getType().getTypeId(), product.getType().getName());
-			res.add(new ItemDTO(item.getId(), item.getQuantity(), productDTO));
+		if(list != null) {
+			for(Cartitem item: list) {
+				Product product = item.getProduct();
+				ProductDTO productDTO = new ProductDTO(product.getProdId(), product.getProductDesc(),
+						product.getProductName(), product.getStock(),
+						product.getTypeBean().getTypeId(), product.getTypeBean().getName());
+				res.add(new ItemDTO(item.getId(), item.getQuantity(), productDTO));
+			}
 		}
+		
 		return res;
 	}
 

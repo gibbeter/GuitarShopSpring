@@ -28,8 +28,8 @@ public class ProductService {
 			Product newP = new Product();
 			newP.setProductName(productDTO.getProductName());
 			newP.setProductDesc(productDTO.getProductDesc());
-			newP.setType(typeRepo.findById(productDTO.getProductType()).get());
-			newP.setStok(productDTO.getProductStock());
+			newP.setTypeBean(typeRepo.findById(productDTO.getProductType()).get());
+			newP.setStock(productDTO.getProductStock());
 			productRepo.save(newP);
 		}
 		catch(ValidationException e) {
@@ -42,7 +42,7 @@ public class ProductService {
 		List<ProductDTO> res = new ArrayList<ProductDTO>();
 		List<Product> list = productRepo.findAll();
 		for(Product p : list) {
-			res.add(new ProductDTO(p.getProdId(), p.getProductDesc(), p.getProductName(), p.getStok(), p.getType().getTypeId(), p.getType().getName()));
+			res.add(new ProductDTO(p.getProdId(), p.getProductDesc(), p.getProductName(), p.getStock(), p.getTypeBean().getTypeId(), p.getTypeBean().getName()));
 		}
 		return res;
 	}
@@ -78,14 +78,14 @@ public class ProductService {
 		List<ProductDTO> res = new ArrayList<ProductDTO>();
 		List<Product> list = productRepo.findByType(type);
 		for(Product p : list) {
-			res.add(new ProductDTO(p.getProdId(), p.getProductDesc(), p.getProductName(), p.getStok(), p.getType().getTypeId(), p.getType().getName()));
+			res.add(new ProductDTO(p.getProdId(), p.getProductDesc(), p.getProductName(), p.getStock(), p.getTypeBean().getTypeId(), p.getTypeBean().getName()));
 		}
 		return res;
 	}
 
 	public ProductDTO findProdById(Integer id) {
 		Product p = productRepo.findById(id).get();
-		ProductDTO pDTO= new ProductDTO(p.getProdId(), p.getProductDesc(), p.getProductName(), p.getStok(), p.getType().getTypeId(), p.getType().getName());
+		ProductDTO pDTO= new ProductDTO(p.getProdId(), p.getProductDesc(), p.getProductName(), p.getStock(), p.getTypeBean().getTypeId(), p.getTypeBean().getName());
 		return pDTO;
 	}
 }
