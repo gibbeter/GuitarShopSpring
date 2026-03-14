@@ -1,0 +1,31 @@
+package com.example.demo.cartitem;
+
+import org.springframework.validation.annotation.Validated;
+
+import jakarta.persistence.Column;
+
+
+@Validated
+public class CartDTO {
+	
+	private int summ;
+
+	private int userId;
+	
+	public int getSumm() {
+		return summ;
+	}
+
+	public void setSumm(int summ) {
+		this.summ = summ;
+	}
+
+	public int getUserId() {
+		return userId;
+	}
+
+	public void setUserId(int userId) {
+		this.userId = userId;
+	}
+
+}

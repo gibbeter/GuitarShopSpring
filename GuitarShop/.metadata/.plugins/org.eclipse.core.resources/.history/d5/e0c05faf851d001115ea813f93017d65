@@ -1,0 +1,66 @@
+package model;
+
+import java.io.Serializable;
+import jakarta.persistence.*;
+
+
+/**
+ * The persistent class for the cartitem database table.
+ * 
+ */
+@Entity
+@NamedQuery(name="Cartitem.findAll", query="SELECT c FROM Cartitem c")
+public class Cartitem implements Serializable {
+	private static final long serialVersionUID = 1L;
+
+	@EmbeddedId
+	private CartitemPK id;
+
+	private int quantity;
+
+	//bi-directional many-to-one association to Cart
+	@ManyToOne
+	@JoinColumn(name="cart_id")
+	private Cart cart;
+
+	//bi-directional many-to-one association to Product
+	@ManyToOne
+	@JoinColumn(name="prod_id")
+	private Product product;
+
+	public Cartitem() {
+	}
+
+	public CartitemPK getId() {
+		return this.id;
+	}
+
+	public void setId(CartitemPK id) {
+		this.id = id;
+	}
+
+	public int getQuantity() {
+		return this.quantity;
+	}
+
+	public void setQuantity(int quantity) {
+		this.quantity = quantity;
+	}
+
+	public Cart getCart() {
+		return this.cart;
+	}
+
+	public void setCart(Cart cart) {
+		this.cart = cart;
+	}
+
+	public Product getProduct() {
+		return this.product;
+	}
+
+	public void setProduct(Product product) {
+		this.product = product;
+	}
+
+}

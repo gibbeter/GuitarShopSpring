@@ -1,0 +1,50 @@
+package com.example.demo.cartitem;
+
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.example.demo.product.ProductDTO;
+import com.example.demo.product.ProductRepo;
+
+import jakarta.validation.ValidationException;
+import model.Cart;
+import model.Cartitem;
+import model.CartitemPK;
+import model.Product;
+import model.Type;
+
+@Service
+public class ItemService {
+	
+	@Autowired
+	ItemRepo itemRepo;
+	
+	@Autowired
+	CartRepo cartRepo;
+	
+	@Autowired
+	ProductRepo prodRepo;
+
+	public ItemDTO saveItem(int cartId, Integer id) {
+		Cartitem i = new Cartitem();
+		i.setId(new CartitemPK(cartId, id));
+		i.setQuantity(1);
+		Cart cart = cartRepo.findById(cartId).get();
+		Product prod = prodRepo.findById(id).get();
+		i.setCart(cart);
+		i.setProduct(prod);
+		cart.getCartitems().add(i);
+		prod.getCartitems().add(i);
+
+		i = itemRepo.save(i);
+		prodRepo.save(prod);
+		cartRepo.save(cart);
+		ItemDTO newI = new ItemDTO(i.getId(), i.getQuantity(), null, null);
+		return newI;
+	}
+
+
+}

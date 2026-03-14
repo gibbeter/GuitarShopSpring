@@ -1,0 +1,69 @@
+package com.example.demo.cartitem;
+
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.example.demo.product.ProductDTO;
+import com.example.demo.product.ProductRepo;
+
+import jakarta.validation.ValidationException;
+import model.Cart;
+import model.Cartitem;
+import model.CartitemPK;
+import model.Product;
+import model.Type;
+
+@Service
+public class ItemService {
+	
+	@Autowired
+	ItemRepo itemRepo;
+	
+	@Autowired
+	CartRepo cartRepo;
+	
+	@Autowired
+	ProductRepo prodRepo;
+
+	public ItemDTO saveItem(int cartId, Integer prodId) {
+		Cartitem i = new Cartitem();
+		i.setQuantity(1);
+		Cart cart = cartRepo.findById(cartId).get();
+		Product prod = prodRepo.findById(prodId).get();
+		i.setCart(cart);
+		i.setProduct(prod);
+		cart.getCartitems().add(i);
+		prod.getCartitems().add(i);
+		i.setId(new CartitemPK(cart.getCartId(), prod.getProdId()));
+		
+		
+//		prodRepo.save(prod);
+		
+		
+//		cartRepo.save(cart);
+		i = itemRepo.save(i);
+
+		ItemDTO newI = new ItemDTO(i.getId(), i.getQuantity(), null);
+		return newI;
+	}
+
+	public boolean saveItemQuantity(Integer cartId, Integer productId, Integer quantity) {
+		try {
+			Cartitem i = itemRepo.findById(new CartitemPK()).get();
+			if(i != null) {
+				i.setQuantity(quantity);
+				itemRepo.save(i);
+				return true;
+			}
+			return false;
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+
+}

@@ -1,0 +1,59 @@
+package com.example.demo.cartitem;
+
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.example.demo.product.ProductDTO;
+import com.example.demo.product.ProductRepo;
+
+import jakarta.validation.ValidationException;
+import model.Cart;
+import model.Cartitem;
+import model.Product;
+import model.Type;
+
+@Service
+public class CartService {
+	
+	@Autowired
+	CartRepo cartRepo;
+	
+	@Autowired
+	ItemRepo itemRepo;
+
+	public CartDTO findCartByUser(Integer id) {
+		try {
+			Cart c = cartRepo.findByUser(id);
+			if(c != null) {
+				CartDTO newC = new CartDTO(c.getCartId() ,c.getSumm(), c.getUserId(), c.getCartitems());
+				return newC;
+			}
+			else return null;
+			
+		}catch(Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public CartDTO newCart(Integer userId) {
+		Cart c = new Cart();
+		c.setUserId(userId);
+		c = cartRepo.save(c);
+		CartDTO newC = new CartDTO(c.getCartId(), c.getSumm(), c.getUserId(), c.getCartitems());
+		return null;
+	}
+
+	public ItemDTO findItemInCart(Integer id) {
+		Cartitem item = itemRepo.findItemInCart(id);
+		if(item != null) {
+			ItemDTO newI = new ItemDTO(item.getId(), item.getQuantity(), item.getCart(), item.getProduct());
+			return newI;
+		}
+		return null;
+	}
+
+}

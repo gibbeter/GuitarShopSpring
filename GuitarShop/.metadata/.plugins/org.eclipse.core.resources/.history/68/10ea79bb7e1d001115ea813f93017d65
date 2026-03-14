@@ -1,0 +1,9 @@
+package com.example.demo.cartitem;
+
+import org.springframework.validation.annotation.Validated;
+
+
+@Validated
+public class ItemDTO {
+	
+}

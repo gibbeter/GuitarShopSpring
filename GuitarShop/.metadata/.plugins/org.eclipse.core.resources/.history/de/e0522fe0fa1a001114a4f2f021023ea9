@@ -1,0 +1,77 @@
+package com.example.demo.product;
+
+import org.springframework.validation.annotation.Validated;
+
+
+@Validated
+public class ProductDTO {
+	
+	private int prodId;
+	
+	private String productDesc;
+
+	private String productName;
+
+	private int productStock;
+
+	private int produtcType;
+
+	public int getProdId() {
+		return prodId;
+	}
+
+	public void setProdId(int prodId) {
+		this.prodId = prodId;
+	}
+
+	public String getProductDesc() {
+		return productDesc;
+	}
+
+	public void setProductDesc(String productDesc) {
+		this.productDesc = productDesc;
+	}
+
+	public String getProductName() {
+		return productName;
+	}
+
+	public void setProductName(String productName) {
+		this.productName = productName;
+	}
+
+	public int getStok() {
+		return productStock;
+	}
+
+	public void setStok(int stok) {
+		this.productStock = stok;
+	}
+
+	public int getType() {
+		return produtcType;
+	}
+
+	public void setType(int type) {
+		this.produtcType = type;
+	}
+
+	public ProductDTO(int id, String desc, String name, int st, int t) {
+		prodId = id;
+		productDesc = desc;
+		productName = name;
+		productStock = st;
+		produtcType = t;	
+	}
+	
+	public ProductDTO() {
+		
+	}
+	
+	@Override
+	public String toString() {
+		return "ProductDTO [prodId=" + prodId + ", productDesc=" + productDesc + ", productName=" + productName
+				+ ", stok=" + productStock + ", type=" + produtcType + "]";
+	}
+
+}

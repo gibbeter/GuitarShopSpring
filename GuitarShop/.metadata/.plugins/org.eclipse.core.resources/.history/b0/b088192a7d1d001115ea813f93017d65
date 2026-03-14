@@ -1,0 +1,57 @@
+package com.example.demo.cartitem;
+
+import java.util.List;
+
+import org.springframework.validation.annotation.Validated;
+
+import model.Cartitem;
+
+
+@Validated
+public class CartDTO {
+	
+	private int summ;
+
+	private int userId;
+	
+	private List<Cartitem> cartitems;
+
+	
+	public int getSumm() {
+		return summ;
+	}
+
+	public void setSumm(int summ) {
+		this.summ = summ;
+	}
+
+	public int getUserId() {
+		return userId;
+	}
+
+	public void setUserId(int userId) {
+		this.userId = userId;
+	}
+
+	public List<Cartitem> getCartitems() {
+		return cartitems;
+	}
+
+	public void setCartitems(List<Cartitem> cartitems) {
+		this.cartitems = cartitems;
+	}
+
+	public CartDTO(int summ, int userId, List<Cartitem> cartitems) {
+		super();
+		this.summ = summ;
+		this.userId = userId;
+		this.cartitems = cartitems;
+	}
+
+	public CartDTO() {
+		
+	}
+	
+	
+
+}

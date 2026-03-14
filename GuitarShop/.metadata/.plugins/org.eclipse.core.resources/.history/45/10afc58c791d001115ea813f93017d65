@@ -1,0 +1,23 @@
+package com.example.demo.cartitem;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.example.demo.product.ProductDTO;
+import com.example.demo.product.ProductRepo;
+
+import jakarta.validation.ValidationException;
+import model.Product;
+import model.Type;
+
+@Service
+public class ItemService {
+	
+	@Autowired
+	ItemRepo ItemRepo;
+
+}

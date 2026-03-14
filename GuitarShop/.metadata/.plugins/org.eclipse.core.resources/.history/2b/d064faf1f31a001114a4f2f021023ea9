@@ -1,0 +1,118 @@
+package com.example.demo.user;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import com.example.demo.GuitarShopSpringApplication;
+import jakarta.validation.ValidationException;
+import model.User;
+
+@Service
+public class UserService {
+
+    private final GuitarShopSpringApplication guitarShopSpringApplication;
+	
+	@Autowired
+	UserRepo userRepo;
+
+    UserService(GuitarShopSpringApplication guitarShopSpringApplication) {
+        this.guitarShopSpringApplication = guitarShopSpringApplication;
+    }
+
+	public boolean saveUser(UserDTO user) {
+		try {
+			User newUser = new User();
+			newUser.setUserName(user.getUserName());
+			newUser.setPassword(user.getPassword());
+			newUser.setType(user.getType());
+			newUser.setUserMail(user.getUserMail());
+			userRepo.save(newUser);
+		}
+		catch(ValidationException e) {
+//			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+	
+	public UserDTO findById(Integer userId) {
+		try {
+			UserDTO userDTO = new UserDTO();
+			User user = userRepo.findById(userId).get();
+			userDTO.setUserId(user.getUserId());
+			userDTO.setUserName(user.getUserName());
+			userDTO.setPassword(user.getPassword());
+			userDTO.setUserMail(user.getUserMail());
+			userDTO.setType(user.getType());
+			
+			return userDTO;
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		return null;
+		
+	}
+
+	public UserDTO findUserByName(String name) {
+		UserDTO userDTO = null;
+		try {
+			userDTO = new UserDTO();
+			User user = userRepo.findUserByUserName(name);
+			userDTO.setUserId(user.getUserId());
+			userDTO.setUserName(user.getUserName());
+			userDTO.setPassword(user.getPassword());
+			userDTO.setUserMail(user.getUserMail());
+			userDTO.setType(user.getType());
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		return userDTO;
+	}
+
+	@Transactional
+	public boolean updateName(Integer userId, String name) {
+		try{
+			User user = userRepo.findById(userId).get();
+			if(user.getUserName() != name) {
+				user.setUserName(name);
+				return userRepo.save(user) != null;
+			}
+			return false;
+		}catch(Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	@Transactional
+	public boolean updatePass(Integer userId, String pass) {
+		try{
+			User user = userRepo.findById(userId).get();
+			if(user.getPassword() != pass) {
+				user.setPassword(pass);
+				return userRepo.save(user) != null;
+			}
+			return false;
+		}catch(Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	@Transactional
+	public boolean updateMail(Integer userId, String mail) {
+		try{
+			User user = userRepo.findById(userId).get();
+			if(user.getUserMail() != mail) {
+				user.setUserMail(mail);
+				return userRepo.save(user) != null;
+			}
+			return false;
+		}catch(Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+}

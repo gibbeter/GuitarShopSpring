@@ -1,0 +1,201 @@
+package com.example.demo.user;
+
+import java.io.IOException;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
+import jakarta.validation.ValidationException;
+
+@Controller
+@RequestMapping("user")
+public class UserController {
+	
+	@Autowired
+	UserService userService;
+	
+	@GetMapping("redirectToIndex")
+	public String redirectToIdx(HttpServletRequest req) {
+		if(req.getSession().getAttribute("updateStatus") != null)
+			req.getSession().removeAttribute("updateStatus");
+		return "index";
+	}
+	
+//	@GetMapping("redirectToAccount")
+//	public String redirectToAcc(@RequestParam(value="activeUser", required = false)Optional<Integer> userId, HttpServletRequest req) {
+//		if(userId.isPresent()) {
+//			getUserData(userId.get(), req);
+//		}
+//		return "pages/account";
+//	}
+	
+	@GetMapping("redirectToAccount")
+	public String redirectToAcc(HttpServletRequest req) {
+		Integer id = (Integer) req.getSession().getAttribute("userId");
+//		System.out.println(id);
+		if(id != null) {
+			getUserData(id, req);
+		}
+		return "pages/account";
+	}
+	
+	@ModelAttribute("userDTO")
+	public UserDTO getUserDTO() {
+		return new UserDTO();
+	}
+	
+	@PostMapping("login")
+	public String loginUser(@RequestParam("userName")String userN, HttpServletRequest req) {
+		UserDTO user = userService.findUserByName(userN);
+		if(user != null) {
+			req.getSession().setAttribute("userId", user.getUserId());
+			req.getSession().setAttribute("userName", user.getUserName());
+		}
+		return "index";
+	}
+	
+	@PostMapping("register")
+	public String registerUser(@Valid @ModelAttribute("userDTO")UserDTO user, BindingResult bindingResult, HttpServletRequest req, Model m) {
+//		String currentPage = req.getRequestURI();
+//		return "/GuitarShop/";
+//		 try {
+//			 if(!userService.saveUser(user))
+//					m.addAttribute("status", "Error during registration");
+//	            return ResponseEntity.ok("User saved");
+//	        } catch (ValidationException e) {
+//	            return ResponseEntity
+//	                .badRequest()
+//	                .body(e.getMessage());
+//	        } catch (Exception e) {
+//	            return ResponseEntity
+//	                .status(500)
+//	                .body("Internal server error");
+//	        }
+		if(bindingResult.hasErrors()) {
+			m.addAttribute("errorStatus", "Validation error during registration, check if you filled all fields");
+			return "pages/account";
+		}
+		
+		try {
+			if(!userService.saveUser(user))
+				m.addAttribute("status", "Error during registration");
+			else {
+				req.getSession().setAttribute("userName", user.getUserName());
+				return "index";
+			}
+				
+		}catch(Exception ex) {
+			ex.printStackTrace();
+		}
+		return "pages/account";
+	}
+	
+	public void getUserData(Integer userId, HttpServletRequest req) {
+		System.out.println("GET DATA");
+		UserDTO user = userService.findById(userId);
+		if(user != null) {
+			req.getSession().setAttribute("userId", user.getUserId());
+			req.getSession().setAttribute("userName",  user.getUserName());
+			req.getSession().setAttribute("userMail",  user.getUserMail());
+			req.getSession().setAttribute("userPassword",  user.getPassword());
+			req.getSession().setAttribute("userType",  user.getType());
+		}
+	}
+	
+	@GetMapping("logout")
+	public String userLogout(HttpServletRequest req) {
+		req.getSession().removeAttribute("userId");
+		req.getSession().removeAttribute("userName");
+		req.getSession().removeAttribute("userMail");
+		req.getSession().removeAttribute("userPassword");
+		return "pages/account";
+	}
+	
+	@PostMapping("changeName")
+	public void changeName(@RequestParam("userName")String name, HttpServletRequest req, HttpServletResponse res) {
+		Integer userId = (Integer) req.getSession().getAttribute("userId");
+		if(!userService.updateName(userId, name)) {
+			req.getSession().setAttribute("updateNameStatus", "Error during update operation");
+		}
+		else {
+			req.getSession().setAttribute("updateNameStatus", "Successfull update!");
+		}
+		
+		getUserData(userId, req);
+		statusManager("name", req);
+		try {
+			res.sendRedirect("redirectToAccount");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	@PostMapping("changePass")
+	public String changePass(@RequestParam("password")String pass, HttpServletRequest req, HttpServletResponse res) {
+		Integer userId = (Integer) req.getSession().getAttribute("userId");
+		if(!userService.updatePass(userId, pass)) {
+			req.getSession().setAttribute("updatePassStatus", "Error during update operation");
+		}
+		else {
+			req.getSession().setAttribute("updatePassStatus", "Successfull update!");
+		}
+		
+		getUserData(userId, req);
+		statusManager("pass", req);
+		try {
+			res.sendRedirect("redirectToAccount");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return "pages/account";
+	}
+	
+	@PostMapping("changeMail")
+	public String changeMail(@RequestParam("userMail")String mail, HttpServletRequest req, HttpServletResponse res) {
+		Integer userId = (Integer) req.getSession().getAttribute("userId");
+		if(!userService.updateMail(userId, mail)) {
+			req.getSession().setAttribute("updateMailStatus", "Error during update operation");
+		}
+		else {
+			req.getSession().setAttribute("updateMailStatus", "Successfull update!");
+		}
+		
+		getUserData(userId, req);
+		statusManager("mail", req);
+		try {
+			res.sendRedirect("redirectToAccount");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return "pages/account";
+	}
+	
+	public void statusManager(String type, HttpServletRequest req) {
+		if(type.equalsIgnoreCase("name")) {
+			req.getSession().removeAttribute("updatePassStatus");
+			req.getSession().removeAttribute("updateMailStatus");
+		}
+		
+		if(type.equalsIgnoreCase("pass")) {
+			req.getSession().removeAttribute("updateNameStatus");
+			req.getSession().removeAttribute("updateMailStatus");
+		}
+		
+		if(type.equalsIgnoreCase("mail")) {
+			req.getSession().removeAttribute("updatePassStatus");
+			req.getSession().removeAttribute("updateNameStatus");
+		}
+	}
+}

@@ -1,0 +1,16 @@
+1773169784810	Rename resource 'prod_8_main.jpg'
+1773169786672	Move 'prod_1_main.jpg' to 'prod_1'
+1773169795856	Rename resource 'prod_1_main.jpg'
+1773170314253	Rename field 'productType'
+1773170324830	Encapsulate field 'productTypeName, ...'
+1773254115366	Copy compilation units
+1773254131413	Rename type 'ProductController'
+1773254141748	Rename type 'ProductDTO'
+1773254149522	Rename type 'ProductRepo'
+1773254161538	Rename type 'ProductService'
+1773254196909	Rename field 'productService'
+1773255187488	Copy compilation unit
+1773255196185	Copy compilation unit
+1773255439532	Encapsulate field 'cartitems, ...'
+1773255476573	Copy compilation unit
+1773256381870	Encapsulate field 'cartId, ...'

@@ -1,0 +1,112 @@
+package com.example.demo.product;
+
+import java.io.IOException;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.example.demo.user.UserDTO;
+import com.example.demo.user.UserService;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
+import jakarta.validation.ValidationException;
+import model.Type;
+
+@Controller
+@RequestMapping("product")
+public class ProductController {
+	
+	@Autowired
+	ProductService productService;
+	
+	@GetMapping("redirectToStorage")
+	public String redirectToStorage(Model m) {
+		m.addAttribute("products", productService.findProducts());
+		m.addAttribute("types", productService.findTypes());
+		return "pages/storage";
+	}
+	
+	@ModelAttribute("productDTO")
+	public ProductDTO getProductDTO() {
+		return new ProductDTO();
+	}
+	
+	@ModelAttribute("typeDTO")
+	public TypeDTO getTypeDTO() {
+		return new TypeDTO();
+	}
+	
+	@PostMapping("addProduct")
+	public void addProduct(@ModelAttribute("productDTO")ProductDTO prodDTO, @ModelAttribute("typeDTO")TypeDTO typeDTO, HttpServletRequest req, HttpServletResponse res) {
+//		System.out.println(prodDTO);
+//		System.out.println(typeDTO);
+		Type type = productService.saveType(typeDTO);
+		prodDTO.setProductType(type.getTypeId());
+		productService.saveProduct(prodDTO);
+		
+		try {
+			res.sendRedirect("redirectToStorage");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	@GetMapping("redirectToType")
+	public String redirectToType(@RequestParam(value = "type", required = false) Optional<String> type, HttpServletRequest req, Model m) {
+		try {
+			if(type.isPresent()) {
+				m.addAttribute("type", type.get());
+				m.addAttribute("products", productService.findProdByType(type.get()));
+			}
+			else {
+				m.addAttribute("products", productService.findProducts());
+			}
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		return "pages/products";
+	}
+	
+	
+	@GetMapping("redirectToProductPage")
+	public String redirectToProduct(@RequestParam(value = "id", required = false) Optional<Integer> id, HttpServletRequest req, Model m) {
+		try {
+			if(id.isPresent()) {
+				m.addAttribute("id", id.get());
+				m.addAttribute("product", productService.findProdById(id.get()));
+			}
+//			else {
+//				m.addAttribute("product", productService.findProducts());
+//			}
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		return "pages/product_page";
+	}
+	
+	@PostMapping("filterStoreByType")
+	public String filterStoreByType(@RequestParam("filterType")String type, Model m) {
+		if(type.equalsIgnoreCase("all")) {
+			m.addAttribute("products", productService.findProducts());
+		}
+		else {
+			m.addAttribute("products", productService.findProdByType(type));
+		}
+		m.addAttribute("filter", type);
+		m.addAttribute("types", productService.findTypes());
+		return "pages/storage";
+	}
+}

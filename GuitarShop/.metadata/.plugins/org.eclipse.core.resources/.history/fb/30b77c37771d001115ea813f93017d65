@@ -1,0 +1,64 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<h1><a href="/GuitarShop">GuitarShop</a></h1>
+	<form action="addProduct" method="post">
+		<input type="text" name="filter_type" value="Type to filter">
+		<select name="filter_type">
+						<option>All</option>
+						<c:forEach items="${types}" var="t">
+							<option value="${t.typeId}">${t.typeName}</option>
+						</c:forEach>
+					</select>
+		<input type="submit" value="Add">
+		<table border="1">
+			<tr>
+				<th>ID</th>
+				<th>Name</th>
+				<th>Description</th>
+				<th>Type</th>
+				<th>Stock</th>
+			</tr>
+			
+			<tr>
+			
+				<td><input type="submit" value="Add"></td>
+				<td><input type="text" name="productName" value="Name"></td>
+				<td><input type="text" name="productDesc" value="Description"></td>
+				<td>
+					<input type="text" name="typeName" value="New or existing type">
+					<select name="selectedType">
+						<option selected disabled hidden="">Types</option>
+						<c:forEach items="${types}" var="t">
+							<option disabled value="${t.typeId}">${t.typeName}</option>
+						</c:forEach>
+					</select>
+				
+				</td>
+				<td><input type="number" name="productStock" value="0"></td>
+			
+			</tr>
+			<c:if test="${!empty products}">
+				<c:forEach items="${products}" var="p">
+					<tr>
+						<th>${p.prodId}</th>
+						<th>${p.productName}</th>
+						<th>${p.productDesc}</th>
+						<th>${p.productType}</th>
+						<th>${p.productStock}</th>
+					</tr>
+				</c:forEach>
+			</c:if>
+		</table>
+	</form>
+		
+</body>
+</html>

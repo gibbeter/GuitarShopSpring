@@ -1,0 +1,80 @@
+package model;
+
+import java.io.Serializable;
+import jakarta.persistence.*;
+import java.util.List;
+
+
+/**
+ * The persistent class for the cart database table.
+ * 
+ */
+@Entity
+@NamedQuery(name="Cart.findAll", query="SELECT c FROM Cart c")
+public class Cart implements Serializable {
+	private static final long serialVersionUID = 1L;
+
+	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@Column(name="cart_id")
+	private int cartId;
+
+	private int summ;
+
+	@Column(name="user_id")
+	private int userId;
+
+	//bi-directional many-to-one association to Cartitem
+	@OneToMany(mappedBy="cart")
+	private List<Cartitem> cartitems;
+
+	public Cart() {
+	}
+
+	public int getCartId() {
+		return this.cartId;
+	}
+
+	public void setCartId(int cartId) {
+		this.cartId = cartId;
+	}
+
+	public int getSumm() {
+		return this.summ;
+	}
+
+	public void setSumm(int summ) {
+		this.summ = summ;
+	}
+
+	public int getUserId() {
+		return this.userId;
+	}
+
+	public void setUserId(int userId) {
+		this.userId = userId;
+	}
+
+	public List<Cartitem> getCartitems() {
+		return this.cartitems;
+	}
+
+	public void setCartitems(List<Cartitem> cartitems) {
+		this.cartitems = cartitems;
+	}
+
+	public Cartitem addCartitem(Cartitem cartitem) {
+		getCartitems().add(cartitem);
+		cartitem.setCart(this);
+
+		return cartitem;
+	}
+
+	public Cartitem removeCartitem(Cartitem cartitem) {
+		getCartitems().remove(cartitem);
+		cartitem.setCart(null);
+
+		return cartitem;
+	}
+
+}

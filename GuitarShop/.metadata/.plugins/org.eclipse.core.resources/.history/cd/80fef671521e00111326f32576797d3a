@@ -1,0 +1,68 @@
+package com.example.demo.cartitem;
+
+import org.springframework.validation.annotation.Validated;
+
+import jakarta.persistence.EmbeddedId;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import model.Cart;
+import model.CartitemPK;
+import model.Product;
+
+
+@Validated
+public class ItemDTO {
+
+	private CartitemPK id;
+
+	private int quantity;
+
+	private Cart cart;
+
+	private Product product;
+	
+	public CartitemPK getId() {
+		return id;
+	}
+
+	public void setId(CartitemPK id) {
+		this.id = id;
+	}
+
+	public int getQuantity() {
+		return quantity;
+	}
+
+	public void setQuantity(int quantity) {
+		this.quantity = quantity;
+	}
+
+	public Cart getCart() {
+		return cart;
+	}
+
+	public void setCart(Cart cart) {
+		this.cart = cart;
+	}
+
+	public Product getProduct() {
+		return product;
+	}
+
+	public void setProduct(Product product) {
+		this.product = product;
+	}
+
+	public ItemDTO(CartitemPK id, int quantity, Cart cart, Product product) {
+		this.id = id;
+		this.quantity = quantity;
+		this.cart = cart;
+		this.product = product;
+	}
+
+	public ItemDTO() {
+		
+	}
+	
+	
+}

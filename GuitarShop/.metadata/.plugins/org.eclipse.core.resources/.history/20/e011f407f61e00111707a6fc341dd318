@@ -1,0 +1,105 @@
+package com.example.demo.cartitem;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.example.demo.product.ProductDTO;
+import com.example.demo.product.ProductService;
+import com.example.demo.user.UserDTO;
+import com.example.demo.user.UserService;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
+import jakarta.validation.ValidationException;
+import model.Cartitem;
+import model.Type;
+
+@Controller
+@RequestMapping("cart")
+public class CartController {
+	
+	@Autowired
+	CartService cartService;
+	
+	@Autowired
+	ItemService itemService;
+	
+	@Autowired
+	ProductService productService;
+	
+	@GetMapping("redirectToCart")
+	public String redirectToStorage(@RequestParam("userId")Integer userId, Model m) {
+		CartDTO cartDTO = cartService.findCartByUser(userId);
+		List<ItemDTO> items = cartDTO.getCartitems();
+//		List<ProductDTO> products = new ArrayList<>();
+//		for(Cartitem item: items) {
+//			products.add(productService.findProdById(item.getId().getProdId()));
+//		}
+		m.addAttribute("cartDTO", cartDTO);
+		m.addAttribute("items", items);
+		return "pages/cart";
+	}
+	
+	@ModelAttribute("itemDTO")
+	public ItemDTO getItemDTO() {
+		return new ItemDTO();
+	}
+	
+	@PostMapping("addItem")
+	public void addItem(@RequestParam("prodId")Integer prodId, @RequestParam("stock")Integer stock, HttpServletRequest req, HttpServletResponse res) {
+		if(stock > 0) {
+			Integer userId = (Integer)req.getSession().getAttribute("userId");
+			//cart
+			CartDTO cartDTO = updateCart(userId);
+			
+			//item add
+			ItemDTO itemDTO = updateCartitem(cartDTO, prodId);
+		}
+		try {
+			res.sendRedirect("/GuitarShop/product/redirectToProductPage?prodId=" + prodId);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public CartDTO updateCart(Integer userId) {
+		CartDTO cartDTO = cartService.findCartByUser(userId);
+		if(cartDTO == null) {
+			cartDTO = cartService.newCart(userId);
+		}
+		return cartDTO;
+	}
+	
+	public ItemDTO updateCartitem(CartDTO cartDTO, Integer prodId) {
+		ItemDTO itemDTO = cartService.findItemInCart(cartDTO.getCartId(), prodId);
+		if(itemDTO == null) {
+			itemDTO = itemService.saveItem(cartDTO.getCartId(), prodId);
+		}
+		return itemDTO;
+	}
+	
+	@ModelAttribute("cartDTO")
+	public CartDTO getCartDTO() {
+		return new CartDTO();
+	}
+	
+	@PostMapping("purchaseCart")
+	public void purchase(@ModelAttribute("cartDTO")CartDTO cartToBuy, HttpServletRequest req) {
+		System.out.println(cartToBuy);
+	}
+}

@@ -1,0 +1,84 @@
+package com.example.demo.cartitem;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.example.demo.product.ProductDTO;
+import com.example.demo.product.ProductRepo;
+
+import jakarta.validation.ValidationException;
+import model.Cart;
+import model.Cartitem;
+import model.CartitemPK;
+import model.Product;
+import model.Type;
+
+@Service
+public class CartService {
+	
+	@Autowired
+	CartRepo cartRepo;
+	
+	@Autowired
+	ItemRepo itemRepo;
+
+	public CartDTO findCartByUser(Integer id) {
+		try {
+			Cart c = cartRepo.findByUser(id);
+			if(c != null) {
+				CartDTO newC = new CartDTO(c.getCartId() ,c.getSumm(), c.getUserId(), c.getCartitems());
+				return newC;
+			}
+			else return null;
+			
+		}catch(Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public CartDTO newCart(Integer userId) {
+		Cart c = new Cart();
+		c.setUserId(userId);
+		c = cartRepo.saveAndFlush(c);
+		CartDTO newC = new CartDTO(c.getCartId(), c.getSumm(), c.getUserId(), cartItemsToDTO(c.getCartitems()));
+		return newC;
+	}
+
+	public ItemDTO findItemInCart(Integer cartId, Integer prodId) {
+		try {
+			Cartitem item = itemRepo.findItemInCart(new CartitemPK(cartId, prodId));
+			if(item != null) {
+				Product product = item.getProduct();
+				ProductDTO productDTO = new ProductDTO(product.getProdId(), product.getProductDesc(),
+													product.getProductName(), product.getStok(),
+													product.getType().getTypeId(), product.getType().getName());
+//				CartDTO cartDTO = new CartDTO(item.getCart().getCartId(), item.getCart().getSumm(),
+//											item.getCart().getUserId(), item.getCart().getCartitems());
+				ItemDTO newI = new ItemDTO(item.getId(), item.getQuantity(), productDTO);
+				return newI;
+			}
+			return null;
+		}catch(Exception e) {
+			return null;
+		}
+		
+	}
+	
+	public List<ItemDTO> cartItemsToDTO(List<Cartitem> list){
+		List<ItemDTO> res = new ArrayList<>();
+		for(Cartitem item: list) {
+			Product product = item.getProduct();
+			ProductDTO productDTO = new ProductDTO(product.getProdId(), product.getProductDesc(),
+					product.getProductName(), product.getStok(),
+					product.getType().getTypeId(), product.getType().getName());
+			res.add(new ItemDTO(item.getId(), item.getQuantity(), productDTO));
+		}
+		return res;
+	}
+
+}
