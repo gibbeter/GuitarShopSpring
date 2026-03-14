@@ -61,4 +61,19 @@ public class UserDTO {
 	public void setType(String type) {
 		this.type = type;
 	}
+
+	public UserDTO(@NotNull Integer userId, @NotNull @NotEmpty String userName, @NotNull @NotEmpty String password,
+			@NotNull String type, @NotNull String userMail) {
+		this.userId = userId;
+		this.userName = userName;
+		this.password = password;
+		this.type = type;
+		this.userMail = userMail;
+	}
+
+	public UserDTO() {
+		
+	}
+	
+	
 }

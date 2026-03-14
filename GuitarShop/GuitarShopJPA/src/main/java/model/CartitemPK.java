@@ -18,11 +18,14 @@ public class CartitemPK implements Serializable {
 	@Column(name="prod_id")
 	private int prodId;
 
-	public CartitemPK() {
-	}
-	public CartitemPK(Integer cartId, Integer prodId) {
+	
+	
+	public CartitemPK(int cartId, int prodId) {
 		this.cartId = cartId;
 		this.prodId = prodId;
+	}
+	
+	public CartitemPK() {
 	}
 	public int getCartId() {
 		return this.cartId;

@@ -10,6 +10,7 @@
 </head>
 <body>
 <h1><a href="${pageContext.request.contextPath}/user/redirectToIndex">GuitarShop</a></h1>
+<c:if test="${!empty guestStatus}">${guestStatus}</c:if>
 <h2>Cart:</h2>
 		<table>
 			<tr>
@@ -17,7 +18,23 @@
 				<td></td>
 				<td></td>
 				<td></td>
-				<td><input type="submit" value="Buy"></td>
+				<td>
+					<form action="purchaseCart" method="post">
+						<c:forEach items="${items}" var="item" varStatus="status">
+							<input type="hidden" name="cartIds" value="${item.id.cartId}" />
+							<input type="hidden" name="productIds" value="${item.id.prodId}" />
+							<input type="hidden" name="quantities" value="${item.quantity}" />
+							<input type="hidden" name="products"
+								value="${item.product.prodId}" />
+						</c:forEach>
+						<c:choose>
+							<c:when test="${!empty items}"><input type="submit" value="Buy"></c:when>
+							<c:otherwise><input type="button" value="Buy"></c:otherwise>
+						</c:choose>
+						
+						
+					</form>
+				</td>
 			</tr>
 			<c:if test="${!empty items}">
 			<c:forEach items="${items}" var="item">
@@ -45,13 +62,6 @@
 			</c:forEach>
 		</c:if>
 		</table>
-		<form action="purchaseCart" method="post">
-			<c:forEach items="${items}" var="item" varStatus="status">
-				<input type="hidden" name="cartIds" value="${item.id.cartId}"/>
-				<input type="hidden" name="productIds" value="${item.id.prodId}"/>
-				<input type="hidden" name="quantities" value="${item.quantity}" />
-				<input type="hidden" name="products" value="${item.product.prodId}" />
-			</c:forEach>
-		</form>
+		
 </body>
 </html>

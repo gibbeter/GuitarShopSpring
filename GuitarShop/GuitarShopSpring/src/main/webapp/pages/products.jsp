@@ -18,6 +18,7 @@
 				<th>Description</th>
 				<th>Type</th>
 				<th>Stock</th>
+				<th>Price</th>
 			</tr>
 			<c:if test="${!empty products}">
 				<c:forEach items="${products}" var="p">
@@ -27,6 +28,7 @@
 						<th>${p.productDesc}</th>
 						<th>${p.productTypeName}</th>
 						<th>${p.productStock}</th>
+						<th>${p.productPrice}$</th>
 					</tr>
 				</c:forEach>
 			</c:if>

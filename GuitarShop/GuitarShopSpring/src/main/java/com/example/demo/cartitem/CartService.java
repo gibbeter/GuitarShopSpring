@@ -1,12 +1,16 @@
 package com.example.demo.cartitem;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import com.example.demo.GuitarShopSpringApplication;
 import com.example.demo.product.ProductDTO;
 import com.example.demo.product.ProductRepo;
 
@@ -16,15 +20,27 @@ import model.Cartitem;
 import model.CartitemPK;
 import model.Product;
 import model.Type;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 @Service
 public class CartService {
+
+    private final GuitarShopSpringApplication guitarShopSpringApplication;
 	
 	@Autowired
 	CartRepo cartRepo;
 	
 	@Autowired
 	ItemRepo itemRepo;
+
+    CartService(GuitarShopSpringApplication guitarShopSpringApplication) {
+        this.guitarShopSpringApplication = guitarShopSpringApplication;
+    }
 
 	public CartDTO findCartByUser(Integer id) {
 		try {
@@ -56,7 +72,8 @@ public class CartService {
 				Product product = item.getProduct();
 				ProductDTO productDTO = new ProductDTO(product.getProdId(), product.getProductDesc(),
 													product.getProductName(), product.getStock(),
-													product.getTypeBean().getTypeId(), product.getTypeBean().getName());
+													product.getTypeBean().getTypeId(), product.getTypeBean().getName(),
+													product.getPrice());
 //				CartDTO cartDTO = new CartDTO(item.getCart().getCartId(), item.getCart().getSumm(),
 //											item.getCart().getUserId(), item.getCart().getCartitems());
 				ItemDTO newI = new ItemDTO(item.getId(), item.getQuantity(), productDTO);
@@ -76,7 +93,8 @@ public class CartService {
 				Product product = item.getProduct();
 				ProductDTO productDTO = new ProductDTO(product.getProdId(), product.getProductDesc(),
 						product.getProductName(), product.getStock(),
-						product.getTypeBean().getTypeId(), product.getTypeBean().getName());
+						product.getTypeBean().getTypeId(), product.getTypeBean().getName(),
+						product.getPrice());
 				res.add(new ItemDTO(item.getId(), item.getQuantity(), productDTO));
 			}
 		}
@@ -95,4 +113,38 @@ public class CartService {
 		return null;
 	}
 
+	public boolean purchaseCart(int cartId) {
+		try {
+			Cart c = cartRepo.findById(cartId).get();
+			c.setCartitems(new ArrayList<Cartitem>());
+			return cartRepo.save(c) != null;
+		}catch(Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	public void removeCart(int cartId) {
+		try {
+			Cart c = cartRepo.findById(cartId).get();
+			cartRepo.delete(c);
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	
+//	public JasperPrint createCheck(Integer userId) throws JRException, IOException {
+////		System.out.println("IdPredstave: "+idPredstava);
+////		System.out.println("Broj karata: "+kr.getKarteZaPredstavu(idPredstava).size());
+//		JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(kr.getKarteZaPredstavu(idPredstava));
+//		InputStream inputStream = this.getClass().getResourceAsStream("/jasperreports/karteZaPredstavu.jrxml");
+//		JasperReport jasperReport = JasperCompileManager.compileReport(inputStream);
+//		Map<String, Object> params = new HashMap<String, Object>();
+////		params.put("predstava", pr.findById(idPredstava).get().getNaziv());
+////		params.put("brojIzvodjenja", ir.brojIzvodjenja(idPredstava));
+//		JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, params, dataSource);
+//		inputStream.close();
+//		return jasperPrint;
+//	}
 }

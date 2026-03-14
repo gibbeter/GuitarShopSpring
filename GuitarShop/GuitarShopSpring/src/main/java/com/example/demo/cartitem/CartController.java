@@ -30,6 +30,9 @@ import model.Cartitem;
 import model.CartitemPK;
 import model.Product;
 import model.Type;
+import net.sf.jasperreports.engine.JasperExportManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import java.io.OutputStream;
 
 @Controller
 @RequestMapping("cart")
@@ -44,18 +47,39 @@ public class CartController {
 	@Autowired
 	ProductService productService;
 	
+	@Autowired
+	UserService userService;
+	
 	@GetMapping("redirectToCart")
-	public String redirectToStorage(@RequestParam("userId")Integer userId, HttpServletRequest req) {
-		CartDTO cartDTO = cartService.findCartByUser(userId);
+	public String redirectToStorage(@RequestParam(value="userId", required=false)Optional<Integer> userId, HttpServletRequest req, HttpServletResponse res) {
+		if(!userId.isPresent() || userService.findById(userId.get()) == null) {
+			req.getSession().setAttribute("guestStatus", "You are buying as guest");
+			UserDTO guest = createGuest();
+			req.getSession().setAttribute("userId", guest.getUserId());
+			req.getSession().setAttribute("userName", guest.getUserName());
+//			return "pages/cart";
+			try {
+				System.out.println(guest.getUserId());
+				res.sendRedirect("/GuitarShop/cart/redirectToCart?userId=" + guest.getUserId());
+				return "pages/cart";
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		CartDTO cartDTO = cartService.findCartByUser(userId.get());
+		if(cartDTO == null) {
+			cartDTO = cartService.newCart(userId.get());
+		}
 		List<ItemDTO> items = cartDTO.getCartitems();
-//		List<ProductDTO> products = new ArrayList<>();
-//		for(Cartitem item: items) {
-//			products.add(productService.findProdById(item.getId().getProdId()));
-//		}
+//			List<ProductDTO> products = new ArrayList<>();
+//			for(Cartitem item: items) {
+//				products.add(productService.findProdById(item.getId().getProdId()));
+//			}
 		req.getSession().setAttribute("cartDTO", cartDTO);
 		req.getSession().setAttribute("items", items);
-		req.getSession().setAttribute("userId", userId);
+		req.getSession().setAttribute("userId", userId.get());
 		return "pages/cart";
+
 	}
 	
 	@ModelAttribute("itemDTO")
@@ -66,7 +90,13 @@ public class CartController {
 	@PostMapping("addItem")
 	public void addItem(@RequestParam("prodId")Integer prodId, @RequestParam("stock")Integer stock, HttpServletRequest req, HttpServletResponse res) {
 		if(stock > 0) {
-			Integer userId = (Integer)req.getSession().getAttribute("userId");
+			Integer userId = (Integer) req.getSession().getAttribute("userId");
+			if(userId == null) {
+				UserDTO guest = createGuest();
+				userId = guest.getUserId();
+				req.getSession().setAttribute("userId", guest.getUserId());
+				req.getSession().setAttribute("userName", guest.getUserName());
+			}
 			//cart
 			CartDTO cartDTO = updateCart(userId);
 			
@@ -117,14 +147,39 @@ public class CartController {
 	        item.setProduct(productService.findProdById(productIds[i]));
 	        items.add(item);
 	        System.out.println(item);
+	        //change stock
+	        productService.changeStock(productIds[i], quantities[i]);
+	        //remove cartitem
+	        itemService.removeItem(item.getId());
 	    }
 	    CartDTO cartDTO = cartService.findCart(items.get(0).getId().getCartId());
+	    cartService.purchaseCart(cartDTO.getCartId());
+	    UserDTO user = userService.findById(cartDTO.getUserId());
+	    if(user.getType().equalsIgnoreCase("guest")) {
+	    	itemService.removeAllCartItems(cartDTO.getCartId());
+	    	cartService.removeCart(cartDTO.getCartId());
+	    	userService.removeUser(cartDTO.getUserId());
+	    }
 		try {
 			res.sendRedirect("/GuitarShop/cart/redirectToCart?userId=" + cartDTO.getUserId());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
+	
+//	public void getCheck(HttpServletResponse response, Model m) {
+//		try {
+//			JasperPrint jasperReport = cartService.createCheck(id);
+//			response.setContentType("text/html");
+//			response.setContentType("application/x-download");
+//			response.addHeader("Content-disposition", "attachment; filename=Check"+userService.getUserNameAndMail(userId)+".pdf");
+//			OutputStream out = response.getOutputStream();
+//			JasperExportManager.exportReportToPdfStream(jasperReport, out);
+//			out.close();
+//		} catch(Exception e) {
+//			e.printStackTrace();
+//		}
+//	}
 	
 	@PostMapping("changeQuantity")
 	public void changeQuantity(@RequestParam("cartId") Integer cartId,
@@ -141,6 +196,16 @@ public class CartController {
 			res.sendRedirect("/GuitarShop/cart/redirectToCart?userId=" + userId);
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
+	}
+	
+	public UserDTO createGuest() {
+		try {
+			UserDTO guest = userService.createGuestUser();
+			return guest;
+		}catch(Exception e) {
+			e.printStackTrace();
+			return null;
 		}
 	}
 }

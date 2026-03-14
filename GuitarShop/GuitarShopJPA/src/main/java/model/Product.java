@@ -19,6 +19,8 @@ public class Product implements Serializable {
 	@Column(name="prod_id")
 	private int prodId;
 
+	private int price;
+
 	@Column(name="product_desc")
 	private String productDesc;
 
@@ -45,6 +47,14 @@ public class Product implements Serializable {
 
 	public void setProdId(int prodId) {
 		this.prodId = prodId;
+	}
+
+	public int getPrice() {
+		return this.price;
+	}
+
+	public void setPrice(int price) {
+		this.price = price;
 	}
 
 	public String getProductDesc() {

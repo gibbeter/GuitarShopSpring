@@ -33,12 +33,17 @@
 					<tr>
 						<td>Username</td>
 						<td><input type="text" name="userName" value="${userName}"></td>
+						<c:if test="${userType != 'guest'}">
 						<td><input type="submit" value="Change"></td>
 						<td>${updateNameStatus}</td>
+						</c:if>
 					</tr>
 					</table>
-				</form>
+			
+			</form>
+			
 			<form action="changePass" method="post">
+			<c:if test="${userType != 'guest'}">
 				<table>
 					<tr>
 						<td>Password</td>
@@ -47,8 +52,11 @@
 						<td>${updatePassStatus}</td>
 					</tr>
 				</table>
+			</c:if>
 			</form>
+			
 			<form action="changeMail" method="post">
+			<c:if test="${userType != 'guest'}">
 				<table>
 					<tr>
 						<td>Mail</td>
@@ -57,7 +65,9 @@
 						<td>${updateMailStatus}</td>
 					</tr>
 				</table>
+			</c:if>
 			</form>
+			
 			<form action="logout">
 				<input type="submit" value="Log out">
 			</form>

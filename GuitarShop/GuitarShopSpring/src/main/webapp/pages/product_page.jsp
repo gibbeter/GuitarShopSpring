@@ -27,6 +27,10 @@
 					<td></td>
 					<td>Product description:</td>
 					<td>${product.productDesc}</td>
+				</tr>
+				<tr>
+					<td></td>
+					<td>${product.productPrice}$</td>
 					<td>Stock: ${product.productStock}</td>
 				</tr>
 			</table>

@@ -117,4 +117,28 @@ public class UserService {
 			return false;
 		}
 	}
+
+	public UserDTO createGuestUser() {
+		User u = new User();
+		int randomInt = (int) (Math.random() * 1000);
+		u.setUserName("guest" + randomInt);
+		u.setType("guest");
+		try {
+			userRepo.save(u);
+		}catch(Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+		return new UserDTO(u.getUserId(), u.getUserName(), "dummy", u.getType(), "dummy");
+	}
+
+	public void removeUser(int userId) {
+		try {
+			User u = userRepo.findById(userId).get();
+			userRepo.delete(u);
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
 }

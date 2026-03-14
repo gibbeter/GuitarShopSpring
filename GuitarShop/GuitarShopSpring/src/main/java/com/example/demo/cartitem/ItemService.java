@@ -65,5 +65,30 @@ public class ItemService {
 		return false;
 	}
 
+	public boolean removeItem(CartitemPK id) {
+		try {
+			Cartitem i = itemRepo.findById(id).get();
+			itemRepo.delete(i);
+			return true;
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	public void removeAllCartItems(int cartId) {
+		try {
+			List<Cartitem> list = cartRepo.findById(cartId).get().getCartitems();
+			if(list != null && list.size() > 0) {
+				for(Cartitem i: list) {
+					itemRepo.delete(i);
+				}
+			}
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
+
 
 }

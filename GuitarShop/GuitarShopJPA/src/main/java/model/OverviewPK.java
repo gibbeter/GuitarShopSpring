@@ -12,21 +12,18 @@ public class OverviewPK implements Serializable {
 	//default serial version id, required for serializable classes.
 	private static final long serialVersionUID = 1L;
 
-
 	@Column(name="user_id")
 	private int userId;
 
 	@Column(name="product_id")
 	private int productId;
-
-	public OverviewPK() {
-	}
 	
 	public OverviewPK(int userId, int productId) {
 		this.userId = userId;
 		this.productId = productId;
 	}
-	
+	public OverviewPK() {
+	}
 	public int getUserId() {
 		return this.userId;
 	}

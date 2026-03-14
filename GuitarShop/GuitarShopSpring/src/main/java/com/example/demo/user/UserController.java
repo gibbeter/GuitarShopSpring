@@ -15,6 +15,10 @@ import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.example.demo.cartitem.CartDTO;
+import com.example.demo.cartitem.CartService;
+import com.example.demo.cartitem.ItemService;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -27,6 +31,12 @@ public class UserController {
 	
 	@Autowired
 	UserService userService;
+	
+	@Autowired
+	ItemService itemService;
+	
+	@Autowired
+	CartService cartService;
 	
 	@GetMapping("redirectToIndex")
 	public String redirectToIdx(HttpServletRequest req) {
@@ -68,7 +78,11 @@ public class UserController {
 	}
 	
 	@PostMapping("login")
-	public String loginUser(@RequestParam("userName")String userN, HttpServletRequest req) {
+	public String loginUser(@RequestParam("userName")String userN, HttpServletRequest req, Model m) {
+		if(userN.contains("guest")) {
+			m.addAttribute("errorStatus", "Username cant contain \"guest\"");
+			return "pages/account";
+		}
 		UserDTO user = userService.findUserByName(userN);
 		if(user != null) {
 			req.getSession().setAttribute("userId", user.getUserId());
@@ -96,6 +110,11 @@ public class UserController {
 //	        }
 		if(bindingResult.hasErrors()) {
 			m.addAttribute("errorStatus", "Validation error during registration, check if you filled all fields");
+			System.out.println(bindingResult.getAllErrors());
+			return "pages/account";
+		}
+		else if(userReg.getUserName().contains("guest")) {
+			m.addAttribute("errorStatus", "Username cant contain \"guest\"");
 			System.out.println(bindingResult.getAllErrors());
 			return "pages/account";
 		}
@@ -144,10 +163,22 @@ public class UserController {
 	
 	@GetMapping("logout")
 	public String userLogout(HttpServletRequest req) {
+		Integer id = (Integer) req.getSession().getAttribute("userId");
+		if(id != null) {
+			UserDTO u = userService.findById(id);
+			if(u.getType().equalsIgnoreCase("guest")) {
+				CartDTO cartDTO = cartService.findCartByUser(id);
+				itemService.removeAllCartItems(cartDTO.getCartId());
+		    	cartService.removeCart(cartDTO.getCartId());
+		    	userService.removeUser(u.getUserId());
+		    }
+		}
 		req.getSession().removeAttribute("userId");
 		req.getSession().removeAttribute("userName");
 		req.getSession().removeAttribute("userMail");
 		req.getSession().removeAttribute("userPassword");
+		req.getSession().removeAttribute("userType");
+		
 		return "pages/account";
 	}
 	
@@ -223,6 +254,16 @@ public class UserController {
 		if(type.equalsIgnoreCase("mail")) {
 			req.getSession().removeAttribute("updatePassStatus");
 			req.getSession().removeAttribute("updateNameStatus");
+		}
+	}
+	
+	public UserDTO createGuest() {
+		try {
+			UserDTO guest = userService.createGuestUser();
+			return guest;
+		}catch(Exception e) {
+			e.printStackTrace();
+			return null;
 		}
 	}
 }

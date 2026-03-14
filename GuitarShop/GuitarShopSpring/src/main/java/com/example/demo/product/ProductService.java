@@ -42,7 +42,8 @@ public class ProductService {
 		List<ProductDTO> res = new ArrayList<ProductDTO>();
 		List<Product> list = productRepo.findAll();
 		for(Product p : list) {
-			res.add(new ProductDTO(p.getProdId(), p.getProductDesc(), p.getProductName(), p.getStock(), p.getTypeBean().getTypeId(), p.getTypeBean().getName()));
+			res.add(new ProductDTO(p.getProdId(), p.getProductDesc(), p.getProductName(), p.getStock(),
+								p.getTypeBean().getTypeId(), p.getTypeBean().getName(), p.getPrice()));
 		}
 		return res;
 	}
@@ -78,14 +79,27 @@ public class ProductService {
 		List<ProductDTO> res = new ArrayList<ProductDTO>();
 		List<Product> list = productRepo.findByType(type);
 		for(Product p : list) {
-			res.add(new ProductDTO(p.getProdId(), p.getProductDesc(), p.getProductName(), p.getStock(), p.getTypeBean().getTypeId(), p.getTypeBean().getName()));
+			res.add(new ProductDTO(p.getProdId(), p.getProductDesc(), p.getProductName(), p.getStock(),
+								p.getTypeBean().getTypeId(), p.getTypeBean().getName(), p.getPrice()));
 		}
 		return res;
 	}
 
 	public ProductDTO findProdById(Integer id) {
 		Product p = productRepo.findById(id).get();
-		ProductDTO pDTO= new ProductDTO(p.getProdId(), p.getProductDesc(), p.getProductName(), p.getStock(), p.getTypeBean().getTypeId(), p.getTypeBean().getName());
+		ProductDTO pDTO= new ProductDTO(p.getProdId(), p.getProductDesc(), p.getProductName(), p.getStock(),
+									p.getTypeBean().getTypeId(), p.getTypeBean().getName(), p.getPrice());
 		return pDTO;
+	}
+
+	public boolean changeStock(Integer prodId, Integer q) {
+		try {
+			Product prod = productRepo.findById(prodId).get();
+			prod.setStock(prod.getStock() - q);
+			return productRepo.save(prod) != null;
+		}catch(Exception e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 }
