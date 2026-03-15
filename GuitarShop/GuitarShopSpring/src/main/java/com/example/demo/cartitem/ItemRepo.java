@@ -1,5 +1,6 @@
 package com.example.demo.cartitem;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -16,5 +17,8 @@ public interface ItemRepo extends JpaRepository<Cartitem, CartitemPK>{
 
 	@Query("select ci from Cart c join c.cartitems ci where ci.id =?1")
 	Cartitem findItemInCart(CartitemPK id);
+	
+	@Query("select ci from Cart c join c.cartitems ci where c.userId =?1")
+	List<Cartitem> findItemsByUser(Integer userId);
 
 }

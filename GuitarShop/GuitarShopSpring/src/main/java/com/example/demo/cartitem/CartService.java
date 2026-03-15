@@ -3,6 +3,7 @@ package com.example.demo.cartitem;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +11,8 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
+
 import com.example.demo.GuitarShopSpringApplication;
 import com.example.demo.product.ProductDTO;
 import com.example.demo.product.ProductRepo;
@@ -132,19 +135,53 @@ public class CartService {
 			e.printStackTrace();
 		}
 	}
-
 	
-//	public JasperPrint createCheck(Integer userId) throws JRException, IOException {
-////		System.out.println("IdPredstave: "+idPredstava);
-////		System.out.println("Broj karata: "+kr.getKarteZaPredstavu(idPredstava).size());
-//		JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(kr.getKarteZaPredstavu(idPredstava));
-//		InputStream inputStream = this.getClass().getResourceAsStream("/jasperreports/karteZaPredstavu.jrxml");
-//		JasperReport jasperReport = JasperCompileManager.compileReport(inputStream);
-//		Map<String, Object> params = new HashMap<String, Object>();
-////		params.put("predstava", pr.findById(idPredstava).get().getNaziv());
-////		params.put("brojIzvodjenja", ir.brojIzvodjenja(idPredstava));
-//		JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, params, dataSource);
-//		inputStream.close();
-//		return jasperPrint;
+	public boolean updateSumm(Integer userId) {
+		try {
+			Cart c = cartRepo.findByUser(userId);
+			List<Cartitem> list = c.getCartitems();
+			int summ = 0;
+			for(Cartitem i: list) {
+				summ += i.getQuantity() * i.getProduct().getPrice();
+			}
+			c.setSumm(summ);
+			return cartRepo.save(c) != null;
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+//	public boolean subFromSumm() {
+//		try {
+//
+//		}catch(Exception e) {
+//			e.printStackTrace();
+//		}
 //	}
+
+	public JasperPrint createCheck(Integer userId) throws JRException, IOException {
+
+		List<Cartitem> list = itemRepo.findItemsByUser(userId);
+		List<CheckDTO> checkList = new ArrayList<>();
+		Cart c = cartRepo.findByUser(userId);
+		System.out.println(list.size());
+		for(Cartitem i: list) {
+			checkList.add(new CheckDTO(i, userId));
+			System.out.println(checkList.getLast());
+		}
+		
+		
+		
+		JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(checkList);
+		InputStream inputStream = this.getClass().getResourceAsStream("/jasperreports/checkForm.jrxml");
+		JasperReport jasperReport = JasperCompileManager.compileReport(inputStream);
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("cartSumm", cartRepo.findByUser(userId).getSumm());
+		params.put("currentDate", new Date());
+//		params.put("brojIzvodjenja", ir.brojIzvodjenja(idPredstava));
+		JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, params, dataSource);
+		inputStream.close();
+		return jasperPrint;
+	}
 }

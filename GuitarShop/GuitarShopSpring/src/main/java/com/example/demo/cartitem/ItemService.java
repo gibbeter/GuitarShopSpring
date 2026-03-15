@@ -36,13 +36,11 @@ public class ItemService {
 		i.setCart(cart);
 		i.setProduct(prod);
 		cart.getCartitems().add(i);
+		cart.setSumm(cart.getSumm() + prod.getPrice());
 		prod.getCartitems().add(i);
 		i.setId(new CartitemPK(cart.getCartId(), prod.getProdId()));
 		
-		
 //		prodRepo.save(prod);
-		
-		
 //		cartRepo.save(cart);
 		i = itemRepo.save(i);
 
@@ -55,6 +53,9 @@ public class ItemService {
 			Cartitem i = itemRepo.findById(new CartitemPK(cartId, productId)).get();
 			if(i != null) {
 				i.setQuantity(quantity);
+				Cart c = cartRepo.findById(cartId).get();
+				Product p = prodRepo.findById(productId).get();
+				c.setSumm(c.getSumm() + p.getPrice() * quantity);
 				itemRepo.save(i);
 				return true;
 			}

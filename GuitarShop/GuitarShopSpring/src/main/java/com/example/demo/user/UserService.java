@@ -25,7 +25,7 @@ public class UserService {
 				return false;
 			User newUser = new User();
 			newUser.setUserName(user.getUserName());
-			newUser.setPassword(user.getPassword());
+			newUser.setPassword(user.getUserPass());
 			newUser.setType(user.getType());
 			newUser.setUserMail(user.getUserMail());
 			userRepo.save(newUser);
@@ -41,9 +41,13 @@ public class UserService {
 		try {
 			UserDTO userDTO = new UserDTO();
 			User user = userRepo.findById(userId).get();
+			
+			if(user == null)
+				return null;
+			
 			userDTO.setUserId(user.getUserId());
 			userDTO.setUserName(user.getUserName());
-			userDTO.setPassword(user.getPassword());
+			userDTO.setUserPass(user.getPassword());
 			userDTO.setUserMail(user.getUserMail());
 			userDTO.setType(user.getType());
 			
@@ -61,9 +65,12 @@ public class UserService {
 		try {
 			userDTO = new UserDTO();
 			User user = userRepo.findUserByUserName(name);
+			if(user == null)
+				return null;
+			
 			userDTO.setUserId(user.getUserId());
 			userDTO.setUserName(user.getUserName());
-			userDTO.setPassword(user.getPassword());
+			userDTO.setUserPass(user.getPassword());
 			userDTO.setUserMail(user.getUserMail());
 			userDTO.setType(user.getType());
 		}catch(Exception e) {
@@ -123,13 +130,15 @@ public class UserService {
 		int randomInt = (int) (Math.random() * 1000);
 		u.setUserName("guest" + randomInt);
 		u.setType("guest");
+		u.setUserMail("dummy");
+		u.setPassword("dummy");
 		try {
 			userRepo.save(u);
 		}catch(Exception e) {
 			e.printStackTrace();
 			return null;
 		}
-		return new UserDTO(u.getUserId(), u.getUserName(), "dummy", u.getType(), "dummy");
+		return new UserDTO(u.getUserId(), u.getUserName(), u.getPassword(), u.getType(), u.getUserMail());
 	}
 
 	public void removeUser(int userId) {
@@ -140,5 +149,16 @@ public class UserService {
 			e.printStackTrace();
 		}
 		
+	}
+
+	public String getUserNameAndMail(Integer userId) {
+		try {
+			User u = userRepo.findById(userId).get();
+			return u.getUserMail()+":"+u.getUserName();
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		return null;
 	}
 }

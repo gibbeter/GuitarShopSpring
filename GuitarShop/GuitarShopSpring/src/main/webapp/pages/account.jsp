@@ -80,7 +80,7 @@
 							<td colspan="2"><input type="text" name="userName"></td>
 						</tr>
 						<tr>
-							<td colspan="2"><input type="password" name="password"></td>
+							<td colspan="2"><input type="password" name="userPass"></td>
 						</tr>
 						<tr>
 							<td><input type="submit" formaction="login" value="Log in"></td>

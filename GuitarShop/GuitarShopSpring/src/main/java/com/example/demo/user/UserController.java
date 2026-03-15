@@ -78,17 +78,27 @@ public class UserController {
 	}
 	
 	@PostMapping("login")
-	public String loginUser(@RequestParam("userName")String userN, HttpServletRequest req, Model m) {
+	public String loginUser(@RequestParam("userName")String userN, @RequestParam("userPass")String userP, HttpServletRequest req, Model m) {
 		if(userN.contains("guest")) {
 			m.addAttribute("errorStatus", "Username cant contain \"guest\"");
 			return "pages/account";
 		}
 		UserDTO user = userService.findUserByName(userN);
 		if(user != null) {
-			req.getSession().setAttribute("userId", user.getUserId());
-			req.getSession().setAttribute("userName", user.getUserName());
+			if(user.getUserPass().contentEquals(userP)) {
+				getUserData(user.getUserId(), req);
+				req.getSession().setAttribute("userId", user.getUserId());
+				req.getSession().setAttribute("userName", user.getUserName());
+			}
+			else {
+				m.addAttribute("errorStatus", "Wrong password");
+			}
 		}
-		return "index";
+		else {
+			m.addAttribute("errorStatus", "User with this login doesnt exist");
+		}
+		
+		return "pages/account";
 	}
 	
 	@PostMapping("register")
@@ -156,7 +166,7 @@ public class UserController {
 			req.getSession().setAttribute("userId", user.getUserId());
 			req.getSession().setAttribute("userName",  user.getUserName());
 			req.getSession().setAttribute("userMail",  user.getUserMail());
-			req.getSession().setAttribute("userPassword",  user.getPassword());
+			req.getSession().setAttribute("userPassword",  user.getUserPass());
 			req.getSession().setAttribute("userType",  user.getType());
 		}
 	}
@@ -166,7 +176,7 @@ public class UserController {
 		Integer id = (Integer) req.getSession().getAttribute("userId");
 		if(id != null) {
 			UserDTO u = userService.findById(id);
-			if(u.getType().equalsIgnoreCase("guest")) {
+			if(u != null && u.getType().equalsIgnoreCase("guest")) {
 				CartDTO cartDTO = cartService.findCartByUser(id);
 				itemService.removeAllCartItems(cartDTO.getCartId());
 		    	cartService.removeCart(cartDTO.getCartId());
@@ -201,7 +211,7 @@ public class UserController {
 		}
 	}
 	@PostMapping("changePass")
-	public String changePass(@RequestParam("password")String pass, HttpServletRequest req, HttpServletResponse res) {
+	public String changePass(@RequestParam("userPass")String pass, HttpServletRequest req, HttpServletResponse res) {
 		Integer userId = (Integer) req.getSession().getAttribute("userId");
 		if(!userService.updatePass(userId, pass)) {
 			req.getSession().setAttribute("updatePassStatus", "Error during update operation");

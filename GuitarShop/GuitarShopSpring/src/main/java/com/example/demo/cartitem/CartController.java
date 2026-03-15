@@ -2,6 +2,7 @@ package com.example.demo.cartitem;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,6 +33,8 @@ import model.Product;
 import model.Type;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+
 import java.io.OutputStream;
 
 @Controller
@@ -51,21 +54,26 @@ public class CartController {
 	UserService userService;
 	
 	@GetMapping("redirectToCart")
-	public String redirectToStorage(@RequestParam(value="userId", required=false)Optional<Integer> userId, HttpServletRequest req, HttpServletResponse res) {
-		if(!userId.isPresent() || userService.findById(userId.get()) == null) {
+	public String redirectToStorage(@RequestParam(value="userId", required=false)Optional<Integer> userId, HttpServletRequest req, HttpServletResponse res, Model m) {
+
+		UserDTO guest = null;
+//		UserDTO user = userService.findById(userId.get());
+		if(!userId.isPresent() || userService.findById(userId.get()) == null){
 			req.getSession().setAttribute("guestStatus", "You are buying as guest");
-			UserDTO guest = createGuest();
+			guest = createGuest();
 			req.getSession().setAttribute("userId", guest.getUserId());
 			req.getSession().setAttribute("userName", guest.getUserName());
-//			return "pages/cart";
-			try {
-				System.out.println(guest.getUserId());
-				res.sendRedirect("/GuitarShop/cart/redirectToCart?userId=" + guest.getUserId());
-				return "pages/cart";
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+
+			return "redirect:/cart/redirectToCart?userId=" + guest.getUserId();
 		}
+		else {
+			if(userService.findById(userId.get()).getType().contains("guest"))
+				req.getSession().setAttribute("guestStatus", "You are buying as guest");
+			else
+				req.getSession().removeAttribute("guestStatus");
+		}
+		
+		cartService.updateSumm(userId.get());
 		CartDTO cartDTO = cartService.findCartByUser(userId.get());
 		if(cartDTO == null) {
 			cartDTO = cartService.newCart(userId.get());
@@ -75,6 +83,8 @@ public class CartController {
 //			for(Cartitem item: items) {
 //				products.add(productService.findProdById(item.getId().getProdId()));
 //			}
+		System.out.println(cartDTO.getSumm());
+		m.addAttribute("cartDTO", cartDTO);
 		req.getSession().setAttribute("cartDTO", cartDTO);
 		req.getSession().setAttribute("items", items);
 		req.getSession().setAttribute("userId", userId.get());
@@ -132,12 +142,19 @@ public class CartController {
 	}
 	//@ModelAttribute("cartDTO")CartDTO cartToBuy,
 	@PostMapping("purchaseCart")
-	public void purchase(@RequestParam("cartIds") Integer[] cartIds,
+	public String purchase(@RequestParam("cartIds") Integer[] cartIds,
 						@RequestParam("productIds") Integer[] productIds,
 			            @RequestParam("quantities") Integer[] quantities,
 //			            @RequestParam("products") ProductDTO[] products,
 			            HttpServletRequest req, HttpServletResponse res, Model m) {
 		List<ItemDTO> items = new ArrayList<>();
+		CartDTO cartDTO = cartService.findCart(cartIds[0]);
+		
+		//check
+	    JasperPrint report = getCheck(cartDTO.getUserId(), res, m);
+	    if(report != null) {
+	    	req.getSession().setAttribute("check", report);
+	    }
 	    
 	    for (int i = 0; i < productIds.length; i++) {
 	        ItemDTO item = new ItemDTO();
@@ -152,7 +169,9 @@ public class CartController {
 	        //remove cartitem
 	        itemService.removeItem(item.getId());
 	    }
-	    CartDTO cartDTO = cartService.findCart(items.get(0).getId().getCartId());
+	    
+//	    CartDTO cartDTO = cartService.findCart(items.get(0).getId().getCartId());
+	    
 	    cartService.purchaseCart(cartDTO.getCartId());
 	    UserDTO user = userService.findById(cartDTO.getUserId());
 	    if(user.getType().equalsIgnoreCase("guest")) {
@@ -160,26 +179,59 @@ public class CartController {
 	    	cartService.removeCart(cartDTO.getCartId());
 	    	userService.removeUser(cartDTO.getUserId());
 	    }
-		try {
-			res.sendRedirect("/GuitarShop/cart/redirectToCart?userId=" + cartDTO.getUserId());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
-//	public void getCheck(HttpServletResponse response, Model m) {
+	    
+	    req.getSession().setAttribute("userId", cartDTO.getUserId());
+		return "pages/check";
+//	    return "redirect:/cart/redirectToCheck?userId=" + cartDTO.getUserId();
 //		try {
-//			JasperPrint jasperReport = cartService.createCheck(id);
-//			response.setContentType("text/html");
-//			response.setContentType("application/x-download");
-//			response.addHeader("Content-disposition", "attachment; filename=Check"+userService.getUserNameAndMail(userId)+".pdf");
-//			OutputStream out = response.getOutputStream();
-//			JasperExportManager.exportReportToPdfStream(jasperReport, out);
-//			out.close();
-//		} catch(Exception e) {
+//			res.sendRedirect("/GuitarShop/cart/redirectToCart?userId=" + cartDTO.getUserId());
+//		} catch (IOException e) {
 //			e.printStackTrace();
 //		}
+	}
+	
+//	@GetMapping("redirectToCheck")
+//	public String redirectToCheckPage(@RequestParam("userId")Integer userId, HttpServletRequest req, HttpServletResponse res) {
+////		if(req.getSession().getAttribute("check") != null)
+////			req.getSession().setAttribute("check", req.getSession().getAttribute("check"));
+//		req.getSession().setAttribute("userId", userId);
+//		return "pages/check";
 //	}
+	
+	@GetMapping("downloadCheck")
+	public void downloadCheck(HttpServletRequest req, HttpServletResponse res) {
+		if(req.getSession().getAttribute("check") != null)
+			postCheck((JasperPrint)req.getSession().getAttribute("check"), res);
+	}
+	
+//	if(req.getSession().getAttribute("check") != null)
+//		postCheck((JasperPrint)req.getSession().getAttribute("check"), res);
+	
+	@GetMapping("check")
+	public JasperPrint getCheck(Integer userId, HttpServletResponse response, Model m) {
+		try {
+			JasperPrint jasperReport = cartService.createCheck(userId);
+			return jasperReport;
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	
+	public void postCheck(JasperPrint jasperReport, HttpServletResponse response){
+		try {
+			response.setContentType("text/html");
+			response.setContentType("application/x-download");
+			response.addHeader("Content-disposition", "attachment; filename=Check:"+new Date().toString()+".pdf");
+			OutputStream out = response.getOutputStream();
+			JasperExportManager.exportReportToPdfStream(jasperReport, out);
+			out.close();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
 	
 	@PostMapping("changeQuantity")
 	public void changeQuantity(@RequestParam("cartId") Integer cartId,

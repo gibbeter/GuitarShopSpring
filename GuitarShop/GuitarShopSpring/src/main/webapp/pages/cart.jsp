@@ -12,6 +12,7 @@
 <h1><a href="${pageContext.request.contextPath}/user/redirectToIndex">GuitarShop</a></h1>
 <c:if test="${!empty guestStatus}">${guestStatus}</c:if>
 <h2>Cart:</h2>
+<h2>Summary [${cartDTO.summ}$]</h2>
 		<table>
 			<tr>
 				<td>Items:</td>
@@ -41,6 +42,7 @@
 					<tr>
 						<td><img src="/GuitarShop/prod_img/${item.product.productTypeName}/prod_${item.product.prodId}/main.jpg"></td>
 						<td><a href="${pageContext.request.contextPath}/product/redirectToProductPage?prodId=${item.product.prodId}">${item.product.productName}</a></td>
+						<td>[${item.quantity * item.product.productPrice}$]</td>
 						<td>
 							<form action="changeQuantity" method="post">
 								<select name="quantity">
@@ -58,7 +60,6 @@
 							</form>
 						</td>
 					</tr>
-				
 			</c:forEach>
 		</c:if>
 		</table>

@@ -16,7 +16,7 @@ public class UserRegDTO {
 	private String userName;
 	@NotNull
 	@NotEmpty
-	private String password;
+	private String userPass;
 	@NotNull
 	private String type;
 	@NotNull
@@ -38,12 +38,12 @@ public class UserRegDTO {
 		this.userName = userName;
 	}
 
-	public String getPassword() {
-		return password;
+	public String getUserPass() {
+		return userPass;
 	}
 
-	public void setPassword(String password) {
-		this.password = password;
+	public void setUserPass(String password) {
+		this.userPass = password;
 	}
 
 	public String getUserMail() {
