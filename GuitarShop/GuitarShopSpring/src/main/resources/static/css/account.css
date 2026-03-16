@@ -1,0 +1,171 @@
+@charset "UTF-8";
+/* modern-account.css */
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+body {
+	font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont,
+		Roboto, sans-serif;
+	background: #f1f5f9;
+	color: #1e293b;
+	line-height: 1.6;
+	padding: 2rem 1.5rem;
+	max-width: 1000px;
+	margin: 0 auto;
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+h1 a {
+	text-decoration: none;
+	font-size: 2.5rem;
+	font-weight: 700;
+	background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	background-clip: text;
+	letter-spacing: -0.02em;
+	transition: opacity 0.2s;
+}
+
+h1 a:hover {
+	opacity: 0.85;
+}
+
+/* навигационные ссылки */
+h1+h1 a {
+	font-size: 1.8rem;
+	background: linear-gradient(135deg, #10b981, #3b82f6);
+}
+
+/* контейнер для форм */
+div, form {
+	width: 100%;
+	max-width: 600px;
+	margin: 1.5rem auto;
+	background: #ffffff;
+	border-radius: 1.5rem;
+	box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px
+		rgba(0, 0, 0, 0.02);
+	padding: 2rem;
+	border: 1px solid #e2e8f0;
+	transition: transform 0.2s, box-shadow 0.2s;
+}
+
+form:hover {
+	box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.1);
+}
+
+/* таблицы внутри форм */
+table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+td {
+	padding: 0.75rem 0.5rem;
+	vertical-align: middle;
+	border-bottom: 1px solid #e2e8f0;
+}
+
+tr:last-child td {
+	border-bottom: none;
+}
+
+/* поля ввода */
+input[type="text"], input[type="password"] {
+	width: 100%;
+	padding: 0.75rem 1rem;
+	border: 1px solid #cbd5e1;
+	border-radius: 0.75rem;
+	font-size: 1rem;
+	transition: border-color 0.2s, box-shadow 0.2s;
+	background: #f8fafc;
+}
+
+input[type="text"]:focus, input[type="password"]:focus {
+	outline: none;
+	border-color: #3b82f6;
+	box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+	background: #ffffff;
+}
+
+/* кнопки */
+input[type="submit"], button {
+	background: #3b82f6;
+	color: white;
+	border: none;
+	padding: 0.75rem 1.5rem;
+	border-radius: 2rem;
+	font-weight: 600;
+	font-size: 1rem;
+	cursor: pointer;
+	transition: background-color 0.2s, transform 0.1s;
+	box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+	border: 1px solid transparent;
+}
+
+input[type="submit"]:hover {
+	background: #2563eb;
+	transform: translateY(-1px);
+}
+
+input[type="submit"]:active {
+	transform: translateY(0);
+}
+
+/* кнопка Log out */
+form:last-of-type input[type="submit"] {
+	background: #ef4444;
+}
+
+form:last-of-type input[type="submit"]:hover {
+	background: #dc2626;
+}
+
+/* статусные сообщения */
+td:last-child {
+	color: #059669;
+	font-weight: 500;
+}
+
+/* сообщения об ошибках / регистрации */
+.c:if {
+	margin-top: 1rem;
+	padding: 1rem;
+	background: #fee2e2;
+	border-radius: 0.75rem;
+	color: #b91c1c;
+}
+
+/* адаптивность */
+@media ( max-width : 640px) {
+	body {
+		padding: 1rem;
+	}
+	h1 a {
+		font-size: 2rem;
+	}
+	form, div {
+		padding: 1.5rem;
+	}
+	td {
+		display: block;
+		width: 100%;
+		text-align: left;
+		padding: 0.5rem 0;
+		border-bottom: none;
+	}
+	td:last-child {
+		margin-bottom: 0.5rem;
+	}
+	input[type="submit"] {
+		width: 100%;
+		margin-top: 0.5rem;
+	}
+}

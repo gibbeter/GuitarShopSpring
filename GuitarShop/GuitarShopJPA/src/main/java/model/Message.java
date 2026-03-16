@@ -25,6 +25,11 @@ public class Message implements Serializable {
 	@ManyToOne
 	@JoinColumn(name="chat_id")
 	private Chat chat;
+	
+	@Column(name="sender_id")
+	private int senderId;
+
+	
 
 	public Message() {
 	}
@@ -51,6 +56,14 @@ public class Message implements Serializable {
 
 	public void setChat(Chat chat) {
 		this.chat = chat;
+	}
+	
+	public int getSenderId() {
+		return senderId;
+	}
+
+	public void setSenderId(int senderId) {
+		this.senderId = senderId;
 	}
 
 }

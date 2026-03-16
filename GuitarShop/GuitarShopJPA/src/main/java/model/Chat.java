@@ -2,6 +2,8 @@ package model;
 
 import java.io.Serializable;
 import jakarta.persistence.*;
+
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -27,7 +29,7 @@ public class Chat implements Serializable {
 
 	//bi-directional many-to-one association to Message
 	@OneToMany(mappedBy="chat")
-	private List<Message> messages;
+	private List<Message> messages = new ArrayList<>();
 
 	public Chat() {
 	}

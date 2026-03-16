@@ -1,0 +1,155 @@
+@charset "UTF-8";
+
+/* Modern CSS for GuitarShop */
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+body {
+	font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont,
+		Roboto, sans-serif;
+	background-color: #f8fafc;
+	color: #1e293b;
+	line-height: 1.6;
+	padding: 2rem 1.5rem;
+	max-width: 1200px;
+	margin: 0 auto;
+}
+
+h1 {
+	font-size: 2.5rem;
+	font-weight: 700;
+	background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	background-clip: text;
+	margin-bottom: 1.5rem;
+	letter-spacing: -0.02em;
+}
+
+a {
+	text-decoration: none;
+	color: #2563eb;
+	transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+a:hover {
+	color: #1d4ed8;
+}
+
+/* User account link */
+.user-link {
+	display: inline-block;
+	background-color: #ffffff;
+	padding: 0.6rem 1.2rem;
+	border-radius: 2rem;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+	font-weight: 500;
+	margin-bottom: 2rem;
+	border: 1px solid #e2e8f0;
+}
+
+.user-link a {
+	color: #1e293b;
+}
+
+.user-link a:hover {
+	color: #3b82f6;
+}
+
+/* Navigation / category table */
+table {
+	width: 100%;
+	border-collapse: separate;
+	border-spacing: 1rem;
+	margin: 2rem 0;
+}
+
+td {
+	background-color: #ffffff;
+	border-radius: 1rem;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+	transition: transform 0.2s, box-shadow 0.2s;
+	text-align: center;
+	padding: 0;
+	border: 1px solid #f1f5f9;
+}
+
+td:hover {
+	transform: translateY(-4px);
+	box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+}
+
+td a {
+	display: block;
+	padding: 1.5rem 0.5rem;
+	font-weight: 600;
+	color: #334155;
+	border-radius: 1rem;
+}
+
+td a:hover {
+	background-color: #f1f5f9;
+	color: #1e293b;
+}
+
+/* Contact section */
+div:last-of-type {
+	margin-top: 3rem;
+	padding: 2rem;
+	background-color: #ffffff;
+	border-radius: 1.5rem;
+	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+	border: 1px solid #e2e8f0;
+}
+
+div p {
+	font-size: 1.5rem;
+	font-weight: 600;
+	margin-bottom: 1rem;
+	color: #0f172a;
+}
+
+div br {
+	display: none; /* use block layout instead */
+}
+
+/* style contact lines as block elements */
+div:last-of-type a, div:last-of-type span {
+	display: inline-block;
+	margin-right: 2rem;
+	margin-bottom: 0.5rem;
+	font-size: 1.1rem;
+	color: #475569;
+}
+
+div:last-of-type span:last-child {
+	font-weight: 600;
+	color: #2563eb;
+	background-color: #eff6ff;
+	padding: 0.4rem 1rem;
+	border-radius: 2rem;
+}
+
+/* Responsive adjustments */
+@media ( max-width : 640px) {
+	body {
+		padding: 1rem;
+	}
+	h1 {
+		font-size: 2rem;
+	}
+	table {
+		border-spacing: 0.5rem;
+	}
+	td a {
+		padding: 1rem 0.25rem;
+	}
+	div:last-of-type a, div:last-of-type span {
+		display: block;
+		margin-right: 0;
+		margin-bottom: 0.75rem;
+	}
+}

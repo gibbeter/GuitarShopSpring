@@ -13,6 +13,10 @@
 	<c:choose>
 		
 		<c:when test="${!empty userId}">
+			<c:if test="${userType != 'guest'}">
+				<h1><a href="${pageContext.request.contextPath}/chat/redirectToChats?userId=${userId}">Chats</a></h1>
+			</c:if>
+			
 			<div>
 				<c:choose>
 					<c:when test="${userType == 'admin'}">

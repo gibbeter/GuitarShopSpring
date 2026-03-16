@@ -10,6 +10,7 @@
 </head>
 <body>
 	${userId}
+	${userType}
 	${product.prodId}
 	<h1><a href="${pageContext.request.contextPath}/user/redirectToIndex">GuitarShop</a></h1>
 	<h1><a href="${pageContext.request.contextPath}/cart/redirectToCart?userId=${userId}">Cart</a></h1>
@@ -60,6 +61,14 @@
 					</td>
 					<td>
 						${o.text}
+					</td>
+					<td>
+						<c:if test="${!empty userType && userType != 'guest'}">
+							<a href="${pageContext.request.contextPath}/chat/createChat?user1Id=${userId}&user2Id=${o.id.userId}">Ask user a question(Chat)</a>
+						</c:if>
+						<c:if test="${empty userType || userType == 'guest'}">
+							<a href="${pageContext.request.contextPath}/user/redirectToAccount">To chat with users please log in</a>
+						</c:if>
 					</td>
 				</tr>
 			</c:forEach>
