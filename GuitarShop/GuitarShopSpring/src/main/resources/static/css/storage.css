@@ -1,0 +1,267 @@
+/* storage-table.css — современный стиль для страницы склада (классическая таблица) */
+
+/** {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    background: #f1f5f9;
+    color: #1e293b;
+    line-height: 1.6;
+    padding: 2rem 1.5rem;
+    max-width: 1400px;
+    margin: 0 auto;
+    min-height: 100vh;
+}*/
+
+/* Градиентный заголовок */
+h1 a {
+    text-decoration: none;
+    font-size: 2.5rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -0.02em;
+    transition: opacity 0.2s;
+    display: inline-block;
+    margin-bottom: 2rem;
+}
+
+h1 a:hover {
+    opacity: 0.85;
+}
+
+/* Фильтр и селект */
+form[action="addProduct"] {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+input[type="submit"][formaction="filterStoreByType"] {
+    background: #3b82f6;
+    color: white;
+    border: none;
+    padding: 0.6rem 1.5rem;
+    border-radius: 2rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+}
+
+input[type="submit"][formaction="filterStoreByType"]:hover {
+    background: #2563eb;
+    transform: translateY(-2px);
+}
+
+.modify-link {
+	
+	text-decoration: none;
+    background: #3b82f6;
+    color: white;
+    border: none;
+    padding: 0.6rem 1.5rem;
+    border-radius: 2rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+}
+
+.modify-link:hover {
+    background: #2563eb;
+    transform: translateY(-2px);
+}
+
+select {
+    padding: 0.6rem 1.2rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 2rem;
+    background: #ffffff;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+select:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59,130,246,0.2);
+}
+
+/* Сообщение о фильтре */
+c\:if[test] {
+    display: inline-block;
+    background: #e2e8f0;
+    padding: 0.4rem 1.2rem;
+    border-radius: 2rem;
+    color: #334155;
+    font-weight: 500;
+    margin-left: 1rem;
+}
+
+/* Таблица */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #ffffff;
+    border-radius: 1.5rem;
+    overflow: hidden;
+    box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05);
+    border: 1px solid #e2e8f0;
+}
+
+/* Фиксированная ширина колонок */
+table {
+    table-layout: fixed;
+}
+
+th, td {
+    padding: 1rem;
+    text-align: left;
+    vertical-align: middle;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+/* Заголовок таблицы */
+thead tr, table tr:first-child {
+    background: #f8fafc;
+    font-weight: 600;
+    color: #334155;
+    border-bottom: 2px solid #cbd5e1;
+}
+
+/* Пропорции колонок (подберите под свои данные) */
+th:nth-child(1), td:nth-child(1) { width: 5%; }
+th:nth-child(2), td:nth-child(2) { width: 25%; }
+th:nth-child(3), td:nth-child(3) { width: 20%; }
+th:nth-child(4), td:nth-child(4) { width: 20%; } 
+th:nth-child(5), td:nth-child(5) { width: 10%; } 
+th:nth-child(6), td:nth-child(6) { width: 10%; }
+th:nth-child(7), td:nth-child(7) { width: 10%; }
+
+
+/* Чередование строк */
+tbody tr:nth-child(even) {
+    background-color: #f8fafc;
+}
+
+/* Строка добавления товара (вторая строка) */
+tr:nth-child(2) td {
+    background: #ffffff;
+    border-bottom: 2px solid #cbd5e1;
+}
+
+/* Поля ввода в строке добавления */
+input[type="text"], input[type="number"], select {
+    width: 100%;
+    padding: 0.6rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 0.75rem;
+    font-size: 0.95rem;
+    background: #f8fafc;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input[type="text"]:focus, input[type="number"]:focus, select:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59,130,246,0.2);
+    background: #ffffff;
+}
+
+/* Кнопка Add */
+input[type="submit"][value="Add"] {
+    background: #10b981;
+    color: white;
+    border: none;
+    padding: 0.8rem 2.2rem;
+    border-radius: 2rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+    width: auto;
+    display: inline-block;
+}
+
+input[type="submit"][value="Add"]:hover {
+    background: #059669;
+    transform: translateY(-2px);
+}
+
+/* Скрытые опции в селекте типов */
+select option:disabled {
+    color: #94a3b8;
+}
+
+.prod-desc {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px;
+    width: 200px; /* фиксированная ширина для надёжности */
+}
+
+.del-conteiner{
+	display: flex;
+    justify-content: center;
+}
+
+span.delStatus[data-content="Error during deletion"]{
+	display: inline-block;
+	margin-top: 1rem;
+	margin-bottom: 1rem;
+	padding: 0.5rem 1rem;
+	background: #ff8080;
+	border-radius: 2rem;
+	color: #d90000;
+	font-weight: 500;
+}
+
+span.delStatus[data-content="Product was successfully deleted"]{
+	display: inline-block;
+	margin-top: 1rem;
+	margin-bottom: 1rem;
+	padding: 0.5rem 1rem;
+	background: #fbf5ce;
+	border-radius: 2rem;
+	color: #cea413;
+	font-weight: 500;
+}
+
+
+/* Адаптивность: на узких экранах таблица скроллируется */
+@media (max-width: 768px) {
+    table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+
+    /* Отменяем фиксированные ширины, чтобы таблица могла сжиматься */
+    th, td {
+        white-space: normal;
+    }
+
+    form[action="addProduct"] {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    input[type="submit"][formaction="filterStoreByType"], select {
+        width: 100%;
+    }
+
+    /* Немного уменьшаем отступы */
+    th, td {
+        padding: 0.75rem;
+    }
+}

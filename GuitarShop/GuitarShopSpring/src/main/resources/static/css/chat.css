@@ -1,0 +1,227 @@
+@charset "UTF-8";
+/* chat.css — современный стиль для страницы чата с зеркальными сообщениями */
+
+/** {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    background: #f1f5f9;
+    color: #1e293b;
+    line-height: 1.6;
+    padding: 2rem 1.5rem;
+    max-width: 900px;
+    margin: 0 auto;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}*/
+
+/* Заголовки-ссылки */
+h1 a {
+    text-decoration: none;
+    font-size: 2.5rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -0.02em;
+    transition: opacity 0.2s;
+    display: inline-block;
+    margin-right: 1rem;
+}
+
+h1 a:hover {
+    opacity: 0.85;
+}
+
+/* Ссылка Chats */
+h1 + h1 a {
+    font-size: 1.8rem;
+    background: linear-gradient(135deg, #10b981, #3b82f6);
+    margin-top: 0.5rem;
+}
+
+.chat-link {
+    font-size: 1.8rem;
+    color: #2563eb; /* обычный синий */
+    background: none; /* отключаем градиент */
+    -webkit-background-clip: unset;
+    -webkit-text-fill-color: unset;
+    background-clip: unset;
+}
+
+h2 {
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin: 2rem 0 1.5rem;
+    color: #0f172a;
+    border-left: 6px solid #3b82f6;
+    padding-left: 1rem;
+}
+
+/* Контейнер для сообщений */
+.message-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin: 1.5rem 0;
+}
+
+/* Общий стиль сообщения */
+.message {
+    display: flex;
+    align-items: center;
+    max-width: 80%;
+    background: #ffffff;
+    border-radius: 1.5rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    border: 1px solid #e2e8f0;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.message:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+
+/* Сообщение текущего пользователя (отправителя) */
+.message-own {
+    align-self: flex-end;
+    flex-direction: row-reverse; /* звёздочка справа */
+}
+
+/* Сообщение собеседника */
+.message-other {
+    align-self: flex-start;
+    flex-direction: row; /* звёздочка слева */
+}
+
+/* Ячейка со звёздочкой (отметка отправителя) */
+.message-indicator {
+    background: #f8fafc;
+    font-weight: 600;
+    color: #3b82f6;
+    min-width: 3rem;
+    text-align: center;
+    padding: 1.2rem 0.5rem;
+    border-right: 1px solid #e2e8f0;
+    border-left: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.message-own .message-indicator {
+    border-right: none;
+    border-left: 1px solid #e2e8f0;
+}
+
+/* Текст сообщения */
+.message-text {
+    flex: 1;
+    padding: 1.2rem 1.5rem;
+    background: #ffffff;
+    word-break: break-word;
+}
+
+/* Адаптивность */
+@media (max-width: 640px) {
+    body {
+        padding: 1rem;
+    }
+
+    h1 a {
+        font-size: 2rem;
+    }
+
+    h1 + h1 a {
+        font-size: 1.5rem;
+    }
+
+    h2 {
+        font-size: 1.5rem;
+    }
+
+    .message {
+        max-width: 95%;
+    }
+
+    .message-indicator {
+        min-width: 2.5rem;
+        padding: 1rem 0.2rem;
+    }
+}
+
+/* Форма отправки сообщения */
+form[action="sendMessage"] {
+    background: #ffffff;
+    border-radius: 1.5rem;
+    box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05);
+    padding: 2rem;
+    border: 1px solid #e2e8f0;
+    margin-top: 2rem;
+}
+
+textarea {
+    width: 100%;
+    padding: 1rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 1rem;
+    font-family: inherit;
+    font-size: 1rem;
+    resize: vertical;
+    background: #f8fafc;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+textarea:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59,130,246,0.2);
+    background: #ffffff;
+}
+
+input[type="submit"] {
+    background: #3b82f6;
+    color: white;
+    border: none;
+    padding: 0.75rem 2rem;
+    border-radius: 2rem;
+    font-weight: 600;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+    margin-top: 1rem;
+    border: 1px solid transparent;
+}
+
+input[type="submit"]:hover {
+    background: #2563eb;
+    transform: translateY(-1px);
+}
+
+input[type="submit"]:active {
+    transform: translateY(0);
+}
+
+input[type="hidden"] {
+    display: none;
+}
+
+/* Статус сообщения */
+.message-status {
+    margin-top: 1rem;
+    padding: 0.5rem 1rem;
+    background: #e6f7e6;
+    border-radius: 2rem;
+    color: #059669;
+    font-weight: 500;
+    text-align: center;
+}

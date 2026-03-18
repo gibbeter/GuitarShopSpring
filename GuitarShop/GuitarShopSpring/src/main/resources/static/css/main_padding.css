@@ -1,0 +1,84 @@
+@charset "UTF-8";
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    background: #f1f5f9;
+    color: #1e293b;
+    line-height: 1.6;
+    padding: 2rem 1.5rem; 
+    max-width: 1400px;      
+    margin: 0 auto;         
+    min-height: 100vh;
+}
+
+.contacts:last-of-type {
+	margin-top: 3rem;
+	padding: 2rem;
+	background-color: #ffffff;
+	border-radius: 1.5rem;
+	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+	border: 1px solid #e2e8f0;
+}
+
+.contacts p {
+	font-size: 1.5rem;
+	font-weight: 600;
+	margin-bottom: 1rem;
+	color: #0f172a;
+}
+
+.contacts br {
+	display: none; /* use block layout instead */
+}
+
+/* style contact lines as block elements */
+.contacts:last-of-type a, div:last-of-type span {
+	display: inline-block;
+	margin-right: 2rem;
+	margin-bottom: 0.5rem;
+	font-size: 1.1rem;
+	color: #475569;
+}
+
+.contacts:last-of-type span:last-child {
+	font-weight: 600;
+	color: #2563eb;
+	background-color: #eff6ff;
+	padding: 0.4rem 1rem;
+	border-radius: 2rem;
+}
+
+/* Ссылка на корзину чуть меньше */
+h1+h1 a {
+	font-size: 2rem;
+	background: linear-gradient(135deg, #10b981, #3b82f6);
+}
+
+h1 .cart-link {
+	font-size: 1.8rem;
+	color: #2563eb; /* обычный синий */
+	background: none; /* отключаем градиент */
+	-webkit-background-clip: unset;
+	-webkit-text-fill-color: unset;
+	background-clip: unset;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;  /* заголовок слева, блок справа */
+    align-items: center;             /* выравнивание по вертикали */
+    margin-bottom: 20px;             /* отступ снизу, если нужно */
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;                       /* расстояние между корзиной и аккаунтом */
+}
+

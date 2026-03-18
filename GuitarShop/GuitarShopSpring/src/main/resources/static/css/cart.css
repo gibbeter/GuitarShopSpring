@@ -1,0 +1,318 @@
+/* ===== cart-modern.css — современный стиль корзины (без таблиц) ===== */
+
+/** {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    background: #f1f5f9;
+    color: #1e293b;
+    line-height: 1.6;
+    padding: 2rem 1.5rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    min-height: 100vh;
+}*/
+
+/* Градиентный заголовок */
+h1 a {
+    text-decoration: none;
+    font-size: 2.5rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -0.02em;
+    transition: opacity 0.2s;
+    display: inline-block;
+    margin-bottom: 1.5rem;
+}
+
+h1 a:hover {
+    opacity: 0.85;
+}
+
+/* Статус гостя */
+.guest-status {
+    display: inline-block;
+    background: #fef9c3;
+    color: #854d0e;
+    padding: 0.5rem 1.5rem;
+    border-radius: 2rem;
+    font-weight: 500;
+    margin-bottom: 1.5rem;
+    border: 1px solid #fde047;
+}
+
+/* Заголовок корзины и сумма */
+.cart-header {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    margin-bottom: 1.5rem;
+}
+
+.cart-header h2 {
+    font-size: 2rem;
+    font-weight: 600;
+    color: #0f172a;
+    border-left: 6px solid #3b82f6;
+    padding-left: 1rem;
+}
+
+.cart-summary {
+    background: linear-gradient(135deg, #f1f5f9, #ffffff);
+    padding: 0.5rem 2rem;
+    border-radius: 3rem;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #0f172a;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+/* Форма покупки */
+.purchase-form {
+    margin-bottom: 2rem;
+    text-align: right;
+}
+
+.buy-button {
+    background: #10b981;
+    color: white;
+    border: none;
+    padding: 0.75rem 2.5rem;
+    border-radius: 2rem;
+    font-weight: 600;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+}
+
+.buy-button:hover:not(.disabled) {
+    background: #059669;
+    transform: translateY(-2px);
+}
+
+.buy-button.disabled {
+    background: #94a3b8;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+/* Контейнер карточек товаров */
+.cart-items {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* Горизонтальная карточка товара */
+.cart-item {
+    display: flex;
+    align-items: center;
+    background: #ffffff;
+    border-radius: 2rem;
+    box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05);
+    border: 1px solid #e2e8f0;
+    padding: 1.5rem;
+    gap: 2rem;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.cart-item:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 30px -10px rgba(0,0,0,0.1);
+}
+
+/* Фото товара */
+.item-image {
+    flex: 0 0 150px;
+}
+
+.item-image img {
+    width: 100%;
+    height: auto;
+    border-radius: 1rem;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    object-fit: cover;
+}
+
+/* Блок с информацией (название и цена) */
+.item-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.item-name {
+    text-decoration: none;
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #0f172a;
+    transition: color 0.2s;
+}
+
+.item-name:hover {
+    color: #3b82f6;
+}
+
+.item-total {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #0f172a;
+    background: #f1f5f9;
+    padding: 0.3rem 1rem;
+    border-radius: 2rem;
+    display: inline-block;
+    align-self: flex-start;
+}
+
+/* Форма изменения количества */
+.quantity-form {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.delete-form {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+select {
+    padding: 0.5rem 1rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 2rem;
+    background: #f8fafc;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+select:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59,130,246,0.2);
+}
+
+.change-btn {
+    background: #3b82f6;
+    color: white;
+    border: none;
+    padding: 0.5rem 1.2rem;
+    border-radius: 2rem;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.delete-btn {
+    background: #ff0000;
+    color: white;
+    border: none;
+    padding: 0.5rem 1.2rem;
+    border-radius: 2rem;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.change-btn:hover {
+    background: #2563eb;
+    transform: translateY(-2px);
+}
+
+.delete-btn:hover {
+    background: #d90000;
+    transform: translateY(-2px);
+}
+
+/* Скрытые поля */
+input[type="hidden"] {
+    display: none;
+}
+
+/* Сообщение о пустой корзине */
+.empty-cart {
+    text-align: center;
+    padding: 3rem;
+    background: #ffffff;
+    border-radius: 2rem;
+    color: #64748b;
+    font-size: 1.2rem;
+    border: 1px solid #e2e8f0;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    body {
+        padding: 1rem;
+    }
+
+    h1 a {
+        font-size: 2rem;
+    }
+
+    .cart-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .cart-summary {
+        font-size: 1.5rem;
+    }
+
+    .cart-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .item-image {
+        flex: 0 0 80px;
+    }
+
+    .item-info {
+        width: 100%;
+    }
+
+    .quantity-form {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    select, .change-btn {
+        flex: 1;
+    }
+}
+
+@media (max-width: 480px) {
+    .item-name {
+        font-size: 1.2rem;
+    }
+
+    .item-total {
+        font-size: 1.2rem;
+    }
+
+    .quantity-form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}

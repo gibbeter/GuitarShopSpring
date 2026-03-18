@@ -1,7 +1,7 @@
 @charset "UTF-8";
 
 /* Modern CSS for GuitarShop */
-* {
+/** {
 	margin: 0;
 	padding: 0;
 	box-sizing: border-box;
@@ -16,9 +16,9 @@ body {
 	padding: 2rem 1.5rem;
 	max-width: 1200px;
 	margin: 0 auto;
-}
+}*/
 
-h1 {
+h1 .nameTag{
 	font-size: 2.5rem;
 	font-weight: 700;
 	background: linear-gradient(135deg, #3b82f6, #8b5cf6);
@@ -95,44 +95,6 @@ td a:hover {
 	color: #1e293b;
 }
 
-/* Contact section */
-div:last-of-type {
-	margin-top: 3rem;
-	padding: 2rem;
-	background-color: #ffffff;
-	border-radius: 1.5rem;
-	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
-	border: 1px solid #e2e8f0;
-}
-
-div p {
-	font-size: 1.5rem;
-	font-weight: 600;
-	margin-bottom: 1rem;
-	color: #0f172a;
-}
-
-div br {
-	display: none; /* use block layout instead */
-}
-
-/* style contact lines as block elements */
-div:last-of-type a, div:last-of-type span {
-	display: inline-block;
-	margin-right: 2rem;
-	margin-bottom: 0.5rem;
-	font-size: 1.1rem;
-	color: #475569;
-}
-
-div:last-of-type span:last-child {
-	font-weight: 600;
-	color: #2563eb;
-	background-color: #eff6ff;
-	padding: 0.4rem 1rem;
-	border-radius: 2rem;
-}
-
 /* Responsive adjustments */
 @media ( max-width : 640px) {
 	body {
@@ -153,3 +115,4 @@ div:last-of-type span:last-child {
 		margin-bottom: 0.75rem;
 	}
 }
+

@@ -1,0 +1,257 @@
+/** {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    background: #f1f5f9;
+    color: #1e293b;
+    line-height: 1.6;
+    padding: 2rem 1.5rem;
+    max-width: 1400px;
+    margin: 0 auto;
+    min-height: 100vh;
+}*/
+
+h1 a {
+    text-decoration: none;
+    font-size: 2.5rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -0.02em;
+    transition: opacity 0.2s;
+    display: inline-block;
+    margin-bottom: 2rem;
+}
+
+h1 a:hover {
+    opacity: 0.85;
+}
+
+h2 {
+	text-align: center;
+    font-size: 1.8rem;
+    color: #2563eb; /* обычный синий */
+    background: none; /* отключаем градиент */
+    -webkit-background-clip: unset;
+    -webkit-text-fill-color: unset;
+    background-clip: unset;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+tr {
+    display: flex;
+    background: #ffffff;
+    border-radius: 1.5rem;
+    box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05);
+    border: 1px solid #e2e8f0;
+    margin-bottom: 2rem;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+tr:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 30px -10px rgba(0,0,0,0.1);
+}
+
+th {
+    border: none;
+    text-align: left;
+    font-weight: normal;
+}
+
+th:first-child {
+    flex: 0 0 auto;
+    padding: 1.5rem;
+    background: #f8fafc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-right: 1px solid #e2e8f0;
+}
+
+img {
+    width: 420px;
+    height: 420px;
+    object-fit: cover;
+    border-radius: 1rem;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+th[colspan="5"] {
+    flex: 1;
+    padding: 1.5rem 2rem;
+}
+
+.product-card {
+    display: flex;
+    flex-direction: column;
+    gap: 1.75rem;
+    height: 100%;
+}
+
+.product-name a {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #0f172a;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.product-name a:hover {
+    color: #3b82f6;
+}
+
+.product-desc {
+    color: #475569;
+    font-size: 1rem;
+}
+
+.product-meta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 0.5rem;
+}
+
+.product-add {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 0.5rem;
+}
+
+.add-to-cart {
+	background: #3b82f6;
+	color: white;
+	border: none;
+	padding: 0.75rem 2rem;
+	border-radius: 2rem;
+	font-weight: 600;
+	font-size: 1.1rem;
+	cursor: pointer;
+	transition: background-color 0.2s, transform 0.1s;
+	box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+	margin-left: auto;
+}
+
+.add-to-cart:hover {
+	background: #2563eb;
+	transform: translateY(-2px);
+}
+
+/* Контейнер уведомления */
+.added-cont{
+	display: flex;
+    justify-content: center;
+}
+
+.added-cont .added-item {
+	display: inline-block;
+	margin-top: 1rem;
+	margin-bottom: 1rem;
+	padding: 0.5rem 1rem;
+	background: #fbf5ce;
+	border-radius: 2rem;
+	color: #cea413;
+	font-weight: 500;
+}
+
+.product-type {
+    background: #e2e8f0;
+    padding: 0.25rem 1rem;
+    border-radius: 2rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #334155;
+    display: inline-block;
+}
+
+.product-stock {
+    font-weight: 600;
+    color: #059669;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.product-price {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #0f172a;
+    background: #f1f5f9;
+    padding: 0.4rem 1.2rem;
+    border-radius: 2rem;
+    margin-left: auto;  /* прижимает цену к правому краю */
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+    white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+    body {
+        padding: 1rem;
+    }
+
+    h1 a {
+        font-size: 2rem;
+    }
+
+    tr {
+        flex-direction: column;
+    }
+
+    th:first-child {
+        border-right: none;
+        border-bottom: 1px solid #e2e8f0;
+        padding: 1rem;
+    }
+
+    th[colspan="5"] {
+        padding: 1.5rem;
+    }
+
+    img {
+        width: 100px;
+        height: 100px;
+    }
+
+    .product-name a {
+        font-size: 1.4rem;
+    }
+
+    .product-price {
+        font-size: 1.5rem;
+        margin-left: 0;  /* на мобильных цена будет слева */
+    }
+}
+
+@media (max-width: 480px) {
+    img {
+        width: 80px;
+        height: 80px;
+    }
+
+    .product-meta {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .product-price {
+        align-self: flex-start;
+    }
+}
