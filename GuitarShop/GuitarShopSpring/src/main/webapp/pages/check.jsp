@@ -7,13 +7,29 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/main_padding.css">
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/check.css">
 </head>
 <body>
 <h1><a href="${pageContext.request.contextPath}/cart/redirectToCart?userId=${userId}">Cart</a></h1>
 	
-	<img>
-	<form action="downloadCheck">
-		<input type="submit" value="Download check">
-	</form>
+	<c:if test="${!empty checkStatus}">
+		${checkStatus}
+	</c:if>
+	<c:if test="${empty checkStatus}">
+		<img src="/GuitarShop/img/check.svg">
+		<form action="downloadCheck">
+			<input type="submit" value="Download check">
+		</form>
+	</c:if>
+	
+	<div class="contacts">
+        <p>📞 Contacts</p>
+        <span>📷 Instagram</span>
+        <span>📘 Facebook</span>
+        <span>💬 Viber</span>
+        <span>📱 WhatsApp</span>
+        <span>📞 +8888888888</span>
+    </div>
 </body>
 </html>

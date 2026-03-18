@@ -25,7 +25,7 @@ public class OverviewService {
 	public OverviewDTO findOverview(Integer userId, Integer prodId) {
 		try {
 			Overview o = overviewRepo.findById(new OverviewPK(userId, prodId)).get();
-			OverviewDTO newO = new OverviewDTO(o.getId(), o.getRating(), o.getText());
+			OverviewDTO newO = new OverviewDTO(o.getId(), o.getRating(), o.getText(), o.getUserName());
 			return newO;
 		}catch(Exception e){
 			e.printStackTrace();
@@ -44,7 +44,7 @@ public class OverviewService {
 			}
 			
 			for(Overview o: list) {
-				res.add(new OverviewDTO(o.getId(), o.getRating(), o.getText()));
+				res.add(new OverviewDTO(o.getId(), o.getRating(), o.getText(), o.getUserName()));
 			}
 			return res;
 		}catch(Exception e){
@@ -54,22 +54,24 @@ public class OverviewService {
 	}
 
 
-	public boolean newOverview(OverviewDTO overDTO) {
+	public OverviewDTO newOverview(OverviewDTO overDTO) {
 		try {
 			Overview o = new Overview();
 			if(overDTO != null) {
 				o.setId(overDTO.getId());
 				o.setRating(overDTO.getRating());
 				o.setText(overDTO.getText());
-				return overviewRepo.save(o) != null;
+				o.setUserName(overDTO.getUserName());
+				o = overviewRepo.save(o);
+				return new OverviewDTO(o.getId(), o.getRating(), o.getText(), o.getUserName());
 			}
 			else {
-				return false;
+				return null;
 			}
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
-		return false;
+		return null;
 	}
 
 }

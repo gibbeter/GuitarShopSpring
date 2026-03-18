@@ -6,100 +6,111 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>GuitarShop – Account</title>
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/main_padding.css">
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/account.css">
 </head>
 <body>
-	<h1><a href="${pageContext.request.contextPath}/user/redirectToIndex">GuitarShop</a></h1>
-	<c:choose>
-		
-		<c:when test="${!empty userId}">
-			<c:if test="${userType != 'guest'}">
-				<h1><a href="${pageContext.request.contextPath}/chat/redirectToChats?userId=${userId}">Chats</a></h1>
-			</c:if>
-			
-			<div>
-				<c:choose>
-					<c:when test="${userType == 'admin'}">
-						<form action="/GuitarShop/product/redirectToStorage">
-							<input type="submit" value="Storage">
-						</form>
-					</c:when>
-					<c:otherwise>
+	<div class="header">
+		<h1>
+			<a href="${pageContext.request.contextPath}/user/redirectToIndex">GuitarShop</a>
+		</h1>
+		<div class="header-right">
+			<h1>
+				<c:if test="${!empty userId && userType != 'guest'}">
+					<a href="${pageContext.request.contextPath}/chat/redirectToChats">Chats</a>
+				</c:if>
+			</h1>
+		</div>
+	</div>
 
-					</c:otherwise>
-				</c:choose>
-			</div>
-			<form action="changeName" method="post">
-				<table>
-					<tr>
-						<td>User "${userName}" data:</td>
-					</tr>
-					<tr>
-						<td>Username</td>
-						<td><input type="text" name="userName" value="${userName}"></td>
-						<c:if test="${userType != 'guest'}">
-						<td><input type="submit" value="Change"></td>
-						<td>${updateNameStatus}</td>
-						</c:if>
-					</tr>
-					</table>
-			
-			</form>
-			
-			<form action="changePass" method="post">
-			<c:if test="${userType != 'guest'}">
-				<table>
-					<tr>
-						<td>Password</td>
-						<td><input type="password" name="password" value="${userPassword}"></td>
-						<td><input type="submit" value="Change"></td>
-						<td>${updatePassStatus}</td>
-					</tr>
-				</table>
-			</c:if>
-			</form>
-			
-			<form action="changeMail" method="post">
-			<c:if test="${userType != 'guest'}">
-				<table>
-					<tr>
-						<td>Mail</td>
-						<td><input type="text" name="userMail" value="${userMail}"></td>
-						<td><input type="submit" value="Change"></td>
-						<td>${updateMailStatus}</td>
-					</tr>
-				</table>
-			</c:if>
-			</form>
-			
-			<form action="logout">
-				<input type="submit" value="Log out">
-			</form>
-		</c:when>
-		<c:otherwise>
-			<div style="float: center;">
-				<form action="defaultAction" method="post">
-					<table>
-						<tr>
-							<td colspan="2"><input type="text" name="userName"></td>
-						</tr>
-						<tr>
-							<td colspan="2"><input type="password" name="userPass"></td>
-						</tr>
-						<tr>
-							<td><input type="submit" formaction="login" value="Log in"></td>
-							<td><input type="submit" formaction="register"
-								value="Register"></td>
-						</tr>
-					</table>
+    <c:choose>
+        <c:when test="${!empty userId}">
+            <c:if test="${userType == 'admin'}">
+                <form action="/GuitarShop/product/redirectToStorage">
+                    <input type="submit" value="Storage">
+                </form>
+            </c:if>
 
-					<input type="hidden" name="type" value="user"> <input
-						type="hidden" name="userMail" value="empty@mail.em">
-				</form>
-				<c:if test="${!empty errorStatus}">${errorStatus}</c:if>
-				<c:if test="${!empty regStatus}">${regStatus}</c:if>
-			</div>
-		</c:otherwise>
-	</c:choose>
+            <form action="changeName" method="post">
+                <table>
+                    <tr>
+                        <td colspan="3">User "${userName}" data:</td>
+                    </tr>
+                    <tr>
+                        <td>Username</td>
+                        <td><input type="text" name="userName" value="${userName}"></td>
+                        <c:if test="${userType != 'guest'}">
+                            <td><input type="submit" value="Change"></td>
+                            <td>${updateNameStatus}</td>
+                        </c:if>
+                    </tr>
+                </table>
+            </form>
+
+            <c:if test="${userType != 'guest'}">
+                <form action="changePass" method="post">
+                    <table>
+                        <tr>
+                            <td>Password</td>
+                            <td><input type="password" name="password" value="${userPassword}"></td>
+                            <td><input type="submit" value="Change"></td>
+                            <td>${updatePassStatus}</td>
+                        </tr>
+                    </table>
+                </form>
+
+                <form action="changeMail" method="post">
+                    <table>
+                        <tr>
+                            <td>Mail</td>
+                            <td><input type="text" name="userMail" value="${userMail}"></td>
+                            <td><input type="submit" value="Change"></td>
+                            <td>${updateMailStatus}</td>
+                        </tr>
+                    </table>
+                </form>
+            </c:if>
+
+            <form action="logout">
+                <input type="submit" value="Log out">
+            </form>
+        </c:when>
+
+        <c:otherwise>
+            <div>
+                <form action="defaultAction" method="post">
+                    <table>
+                        <tr>
+                            <td colspan="2"><input type="text" name="userName" placeholder="Username"></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><input type="password" name="userPass" placeholder="Password"></td>
+                        </tr>
+                        <tr>
+                            <td><input type="submit" formaction="login" value="Log in"></td>
+                            <td><input type="submit" formaction="register" value="Register"></td>
+                        </tr>
+                    </table>
+                    <input type="hidden" name="type" value="user">
+                    <input type="hidden" name="userMail" value="empty@mail.em">
+                </form>
+                <c:if test="${!empty errorStatus}">
+                    <div class="message error">${errorStatus}</div>
+                </c:if>
+                <c:if test="${!empty regStatus}">
+                    <div class="message success">${regStatus}</div>
+                </c:if>
+            </div>
+        </c:otherwise>
+    </c:choose>
+    <div class="contacts">
+        <p>📞 Contacts</p>
+        <span>📷 Instagram</span>
+        <span>📘 Facebook</span>
+        <span>💬 Viber</span>
+        <span>📱 WhatsApp</span>
+        <span>📞 +8888888888</span>
+    </div>
 </body>
 </html>

@@ -1,68 +1,96 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
-<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
+    <meta charset="UTF-8">
+    <title>Cart</title>
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/main_padding.css">
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/cart.css">
+	<script>
+		window.addEventListener('pageshow', function(event) {
+			if (event.persisted) {
+				window.location.reload();
+			}
+		});
+	</script>
 </head>
 <body>
-<h1><a href="${pageContext.request.contextPath}/user/redirectToIndex">GuitarShop</a></h1>
-<c:if test="${!empty guestStatus}">${guestStatus}</c:if>
-<h2>Cart:</h2>
-<h2>Summary [${cartDTO.summ}$]</h2>
-		<table>
-			<tr>
-				<td>Items:</td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td>
-					<form action="purchaseCart" method="post">
-						<c:forEach items="${items}" var="item" varStatus="status">
-							<input type="hidden" name="cartIds" value="${item.id.cartId}" />
-							<input type="hidden" name="productIds" value="${item.id.prodId}" />
-							<input type="hidden" name="quantities" value="${item.quantity}" />
-							<input type="hidden" name="products"
-								value="${item.product.prodId}" />
-						</c:forEach>
-						<c:choose>
-							<c:when test="${!empty items}"><input type="submit" value="Buy"></c:when>
-							<c:otherwise><input type="button" value="Buy"></c:otherwise>
-						</c:choose>
-						
-						
-					</form>
-				</td>
-			</tr>
-			<c:if test="${!empty items}">
-			<c:forEach items="${items}" var="item">
-					<tr>
-						<td><img src="/GuitarShop/prod_img/${item.product.productTypeName}/prod_${item.product.prodId}/main.jpg"></td>
-						<td><a href="${pageContext.request.contextPath}/product/redirectToProductPage?prodId=${item.product.prodId}">${item.product.productName}</a></td>
-						<td>[${item.quantity * item.product.productPrice}$]</td>
-						<td>
-							<form action="changeQuantity" method="post">
-								<select name="quantity">
-										<c:forEach begin="1" end="${item.product.productStock}" var="i">
-											<c:choose>
-												<c:when test="${i == item.quantity}"><option selected value="${i}">${i}</option></c:when>
-												<c:otherwise><option value="${i}">${i}</option></c:otherwise>
-											</c:choose>
-											
-										</c:forEach>
-								</select>
-								<input type= "hidden" name="cartId" value="${item.id.cartId}">
-								<input type= "hidden" name="productId" value="${item.id.prodId}">
-								<input type="submit" formaction="changeQuantity" value="Change quanttity">
-							</form>
-						</td>
-					</tr>
-			</c:forEach>
-		</c:if>
-		</table>
-		
+    <h1><a href="${pageContext.request.contextPath}/user/redirectToIndex">GuitarShop</a></h1>
+
+    <c:if test="${!empty guestStatus}">
+        <div class="guest-status">${guestStatus}</div>
+    </c:if>
+
+    <div class="cart-header">
+        <h2>Cart</h2>
+        <div class="cart-summary">${cartDTO.summ}$</div>
+    </div>
+
+    <form action="purchaseCart" method="post" class="purchase-form">
+        <c:forEach items="${items}" var="item">
+            <input type="hidden" name="cartIds" value="${item.id.cartId}" />
+            <input type="hidden" name="productIds" value="${item.id.prodId}" />
+            <input type="hidden" name="quantities" value="${item.quantity}" />
+            <input type="hidden" name="products" value="${item.product.prodId}" />
+        </c:forEach>
+        <c:choose>
+            <c:when test="${!empty items}">
+                <button type="submit" class="buy-button">Buy</button>
+            </c:when>
+            <c:otherwise>
+                <button type="button" class="buy-button disabled" disabled>Buy</button>
+            </c:otherwise>
+        </c:choose>
+    </form>
+
+
+    <c:if test="${!empty items}">
+        <div class="cart-items">
+            <c:forEach items="${items}" var="item">
+                <div class="cart-item">
+                    <div class="item-image">
+                        <img src="/GuitarShop/prod_img/${item.product.productTypeName}/prod_${item.product.prodId}/main.webp" alt="${item.product.productName}">
+                    </div>
+
+                    <div class="item-info">
+                        <a href="${pageContext.request.contextPath}/product/redirectToProductPage?prodId=${item.product.prodId}"
+                           class="item-name">${item.product.productName}</a>
+                        <div class="item-total">${item.quantity * item.product.productPrice}$</div>
+                    </div>
+
+                    <form action="changeQuantity" method="post" class="quantity-form">
+                        <select name="quantity">
+                            <c:forEach begin="1" end="${item.product.productStock}" var="i">
+                                <option value="${i}" ${i == item.quantity ? 'selected' : ''}>${i}</option>
+                            </c:forEach>
+                        </select>
+                        <input type="hidden" name="cartId" value="${item.id.cartId}">
+                        <input type="hidden" name="productId" value="${item.id.prodId}">
+                        <button type="submit" formaction="changeQuantity" class="change-btn">Change quantity</button>
+                    </form>
+                    
+                    <form action="deleteItem" method="post" class="delete-form">
+                    	<input type="hidden" name="cartId" value="${item.id.cartId}">
+                        <input type="hidden" name="productId" value="${item.id.prodId}">
+                        <button type="submit" formaction="deleteItem" class="delete-btn">Delete</button>
+                    </form>
+                </div>
+            </c:forEach>
+        </div>
+    </c:if>
+
+    <c:if test="${empty items}">
+        <p class="empty-cart">Your cart is empty</p>
+    </c:if>
+    
+    <div class="contacts">
+        <p>📞 Contacts</p>
+        <span>📷 Instagram</span>
+        <span>📘 Facebook</span>
+        <span>💬 Viber</span>
+        <span>📱 WhatsApp</span>
+        <span>📞 +8888888888</span>
+    </div>
 </body>
 </html>

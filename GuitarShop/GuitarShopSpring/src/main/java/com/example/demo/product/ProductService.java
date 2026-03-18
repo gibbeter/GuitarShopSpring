@@ -6,7 +6,9 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.example.demo.cartitem.ItemRepo;
 import com.example.demo.product.ProductDTO;
 import com.example.demo.product.ProductRepo;
 
@@ -22,6 +24,12 @@ public class ProductService {
 	
 	@Autowired
 	TypeRepo typeRepo;
+	
+	@Autowired
+	ItemRepo itemRepo;
+	
+	@Autowired
+	OverviewRepo overRepo;
 
 	public boolean saveProduct(ProductDTO productDTO) {
 		try {
@@ -33,6 +41,23 @@ public class ProductService {
 			productRepo.save(newP);
 		}
 		catch(ValidationException e) {
+			return false;
+		}
+		return true;
+	}
+	
+	@Transactional
+	public boolean modifyProduct(ProductDTO productDTO) {
+		try {
+			Product newP = productRepo.findById(productDTO.getProdId()).get();
+			newP.setProductName(productDTO.getProductName());
+			newP.setProductDesc(productDTO.getProductDesc());
+			newP.setTypeBean(typeRepo.findById(productDTO.getProductType()).get());
+			newP.setStock(productDTO.getProductStock());
+			productRepo.save(newP);
+		}
+		catch(ValidationException e) {
+			e.printStackTrace();
 			return false;
 		}
 		return true;
@@ -91,7 +116,7 @@ public class ProductService {
 									p.getTypeBean().getTypeId(), p.getTypeBean().getName(), p.getPrice());
 		return pDTO;
 	}
-
+	
 	public boolean changeStock(Integer prodId, Integer q) {
 		try {
 			Product prod = productRepo.findById(prodId).get();
@@ -101,5 +126,21 @@ public class ProductService {
 			e.printStackTrace();
 			return false;
 		}
+	}
+
+	@Transactional
+	public boolean deleteProduct(ProductDTO prodDTO) {
+		try {
+			itemRepo.deleteAllByProductId(prodDTO.getProdId());
+			overRepo.deleteAllByProductId(prodDTO.getProdId());
+			
+			Product p = productRepo.findById(prodDTO.getProdId()).get();
+			productRepo.delete(p);
+			return true;
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+		
 	}
 }

@@ -26,6 +26,12 @@ public class Chat implements Serializable {
 
 	@Column(name="user2_id")
 	private int user2Id;
+	
+	@Column(name="user1_username")
+	private String user1Username;
+
+	@Column(name="user2_username")
+	private String user2Username;
 
 	//bi-directional many-to-one association to Message
 	@OneToMany(mappedBy="chat")
@@ -64,6 +70,23 @@ public class Chat implements Serializable {
 
 	public void setMessages(List<Message> messages) {
 		this.messages = messages;
+	}
+	
+	
+	public String getUser1Username() {
+		return user1Username;
+	}
+
+	public void setUser1Username(String user1Username) {
+		this.user1Username = user1Username;
+	}
+
+	public String getUser2Username() {
+		return user2Username;
+	}
+
+	public void setUser2Username(String user2Username) {
+		this.user2Username = user2Username;
 	}
 
 	public Message addMessage(Message message) {

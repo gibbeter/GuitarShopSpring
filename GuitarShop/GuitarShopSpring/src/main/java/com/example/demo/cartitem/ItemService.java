@@ -91,5 +91,24 @@ public class ItemService {
 		
 	}
 
+	public boolean deleteItemFromCart(Integer cartId, Integer productId) {
+		try {
+			Cart cart = cartRepo.findById(cartId).get();
+			Product product = prodRepo.findById(productId).get();
+			List<Cartitem> list = cart.getCartitems();
+			for(Cartitem i: list) {
+				if(i.getProduct().equals(product)) {
+					list.remove(i);
+					itemRepo.delete(i);
+					break;
+				}
+			}
+			return true;
+		}catch(Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
 
 }

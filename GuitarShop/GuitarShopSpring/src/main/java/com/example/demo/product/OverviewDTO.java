@@ -14,6 +14,8 @@ public class OverviewDTO {
 	private int rating;
 
 	private String text;
+	
+	private String userName;
 
 	public OverviewPK getId() {
 		return id;
@@ -39,10 +41,11 @@ public class OverviewDTO {
 		this.text = text;
 	}
 
-	public OverviewDTO(OverviewPK id, int rating, String text) {
+	public OverviewDTO(OverviewPK id, int rating, String text, String userName) {
 		this.id = id;
 		this.rating = rating;
 		this.text = text;
+		this.userName = userName;
 	}
 
 	public OverviewDTO() {
@@ -52,6 +55,14 @@ public class OverviewDTO {
 	@Override
 	public String toString() {
 		return "OverviewDTO [id=" + id + ", rating=" + rating + ", text=" + text + "]";
+	}
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
 	}
 
 	

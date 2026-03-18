@@ -7,39 +7,50 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/main_padding.css">
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/index.css">
 </head>
 <body>
-    <h1>GuitarShop</h1>
+	<div class="header">
+		<h1>
+			<span class="nameTag">GuitarShop</span>
+		</h1>
+		<div class="header-right">
+			<h1>
+				<a class="cart-link"
+					href="${pageContext.request.contextPath}/cart/redirectToCart">🛒Cart</a>
+			</h1>
+		</div>
+	</div>
 
-    <div class="user-link">
-        <c:choose>
-            <c:when test="${!empty userId}">
-                <a href="/GuitarShop/user/redirectToAccount">👤 ${userName}</a>
-            </c:when>
-            <c:otherwise>
-                <a href="/GuitarShop/user/redirectToAccount">🔑 Account</a>
-            </c:otherwise>
-        </c:choose>
-    </div>
+	<div class="user-link">
+		<c:choose>
+			<c:when test="${!empty userId}">
+				<a href="/GuitarShop/user/redirectToAccount">👤 ${userName}</a>
+			</c:when>
+			<c:otherwise>
+				<a href="/GuitarShop/user/redirectToAccount">🔑 Account</a>
+			</c:otherwise>
+		</c:choose>
+	</div>
 
-    <table>
+	<table>
     	<tr>
     		<td colspan="3"><a href="${pageContext.request.contextPath}/product/redirectToType" class="all-products-link">← All Products</a></td>
     	</tr>
         <tr>
             <td><a href="${pageContext.request.contextPath}/product/redirectToType?type=guitar">🎸 Guitars</a></td>
-            <td><a href="${pageContext.request.contextPath}/product/redirectToType?type=drums">🥁 Drums</a></td>
-            <td><a href="${pageContext.request.contextPath}/product/redirectToType?type=keys">🎹 Keys</a></td>
+            <td><a href="${pageContext.request.contextPath}/product/redirectToType?userId=${userId}&type=drums">🥁 Drums</a></td>
+            <td><a href="${pageContext.request.contextPath}/product/redirectToType?userId=${userId}&type=keys">🎹 Keys</a></td>
         </tr>
         <tr>
-            <td><a href="${pageContext.request.contextPath}/product/redirectToType?type=mics">🎤 Microphones</a></td>
-            <td><a href="${pageContext.request.contextPath}/product/redirectToType?type=cables">🔌 Cables & Connectors</a></td>
+            <td><a href="${pageContext.request.contextPath}/product/redirectToType?type=microphone">🎤 Microphones</a></td>
+            <td><a href="${pageContext.request.contextPath}/product/redirectToType?type=cable">🔌 Cables & Connectors</a></td>
             <td><a href="${pageContext.request.contextPath}/product/redirectToType?type=soft">💻 Software</a></td>
         </tr>
     </table>
 
-    <div>
+    <div class="contacts">
         <p>📞 Contacts</p>
         <span>📷 Instagram</span>
         <span>📘 Facebook</span>

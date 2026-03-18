@@ -3,6 +3,7 @@ package com.example.demo.product;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -12,7 +13,7 @@ import model.User;
 
 public interface ProductRepo extends JpaRepository<Product, Integer>{
 	
-	@Query("select p from Product p where p.typeBean.name =?1")
+	@Query("select p from Product p where p.typeBean.name like %?1%")
 	List<Product> findByType(String type);
 
 }

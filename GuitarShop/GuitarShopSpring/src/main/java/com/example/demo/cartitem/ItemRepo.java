@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,5 +21,9 @@ public interface ItemRepo extends JpaRepository<Cartitem, CartitemPK>{
 	
 	@Query("select ci from Cart c join c.cartitems ci where c.userId =?1")
 	List<Cartitem> findItemsByUser(Integer userId);
+	
+	@Modifying
+	@Query("delete from Cartitem where product.id =?1")
+	void deleteAllByProductId(int prodId);
 
 }
