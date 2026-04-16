@@ -4,6 +4,12 @@
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<parameter name="cartSumm" class="java.lang.Integer"/>
 	<parameter name="currentDate" class="java.util.Date"/>
+	<parameter name="phone" class="java.lang.Integer"/>
+	<parameter name="surname" class="java.lang.String"/>
+	<parameter name="shippingAdress" class="java.lang.String"/>
+	<parameter name="pickupAdress" class="java.lang.String"/>
+	<parameter name="shippingType" class="java.lang.String"/>
+	<parameter name="name" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -16,7 +22,7 @@
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="79" splitType="Stretch">
+		<band height="160" splitType="Stretch">
 			<staticText>
 				<reportElement x="230" y="30" width="100" height="30" uuid="4efead57-19fd-48a1-a9f5-972607f93634"/>
 				<textElement textAlignment="Center">
@@ -31,6 +37,57 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$P{currentDate}]]></textFieldExpression>
 			</textField>
+			<textField>
+				<reportElement x="80" y="0" width="80" height="20" uuid="f8a8d62e-fb20-416c-8221-fce4aed7f9e0"/>
+				<textFieldExpression><![CDATA[$P{name}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="80" y="20" width="80" height="20" uuid="7fda3d89-c4f2-44b2-bbc1-a219f41793ee"/>
+				<textFieldExpression><![CDATA[$P{surname}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="80" y="60" width="80" height="20" uuid="2e0e2d54-32cb-4d04-adad-6835a064afbf"/>
+				<textFieldExpression><![CDATA[$P{shippingType}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="80" y="40" width="80" height="20" uuid="e8e02b71-c95d-4c8a-b5a1-07a24b0ef896"/>
+				<textFieldExpression><![CDATA[$P{phone}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="0" width="80" height="20" uuid="bd69596d-96ab-4c7c-b028-23a94e87f230"/>
+				<text><![CDATA[Client's name:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="20" width="80" height="20" uuid="1f17a05e-450c-4d2f-a63d-b7936bd4ba05"/>
+				<text><![CDATA[Client's surname:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="40" width="80" height="20" uuid="c0f22cd1-795e-4e8f-96db-6e9d820a2f34"/>
+				<text><![CDATA[Client's phone:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="60" width="80" height="20" uuid="630641d2-8534-47c6-b894-f9d607d9bce9"/>
+				<text><![CDATA[Shipping type:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="80" width="160" height="20" uuid="014aceff-c85a-457d-9697-f16fce6bbb83"/>
+				<box topPadding="0">
+					<topPen lineWidth="0.5"/>
+				</box>
+				<text><![CDATA[Shipping adress:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="100" width="160" height="20" uuid="f42b7505-1d0c-4909-a1e7-010184aff7b7"/>
+				<textFieldExpression><![CDATA[$P{shippingAdress}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="140" width="160" height="20" uuid="46fb0384-66e5-43fd-b22b-6fda8ea01063"/>
+				<textFieldExpression><![CDATA[$P{pickupAdress}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="120" width="160" height="20" uuid="9b5e23d4-aa95-40c6-aed8-2ddf6f111cd3"/>
+				<text><![CDATA[Pick-Up adress:]]></text>
+			</staticText>
 		</band>
 	</title>
 	<pageHeader>
@@ -48,7 +105,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="14" isBold="true" isItalic="false"/>
 				</textElement>
-				<text><![CDATA[User]]></text>
+				<text><![CDATA[User ID]]></text>
 			</staticText>
 			<staticText>
 				<reportElement mode="Opaque" x="100" y="30" width="100" height="30" backcolor="#F1F5F9" uuid="4d10422c-2e66-4a37-9541-7de4804931ec">
@@ -60,7 +117,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="14" isBold="true" isItalic="false"/>
 				</textElement>
-				<text><![CDATA[Id]]></text>
+				<text><![CDATA[Item ID]]></text>
 			</staticText>
 			<staticText>
 				<reportElement mode="Opaque" x="200" y="30" width="160" height="30" backcolor="#F1F5F9" uuid="82e15acd-ba3d-4343-9112-2033477f4d5c">

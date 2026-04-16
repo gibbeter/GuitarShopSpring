@@ -27,6 +27,15 @@ public class User implements Serializable {
 
 	@Column(name="user_name")
 	private String userName;
+	
+	@Column(name="name")
+	private String name;
+	
+	@Column(name="surname")
+	private String surname;
+	
+	@Column(name="phone_number")
+	private Integer phoneNumber;
 
 	public User() {
 	}
@@ -70,5 +79,31 @@ public class User implements Serializable {
 	public void setUserName(String userName) {
 		this.userName = userName;
 	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getSurname() {
+		return surname;
+	}
+
+	public void setSurname(String surname) {
+		this.surname = surname;
+	}
+
+	public Integer getPhoneNumber() {
+		return phoneNumber;
+	}
+
+	public void setPhoneNumber(Integer phoneNumber) {
+		this.phoneNumber = phoneNumber;
+	}
+	
+	
 
 }

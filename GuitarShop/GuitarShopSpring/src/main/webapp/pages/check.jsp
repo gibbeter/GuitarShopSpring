@@ -11,7 +11,7 @@
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/check.css">
 </head>
 <body>
-<h1><a href="${pageContext.request.contextPath}/cart/redirectToCart?userId=${userId}">Cart</a></h1>
+<h1><a href="${pageContext.request.contextPath}/cart/redirectToCart">Cart</a></h1>
 	
 	<c:if test="${!empty checkStatus}">
 		${checkStatus}

@@ -75,7 +75,7 @@ h1 a:hover {
 }
 
 /* Форма покупки */
-.purchase-form {
+.purchase-form .form-header {
     margin-bottom: 2rem;
     text-align: right;
 }
@@ -257,6 +257,202 @@ input[type="hidden"] {
     font-size: 1.2rem;
     border: 1px solid #e2e8f0;
 }
+
+.credits-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    background: #ffffff;
+    border-radius: 2rem;
+    border: 1px solid #e2e8f0;
+    padding: 1.5rem;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05);
+}
+
+/* Each row - one line under the other */
+.credits-container > * {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.credits-container > *:last-child {
+    border-bottom: none;
+}
+
+/* TAG Style - like metadata labels */
+.credits-container .tag {
+	flex-shrink: 0;
+    flex-grow: 0;
+    flex-basis: auto;
+	
+	width: auto;
+    font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: #3b82f6;
+    background: #eff6ff;
+    padding: 0.5rem 1rem;
+    border-radius: 2rem;
+    display: inline-block;
+    border: 1px solid #dbeafe;
+}
+
+.credits-container .hint {
+	flex-shrink: 0;
+    flex-grow: 0;
+    flex-basis: auto;
+	
+	width: auto;
+    font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: #ff8000;
+    background: #ffcd9b;
+    padding: 0.5rem 1rem;
+    border-radius: 2rem;
+    display: inline-block;
+    border: 1px solid #ffa851;
+}
+
+/* META Style - input/select container */
+.credits-container .meta {
+    flex: 1;
+}
+
+/* Input fields styling - matching cart style */
+.credits-container .meta input,
+.credits-container .meta select {
+    width: 100%;
+    padding: 0.6rem 1rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 2rem;
+    background: #f8fafc;
+    font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    font-size: 0.95rem;
+    color: #1e293b;
+    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+    cursor: pointer;
+}
+
+/* Input focus state */
+.credits-container .meta input:focus,
+.credits-container .meta select:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    background: #ffffff;
+}
+
+/* Input hover state */
+.credits-container .meta input:hover,
+.credits-container .meta select:hover {
+    border-color: #3b82f6;
+    background: #ffffff;
+}
+
+/* Placeholder styling */
+.credits-container .meta input::placeholder {
+    color: #94a3b8;
+    font-size: 0.85rem;
+}
+
+/* Disabled/readonly state */
+.credits-container .meta input:read-only {
+    background: #f1f5f9;
+    cursor: default;
+    border-color: #e2e8f0;
+}
+
+/* Title attribute tooltip styling 
+.credits-container .meta[title="FORMAT"] input {
+    background: #fef9c3;
+    border-color: #fde047;
+}
+
+.credits-container .meta[title="FORMAT"] input:focus {
+    background: #ffffff;
+    border-color: #3b82f6;
+}
+
+/* Required field indicator 
+.credits-container .tag.required::after {
+    content: " *";
+    color: #ef4444;
+    font-weight: bold;
+}
+
+/* Error state for inputs 
+.credits-container .meta input.error,
+.credits-container .meta select.error {
+    border-color: #ef4444;
+    background: #fef2f2;
+}
+
+.credits-container .meta input.error:focus,
+.credits-container .meta select.error:focus {
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+}
+
+/* Success state 
+.credits-container .meta input.success {
+    border-color: #10b981;
+    background: #f0fdf4;
+}
+
+/* Helper text styling 
+.field-helper {
+    display: block;
+    font-size: 0.7rem;
+    color: #64748b;
+    margin-top: 0.25rem;
+    margin-left: 1rem;
+}
+
+/* Validation message 
+.validation-message {
+    display: block;
+    font-size: 0.7rem;
+    margin-top: 0.25rem;
+    margin-left: 1rem;
+    color: #ef4444;
+}
+
+.error-container{
+	display: flex;
+    justify-content: center;
+}
+
+span.errorStatus{
+	display: inline-block;
+	margin-top: 1rem;
+	margin-bottom: 1rem;
+	padding: 0.5rem 1rem;
+	background: #ff8080;
+	border-radius: 2rem;
+	color: #d90000;
+	font-weight: 500;
+}*/
+
+
+/* Only show red when user has typed something (placeholder hidden) */
+.shippingAddress:not(:placeholder-shown):invalid {
+  border: 2px solid red;
+}
+
+.shippingAddress:not(:placeholder-shown):valid {
+  border: 2px solid green;
+}
+
 
 /* Адаптивность */
 @media (max-width: 768px) {

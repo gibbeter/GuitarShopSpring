@@ -33,7 +33,7 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 @Service
 public class CartService {
 
-    private final GuitarShopSpringApplication guitarShopSpringApplication;
+//    private final GuitarShopSpringApplication guitarShopSpringApplication;
 	
 	@Autowired
 	CartRepo cartRepo;
@@ -41,9 +41,9 @@ public class CartService {
 	@Autowired
 	ItemRepo itemRepo;
 
-    CartService(GuitarShopSpringApplication guitarShopSpringApplication) {
-        this.guitarShopSpringApplication = guitarShopSpringApplication;
-    }
+//    CartService(GuitarShopSpringApplication guitarShopSpringApplication) {
+//        this.guitarShopSpringApplication = guitarShopSpringApplication;
+//    }
 
 	public CartDTO findCartByUser(Integer id) {
 		try {
@@ -160,7 +160,7 @@ public class CartService {
 //		}
 //	}
 
-	public JasperPrint createCheck(Integer userId) throws JRException, IOException {
+	public JasperPrint createCheck(Integer userId, PurchaseFormDTO pformDTO) throws JRException, IOException {
 
 		List<Cartitem> list = itemRepo.findItemsByUser(userId);
 		List<CheckDTO> checkList = new ArrayList<>();
@@ -179,6 +179,12 @@ public class CartService {
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("cartSumm", cartRepo.findByUser(userId).getSumm());
 		params.put("currentDate", new Date());
+		params.put("name", pformDTO.getUserName());
+		params.put("surname", pformDTO.getUserSurname());
+		params.put("phone", pformDTO.getUserPhone());
+		params.put("shippingType", pformDTO.getShippingType());
+		params.put("shippingAdress", pformDTO.getSPAdress());
+		params.put("pickupAdress", pformDTO.getPUAdress());
 //		params.put("brojIzvodjenja", ir.brojIzvodjenja(idPredstava));
 		JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, params, dataSource);
 		inputStream.close();

@@ -75,5 +75,27 @@
         <span>📱 WhatsApp</span>
         <span>📞 +8888888888</span>
     </div>
+    
+    <script>
+	    (function() {
+	        // Save current scroll position before page unload (reload, form submit, navigation)
+	        window.addEventListener('beforeunload', function() {
+	            sessionStorage.setItem('scrollPos', window.scrollY);
+	        });
+	
+	        // Restore scroll position after page has fully loaded
+	        window.addEventListener('load', function() {
+	            var savedScroll = sessionStorage.getItem('scrollPos');
+	            if (savedScroll !== null) {
+	                window.scrollTo({
+	                    top: parseInt(savedScroll, 10),
+	                    behavior: 'auto'   // 'instant' or 'smooth'
+	                });
+	                // Optional: remove the saved position after restoring
+	                sessionStorage.removeItem('scrollPos');
+	            }
+	        });
+	    })();
+	</script>
 </body>
 </html>

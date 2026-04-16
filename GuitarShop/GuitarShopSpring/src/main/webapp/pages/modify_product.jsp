@@ -30,6 +30,41 @@
 		</div>
 	</c:if>
 	
+	<c:if test="${!empty product}">
+		<div class="upload-section">
+		    <h3>Upload Product Images</h3>
+		    <p>Name of the files (.webp):</p>
+		    <div class="table-wrapper">
+		    <table>
+		    	<tr>
+			    	<th>main</th>
+			    	<th>back</th>
+			    	<th>side_l</th>
+			    	<th>side_r</th>
+			    	<th>additional</th>
+		    	</tr>
+		    	<tr>
+	    			<td><img src="/GuitarShop/prod_img/${product.productTypeName}/prod_${product.prodId}/main.webp" alt="${product.productName}"></td>
+	    			<td><img src="/GuitarShop/prod_img/${product.productTypeName}/prod_${product.prodId}/back.webp" alt="${product.productName}"></td>
+	    			<td><img src="/GuitarShop/prod_img/${product.productTypeName}/prod_${product.prodId}/side_l.webp" alt="${product.productName}"></td>
+	    			<td><img src="/GuitarShop/prod_img/${product.productTypeName}/prod_${product.prodId}/side_r.webp" alt="${product.productName}"></td>
+	    			<td><img src="/GuitarShop/prod_img/${product.productTypeName}/prod_${product.prodId}/additional.webp" alt="${product.productName}"></td>
+		    	</tr>
+		    </table>
+		    </div>
+		    
+		    <form action="${pageContext.request.contextPath}/uploadImages" method="post" enctype="multipart/form-data">
+		        <input type="file" name="webpFiles" accept="image/webp" multiple required />
+		        <input type="hidden" name="prodId" value="${product.prodId}"/>
+		        <input type="hidden" name="prodType" value="${product.productTypeName}"/>
+		        <input type="submit" value="Upload" />
+		    </form>
+		    <c:if test="${!empty uploadState}">
+		        <p class="upload-stat">${uploadState}</p>
+		    </c:if>
+		</div>
+	</c:if>
+	
 	<form action="dummy" method="post">
 	<c:if test="${!empty product}">
 		<div class="form-conteiner">
@@ -53,7 +88,6 @@
 		</div>
 		</c:if>
 	</form>
-
 
 	<script>
 		function autoResize(textarea) {

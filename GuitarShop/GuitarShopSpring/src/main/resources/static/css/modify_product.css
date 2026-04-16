@@ -39,12 +39,12 @@ h1 a:hover {
 
 .field-row .tag {
     flex: 0 0 120px;          /* фиксированная ширина подписи */
-    background: #f8fafc;
+    background: #c2d0e0;
+    color: #1c2837;
     padding: 10px 20px;
     border-radius: 2rem;
     border: 1px solid #e2e8f0;
     font-weight: 600;
-    color: #334155;
     text-align: center;        /* выравнивание текста подписи справа */
     white-space: nowrap;
 }
@@ -88,12 +88,12 @@ h1 a:hover {
 }
 
 .fields-grid .tag {
-    background: #f8fafc;
+    background: #c2d0e0;
+    color: #1c2837;
     padding: 10px 20px;
     border-radius: 2rem;
     border: 1px solid #e2e8f0;
     font-weight: 600;
-    color: #334155;
     justify-self: center;        /* прижато к правому краю */
     white-space: nowrap;
 }
@@ -188,6 +188,135 @@ span.modStatus[data-content="Product was successfully modificated"]{
 	font-weight: 500;
 }
 
+/* Image preview table inside upload section */
+.upload-section form {
+    margin: 1.5rem 0 1.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
+}
+
+.upload-section input[type="file"] {
+    flex: 1;
+    min-width: 200px;
+    padding: 0.6rem 0.8rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 2rem;
+    background: #f8fafc;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.upload-section input[type="file"]:hover {
+    border-color: #3b82f6;
+}
+
+.upload-section input[type="file"]:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59,130,246,0.2);
+}
+
+.upload-section input[type="submit"] {
+    background: #3b82f6;
+    color: white;
+    border: none;
+    padding: 0.6rem 1.8rem;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 2rem;
+    cursor: pointer;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+    transition: background-color 0.2s, transform 0.1s;
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+.upload-section input[type="submit"]:hover {
+    background: #2563eb;
+    transform: translateY(-2px);
+}
+
+.upload-section input[type="submit"]:active {
+    transform: translateY(0);
+}
+
+.upload-stat {
+    margin-top: 1rem;
+    padding: 0.5rem 1rem;
+    border-radius: 2rem;
+    font-weight: 500;
+    display: inline-block;
+    background: #fbf5ce;
+    color: #cea413;
+}
+
+.upload-section .table-wrapper {
+    overflow-x: auto;
+    margin: 1.5rem 0;
+    border-radius: 1rem;
+}
+
+/* Table – fixed layout, columns respect set widths */
+.upload-section table {
+    width: 100%;
+    min-width: 1150px;  /* 5 cols * (230px + spacing) – optional, forces scroll on narrow */
+    table-layout: fixed;
+    border-collapse: separate;
+    border-spacing: 0.8rem;
+    margin: 0;
+}
+
+/* Each th and td gets a fixed width */
+.upload-section th,
+.upload-section td {
+    width: 230px;
+    padding: 0.5rem;
+    text-align: center;
+    vertical-align: middle;
+    background: #f8fafc;
+    border-radius: 1rem;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+/* Header styling */
+.upload-section th {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #1e293b;
+    background: #f1f5f9;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Image styling – fixed dimensions, fill cell */
+.upload-section img {
+    width: 220px;
+    height: 220px;
+    object-fit: contain;
+    border-radius: 0.75rem;
+    border: 2px solid #e2e8f0;
+    background: #ffffff;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    display: block;
+    margin: 0 auto;
+    transition: border-color 0.2s;
+}
+
+/* Hover effects */
+.upload-section td:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+/* Fallback for missing images – keep td the same size, show a subtle placeholder */
+.upload-section img[src$=".webp"] {
+    /* if image fails to load, browser shows broken icon, but dimensions stay */
+    background: #e2e8f0;
+}
+
+
 /* Адаптация для мобильных */
 @media (max-width: 700px) {
     .field-row {
@@ -209,5 +338,42 @@ span.modStatus[data-content="Product was successfully modificated"]{
         background: none;
         padding: 0;
         border: none;
+    }
+    
+    .upload-section table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+    .upload-section tbody, .upload-section tr {
+        display: inline-flex;
+        gap: 0.5rem;
+    }
+    .upload-section td, .upload-section th {
+        display: inline-block;
+        min-width: 110px;
+    }
+    .upload-section th {
+        display: none; /* hide header row on mobile, or keep but it's messy */
+    }
+    /* Alternative: keep table layout but reduce spacing */
+    .upload-section table,
+    .upload-section tbody,
+    .upload-section tr,
+    .upload-section td,
+    .upload-section th {
+        display: revert;
+        white-space: normal;
+    }
+    .upload-section td {
+        padding: 0.25rem;
+    }
+    .upload-section img {
+        max-width: 90px;
+        height: 90px;
+    }
+    .upload-section th {
+        font-size: 0.7rem;
+        padding: 0.25rem;
     }
 }

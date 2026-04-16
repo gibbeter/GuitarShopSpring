@@ -27,12 +27,25 @@
     <c:choose>
         <c:when test="${!empty userId}">
             <c:if test="${userType == 'admin'}">
-                <form action="/GuitarShop/product/redirectToStorage">
-                    <input type="submit" value="Storage">
-                </form>
+            	<div class="admin-menu">
+	                <form action="/GuitarShop/product/redirectToStorage">
+	                    <input type="submit" value="Storage">
+	                </form>
+	                <form action="/GuitarShop/order/redirectToOrders">
+	                    <input type="submit" value="Orders">
+	                </form>
+              	</div>
+            </c:if>
+            
+            <c:if test="${userType != 'admin'}">
+            	<div class="admin-menu">
+	                <form action="/GuitarShop/order/redirectToUserOrders">
+	                    <input type="submit" value="Orders">
+	                </form>
+              	</div>
             </c:if>
 
-            <form action="changeName" method="post">
+            <form class="action-forms" action="changeUserName" method="post">
                 <table>
                     <tr>
                         <td colspan="3">User "${userName}" data:</td>
@@ -42,25 +55,25 @@
                         <td><input type="text" name="userName" value="${userName}"></td>
                         <c:if test="${userType != 'guest'}">
                             <td><input type="submit" value="Change"></td>
-                            <td>${updateNameStatus}</td>
+                            <td>${updateUserNStatus}</td>
                         </c:if>
                     </tr>
                 </table>
             </form>
 
             <c:if test="${userType != 'guest'}">
-                <form action="changePass" method="post">
+                <form class="action-forms" action="changePass" method="post">
                     <table>
                         <tr>
                             <td>Password</td>
-                            <td><input type="password" name="password" value="${userPassword}"></td>
+                            <td><input type="password" name="userPass" value="${userPassword}"></td>
                             <td><input type="submit" value="Change"></td>
                             <td>${updatePassStatus}</td>
                         </tr>
                     </table>
                 </form>
 
-                <form action="changeMail" method="post">
+                <form class="action-forms" action="changeMail" method="post">
                     <table>
                         <tr>
                             <td>Mail</td>
@@ -70,16 +83,58 @@
                         </tr>
                     </table>
                 </form>
+                
+                <form class="action-forms" action="changeName" method="post">
+                	<table>
+	                   	<tr>
+	                        <td>Name</td>
+	                        <td><input type="text" name="name" value="${name}"></td>
+	                        <c:if test="${userType != 'guest'}">
+	                            <td><input type="submit" value="Change"></td>
+	                            <td>${updateNameStatus}</td>
+	                        </c:if>
+	                  	</tr>
+	                </table>
+	            </form>
+	            
+	            <form class="action-forms" action="changeSurname" method="post">
+                	<table>
+	                   	<tr>
+	                        <td>Surname</td>
+	                        <td><input type="text" name="surname" value="${surname}"></td>
+	                        <c:if test="${userType != 'guest'}">
+	                            <td><input type="submit" value="Change"></td>
+	                            <td>${updateSurnameStatus}</td>
+	                        </c:if>
+	                  	</tr>
+	                </table>
+	            </form>
+	            
+                <form class="action-forms" action="changePhoneNumber" method="post">
+                	<table>
+	                   	<tr>
+	                        <td>Phone</td>
+	                        <td><input type="text" name="phoneNumber" value="${phoneNumber}"></td>
+	                        <c:if test="${userType != 'guest'}">
+	                            <td><input type="submit" value="Change"></td>
+	                            <td>${updatePhoneNumberStatus}</td>
+	                        </c:if>
+	                  	</tr>
+	                </table>
+	            </form>
+                
             </c:if>
+            
+            
 
-            <form action="logout">
-                <input type="submit" value="Log out">
+            <form class="action-forms" action="logout">
+                <input class="logout-btn" type="submit" value="Log out">
             </form>
         </c:when>
 
         <c:otherwise>
             <div>
-                <form action="defaultAction" method="post">
+                <form class="action-forms" action="defaultAction" method="post">
                     <table>
                         <tr>
                             <td colspan="2"><input type="text" name="userName" placeholder="Username"></td>
