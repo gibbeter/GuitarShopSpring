@@ -2,6 +2,7 @@ package com.example.demo.user;
 
 import org.springframework.validation.annotation.Validated;
 
+import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
@@ -21,6 +22,12 @@ public class UserDTO {
 	private String type;
 	@NotNull
 	private String userMail;
+	@NotNull
+	private String name;
+	@NotNull
+	private String surname;
+	@NotNull
+	private Integer phoneNumber;
 
 	public Integer getUserId() {
 		return userId;
@@ -61,6 +68,32 @@ public class UserDTO {
 	public void setType(String type) {
 		this.type = type;
 	}
+	
+	
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getSurname() {
+		return surname;
+	}
+
+	public void setSurname(String surname) {
+		this.surname = surname;
+	}
+
+	public Integer getPhoneNumber() {
+		return phoneNumber;
+	}
+
+	public void setPhoneNumber(Integer phoneNumber) {
+		this.phoneNumber = phoneNumber;
+	}
 
 	public UserDTO(@NotNull Integer userId, @NotNull @NotEmpty String userName, @NotNull @NotEmpty String password,
 			@NotNull String type, @NotNull String userMail) {
@@ -69,6 +102,21 @@ public class UserDTO {
 		this.userPass = password;
 		this.type = type;
 		this.userMail = userMail;
+	}
+	
+	
+
+	public UserDTO(@NotNull Integer userId, @NotNull @NotEmpty String userName, @NotNull @NotEmpty String userPass,
+			@NotNull String type, @NotNull String userMail, @NotNull String name, @NotNull String surname,
+			@NotNull Integer phoneNumber) {
+		this.userId = userId;
+		this.userName = userName;
+		this.userPass = userPass;
+		this.type = type;
+		this.userMail = userMail;
+		this.name = name;
+		this.surname = surname;
+		this.phoneNumber = phoneNumber;
 	}
 
 	public UserDTO() {

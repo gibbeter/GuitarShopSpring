@@ -10,13 +10,17 @@ import model.User;
 @Service
 public class UserService {
 
-    private final GuitarShopSpringApplication guitarShopSpringApplication;
+//    private final GuitarShopSpringApplication guitarShopSpringApplication;
 	
 	@Autowired
 	UserRepo userRepo;
 
-    UserService(GuitarShopSpringApplication guitarShopSpringApplication) {
-        this.guitarShopSpringApplication = guitarShopSpringApplication;
+//    UserService(GuitarShopSpringApplication guitarShopSpringApplication) {
+//        this.guitarShopSpringApplication = guitarShopSpringApplication;
+//    }
+    
+    public UserDTO userToDTO(User u) {
+    	return new UserDTO(u.getUserId(), u.getUserName(), u.getPassword(), u.getType(), u.getUserMail(), u.getName(), u.getSurname(), u.getPhoneNumber());
     }
 
 	public boolean saveUser(UserRegDTO user) {
@@ -28,6 +32,9 @@ public class UserService {
 			newUser.setPassword(user.getUserPass());
 			newUser.setType(user.getType());
 			newUser.setUserMail(user.getUserMail());
+			newUser.setName(user.getName());
+			newUser.setSurname(user.getSurname());
+			newUser.setPhoneNumber(user.getPhoneNumber());
 			userRepo.save(newUser);
 		}
 		catch(ValidationException e) {
@@ -45,11 +52,12 @@ public class UserService {
 			if(user == null)
 				return null;
 			
-			userDTO.setUserId(user.getUserId());
-			userDTO.setUserName(user.getUserName());
-			userDTO.setUserPass(user.getPassword());
-			userDTO.setUserMail(user.getUserMail());
-			userDTO.setType(user.getType());
+			userDTO = userToDTO(user);
+//			userDTO.setUserId(user.getUserId());
+//			userDTO.setUserName(user.getUserName());
+//			userDTO.setUserPass(user.getPassword());
+//			userDTO.setUserMail(user.getUserMail());
+//			userDTO.setType(user.getType());
 			
 			return userDTO;
 		}catch(Exception e) {
@@ -68,11 +76,12 @@ public class UserService {
 			if(user == null)
 				return null;
 			
-			userDTO.setUserId(user.getUserId());
-			userDTO.setUserName(user.getUserName());
-			userDTO.setUserPass(user.getPassword());
-			userDTO.setUserMail(user.getUserMail());
-			userDTO.setType(user.getType());
+			userDTO = userToDTO(user);
+//			userDTO.setUserId(user.getUserId());
+//			userDTO.setUserName(user.getUserName());
+//			userDTO.setUserPass(user.getPassword());
+//			userDTO.setUserMail(user.getUserMail());
+//			userDTO.setType(user.getType());
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
@@ -81,7 +90,7 @@ public class UserService {
 	}
 
 	@Transactional
-	public boolean updateName(Integer userId, String name) {
+	public boolean updateUserName(Integer userId, String name) {
 		try{
 			User user = userRepo.findById(userId).get();
 			if(user.getUserName() != name) {
@@ -138,7 +147,7 @@ public class UserService {
 			e.printStackTrace();
 			return null;
 		}
-		return new UserDTO(u.getUserId(), u.getUserName(), u.getPassword(), u.getType(), u.getUserMail());
+		return userToDTO(u);
 	}
 
 	public void removeUser(int userId) {
@@ -160,5 +169,50 @@ public class UserService {
 		}
 		
 		return null;
+	}
+
+	@Transactional
+	public boolean updateName(Integer userId, String name) {
+		try{
+			User user = userRepo.findById(userId).get();
+			if(user.getName() != name) {
+				user.setName(name);
+				return userRepo.save(user) != null;
+			}
+			return false;
+		}catch(Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	@Transactional
+	public boolean updateSurname(Integer userId, String surname) {
+		try{
+			User user = userRepo.findById(userId).get();
+			if(user.getSurname() != surname) {
+				user.setSurname(surname);
+				return userRepo.save(user) != null;
+			}
+			return false;
+		}catch(Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	@Transactional
+	public boolean updatePhoneNumber(Integer userId, Integer phoneNumber) {
+		try{
+			User user = userRepo.findById(userId).get();
+			if(user.getPhoneNumber() != phoneNumber) {
+				user.setPhoneNumber(phoneNumber);
+				return userRepo.save(user) != null;
+			}
+			return false;
+		}catch(Exception e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 }

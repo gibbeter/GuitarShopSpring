@@ -1,6 +1,8 @@
 package com.example.demo.user;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +48,10 @@ public class UserController {
 	public String redirectToIdx(HttpServletRequest req) {
 		req.getSession().removeAttribute("updatePassStatus");
 		req.getSession().removeAttribute("updateMailStatus");
+		req.getSession().removeAttribute("updateUserNStatus");
 		req.getSession().removeAttribute("updateNameStatus");
+		req.getSession().removeAttribute("updateSurnameStatus");
+		req.getSession().removeAttribute("updatePhoneNumberStatus");
 		return "index";
 	}
 	
@@ -178,6 +183,9 @@ public class UserController {
 			session.setAttribute("userMail",  user.getUserMail());
 			session.setAttribute("userPassword",  user.getUserPass());
 			session.setAttribute("userType",  user.getType());
+			session.setAttribute("name",  user.getName());
+			session.setAttribute("surname",  user.getSurname());
+			session.setAttribute("phoneNumber",  user.getPhoneNumber());
 		}
 	}
 	
@@ -187,9 +195,13 @@ public class UserController {
 		if(id != null) {
 			UserDTO u = userService.findById(id);
 			if(u != null && u.getType().equalsIgnoreCase("guest")) {
-				CartDTO cartDTO = cartService.findCartByUser(id);
-				itemService.removeAllCartItems(cartDTO.getCartId());
-		    	cartService.removeCart(cartDTO.getCartId());
+				try {
+					CartDTO cartDTO = cartService.findCartByUser(id);
+					itemService.removeAllCartItems(cartDTO.getCartId());
+			    	cartService.removeCart(cartDTO.getCartId());
+				}catch(Exception e) {
+					e.printStackTrace();
+				}
 		    	userService.removeUser(u.getUserId());
 		    }
 		}
@@ -201,29 +213,27 @@ public class UserController {
 		
 		req.getSession().removeAttribute("updatePassStatus");
 		req.getSession().removeAttribute("updateMailStatus");
-		req.getSession().removeAttribute("updateNameStatus");
+		req.getSession().removeAttribute("updateUserNStatus");
 		
 		return "redirect:redirectToAccount";
 	}
 	
-	@PostMapping("changeName")
-	public void changeName(@RequestParam("userName")String name, HttpSession session, HttpServletRequest req, HttpServletResponse res) {
+	@PostMapping("changeUserName")
+	public String changeUserName(@RequestParam("userName")String name, HttpSession session, HttpServletRequest req, HttpServletResponse res) {
 		Integer userId = (Integer) session.getAttribute("userId");
-		if(!userService.updateName(userId, name)) {
-			req.getSession().setAttribute("updateNameStatus", "Error during update operation");
+		if(!userService.updateUserName(userId, name)) {
+			req.getSession().setAttribute("updateUserNStatus", "Error during update operation");
 		}
 		else {
-			req.getSession().setAttribute("updateNameStatus", "Successfull update!");
+			req.getSession().setAttribute("updateUserNStatus", "Successfull update!");
 		}
 		
 		getUserData(userId, session, req);
-		statusManager("name", session, req);
-		try {
-			res.sendRedirect("redirectToAccount");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		statusManager("userN", session, req);
+		
+		return "redirect:redirectToAccount";
 	}
+	
 	@PostMapping("changePass")
 	public String changePass(@RequestParam("userPass")String pass, HttpSession session, HttpServletRequest req, HttpServletResponse res) {
 		Integer userId = (Integer) session.getAttribute("userId");
@@ -236,11 +246,7 @@ public class UserController {
 		
 		getUserData(userId, session, req);
 		statusManager("pass", session, req);
-		try {
-			res.sendRedirect("redirectToAccount");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+
 		return "redirect:redirectToAccount";
 	}
 	
@@ -256,29 +262,77 @@ public class UserController {
 		
 		getUserData(userId, session, req);
 		statusManager("mail",session, req);
-		try {
-			res.sendRedirect("redirectToAccount");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+
 		return "redirect:redirectToAccount";
 	}
 	
+	@PostMapping("changeName")
+	public String changeName(@RequestParam("name")String name, HttpSession session, HttpServletRequest req, HttpServletResponse res) {
+		Integer userId = (Integer) session.getAttribute("userId");
+		if(!userService.updateName(userId, name)) {
+			req.getSession().setAttribute("updateNameStatus", "Error during update operation");
+		}
+		else {
+			req.getSession().setAttribute("updateNameStatus", "Successfull update!");
+		}
+		
+		getUserData(userId, session, req);
+		statusManager("name",session, req);
+
+		return "redirect:redirectToAccount";
+	}
+	
+	@PostMapping("changeSurname")
+	public String changeSurname(@RequestParam("surname")String surname, HttpSession session, HttpServletRequest req, HttpServletResponse res) {
+		Integer userId = (Integer) session.getAttribute("userId");
+		if(!userService.updateSurname(userId, surname)) {
+			req.getSession().setAttribute("updateSurnameStatus", "Error during update operation");
+		}
+		else {
+			req.getSession().setAttribute("updateSurnameStatus", "Successfull update!");
+		}
+		
+		getUserData(userId, session, req);
+		statusManager("surname",session, req);
+
+		return "redirect:redirectToAccount";
+	}
+	
+	@PostMapping("changePhoneNumber")
+	public String changePhoneNumber(@RequestParam("phoneNumber")Integer phoneNumber, HttpSession session, HttpServletRequest req, HttpServletResponse res) {
+		Integer userId = (Integer) session.getAttribute("userId");
+		if(!userService.updatePhoneNumber(userId, phoneNumber)) {
+			req.getSession().setAttribute("updatePhoneNumberStatus", "Error during update operation");
+		}
+		else {
+			req.getSession().setAttribute("updatePhoneNumberStatus", "Successfull update!");
+		}
+		
+		getUserData(userId, session, req);
+		statusManager("phoneNumber",session, req);
+
+		return "redirect:redirectToAccount";
+	}
+	
+	
+	
 	public void statusManager(String type, HttpSession session, HttpServletRequest req) {
-		if(type.equalsIgnoreCase("name")) {
-			req.getSession().removeAttribute("updatePassStatus");
-			session.removeAttribute("updateMailStatus");
+		
+		ArrayList<String> fields = new ArrayList<>(Arrays.asList("UserN", "Pass", "Mail", "Name", "Surname", "PhoneNumber"));
+		
+		for(String t : fields) {
+			if(!t.equalsIgnoreCase(type)) {
+				session.removeAttribute(new StringBuilder("update")
+					    .append(t)
+					    .append("Status")
+					    .toString());
+			}
 		}
 		
-		if(type.equalsIgnoreCase("pass")) {
-			req.getSession().removeAttribute("updateNameStatus");
-			req.getSession().removeAttribute("updateMailStatus");
-		}
-		
-		if(type.equalsIgnoreCase("mail")) {
-			req.getSession().removeAttribute("updatePassStatus");
-			req.getSession().removeAttribute("updateNameStatus");
-		}
+//		if(type.equalsIgnoreCase("userN")) {
+//			session.removeAttribute("updatePassStatus");
+//			session.removeAttribute("updateMailStatus");
+//		}
 	}
 	
 	public UserDTO createGuest() {
