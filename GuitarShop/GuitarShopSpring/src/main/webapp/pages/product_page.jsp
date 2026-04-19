@@ -63,7 +63,12 @@
 					<div class="product-row">
 						<!--<span class="label">Product name:</span>-->
 						<span class="value product-name">${product.productName}</span>
-						<button type="submit" class="add-to-cart">Add to cart</button>
+						<c:if test="${product.productStock != 0}">
+							<button type="submit" class="add-to-cart">Add to cart</button>
+						</c:if>
+						<c:if test="${product.productStock == 0}">
+							<button type="submit" class="add-to-cart" disabled>Add to cart</button>
+						</c:if>
 					</div>
 					<div class="product-row">
 						<!--<span class="label">Product description:</span>-->

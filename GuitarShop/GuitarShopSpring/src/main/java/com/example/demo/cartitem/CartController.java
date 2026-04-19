@@ -167,7 +167,8 @@ public class CartController {
 	public String addItem(@RequestParam("prodId")Integer prodId,
 							@RequestParam("stock")Integer stock,
 							@RequestParam(value="type", required=false)Optional<String> type,
-							HttpSession session, HttpServletRequest req, HttpServletResponse res) {
+							HttpSession session, HttpServletRequest req,
+							RedirectAttributes redirects, HttpServletResponse res) {
 		if(stock > 0) {
 			Integer userId = (Integer) req.getSession().getAttribute("userId");
 			if(userId == null) {
@@ -182,12 +183,22 @@ public class CartController {
 			//item add
 			ItemDTO itemDTO = updateCartitem(cartDTO, prodId);
 		}
-		if(type.isPresent())
-			if(type.get().equals(""))
-				return "redirect:/product/redirectToType?prodId=" + prodId+"&itemStatus=added";
-			else
-				return "redirect:/product/redirectToType?type="+type.get()+"&prodId=" + prodId+"&itemStatus=added";
-		return "redirect:/product/redirectToProductPage?itemStatus=added&prodId=" + prodId;
+		if(type.isPresent()) {
+			redirects.addFlashAttribute("prodId", prodId);
+			redirects.addFlashAttribute("itemStatus", "added");
+			if(type.get().equals("")) {
+//				return "redirect:/product/redirectToType?prodId=" + prodId+"&itemStatus=added";
+				return "redirect:/product/redirectToType";
+			}
+			else {
+//				return "redirect:/product/redirectToType?type="+type.get()+"&prodId=" + prodId+"&itemStatus=added";
+				redirects.addFlashAttribute("type", type.get());
+				return "redirect:/product/redirectToType";
+			}
+				
+		}
+//		return "redirect:/product/redirectToProductPage?itemStatus=added&prodId=" + prodId;
+		return "redirect:/product/redirectToProductPage";
 	}
 	
 	public CartDTO updateCart(Integer userId) {
@@ -358,10 +369,10 @@ public class CartController {
 	}
 	
 	@GetMapping("redirectToCheck")
-	public String redirectToCheckPage(@RequestParam("checkStatus")Optional<String> checkStatus, HttpServletRequest req, HttpServletResponse res) {
+	public String redirectToCheckPage(HttpServletRequest req, HttpServletResponse res) {
 		
-		if(checkStatus.isPresent())
-			req.setAttribute("checkStatus", checkStatus.get());
+//		if(checkStatus.isPresent())
+//			req.setAttribute("checkStatus", checkStatus.get());
 		return "pages/check";
 	}
 	
@@ -382,14 +393,16 @@ public class CartController {
 	}
 	
 	@GetMapping("downloadCheck")
-	public String downloadCheck(HttpSession session, HttpServletResponse res) {
+	public String downloadCheck(HttpSession session, RedirectAttributes redirects, HttpServletResponse res) {
 		JasperPrint check = (JasperPrint)session.getAttribute("check");
 		if(check != null) {
 			postCheck(check, res);
 			return "index";
 		}
 		else {
-			return "redirect:redirectToCheck?checkStatus=Check was deleted from session";
+//			return "redirect:redirectToCheck?checkStatus=Check was deleted from session";
+			redirects.addFlashAttribute("checkStatus", "Check was deleted from session");
+			return "redirect:redirectToCheck";
 		}
 	}
 	

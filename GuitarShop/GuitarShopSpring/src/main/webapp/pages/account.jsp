@@ -150,8 +150,8 @@
                     <input type="hidden" name="type" value="user">
                     <input type="hidden" name="userMail" value="empty@mail.em">
                 </form>
-                <c:if test="${!empty errorStatus}">
-                    <div class="message error">${errorStatus}</div>
+                <c:if test="${!empty loginStatus}">
+                    <div class="message error">${loginStatus}</div>
                 </c:if>
                 <c:if test="${!empty regStatus}">
                     <div class="message success">${regStatus}</div>

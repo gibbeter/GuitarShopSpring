@@ -32,10 +32,11 @@ public class FileUploadController {
     public String handleFileUpload(@RequestParam("webpFiles") MultipartFile[] files,
 								   @RequestParam("prodId") Integer prodId,
 								   @RequestParam("prodType") String prodType,
-								   RedirectAttributes redirectAttributes) {
+								   RedirectAttributes redirects) {
         if (files == null || files.length == 0) {
-            redirectAttributes.addFlashAttribute("uploadStat", "Please select a WEBP file.");
-            return "redirect:/product/redirectToModifyProductPage?prodId="+prodId;  // adjust to your actual page URL
+        	redirects.addFlashAttribute("prodId", prodId);
+            redirects.addFlashAttribute("uploadStat", "Please select a WEBP file.");
+            return "redirect:/product/redirectToModifyProductPage";  // adjust to your actual page URL
         }
         
         List<String> uploaded = new ArrayList<>();
@@ -74,7 +75,9 @@ public class FileUploadController {
         if (!errors.isEmpty()) {
             message += "Errors: " + String.join(", ", errors);
         }
-        redirectAttributes.addFlashAttribute("uploadStat", message);
-        return "redirect:/product/redirectToModifyProductPage?prodId="+prodId;
+        
+        redirects.addFlashAttribute("prodId", prodId);
+        redirects.addFlashAttribute("uploadStat", message);
+        return "redirect:/product/redirectToModifyProductPage";
     }
 }

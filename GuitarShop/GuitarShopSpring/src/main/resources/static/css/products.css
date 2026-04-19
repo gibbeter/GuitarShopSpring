@@ -155,6 +155,25 @@ th[colspan="5"] {
 	transform: translateY(-2px);
 }
 
+.add-to-cart:disabled {
+	background: #c0c0c0;
+	color: white;
+	border: none;
+	padding: 0.75rem 2rem;
+	border-radius: 2rem;
+	font-weight: 600;
+	font-size: 1.1rem;
+	cursor: pointer;
+	transition: background-color 0.2s, transform 0.1s;
+	box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+	margin-left: auto;
+}
+
+.add-to-cart:hover:disabled {
+	background: #808080;
+	transform: translateY(-2px);
+}
+
 /* Контейнер уведомления */
 .added-cont{
 	display: flex;

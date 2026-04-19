@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.demo.product.ProductDTO;
 import com.example.demo.user.UserDTO;
@@ -49,7 +50,7 @@ public class OrderController {
 	OrderItemService orderItemService;
 
 	@GetMapping("redirectToOrders")
-	public String redirectToOrders(@RequestParam(value="delStatus")Optional<String> delStatus, Model m) {
+	public String redirectToOrders(@ModelAttribute(value="delStatus")Optional<String> delStatus, Model m) {
 		m.addAttribute("orders", orderService.findAllOrders());
 		m.addAttribute("filter", "ALL");
 		if(delStatus.isPresent())
@@ -69,7 +70,7 @@ public class OrderController {
 	}
 	
 	@GetMapping("redirectToModifyOrderPage")
-	public String redirectToOrders(@RequestParam("orderId")Integer orderId, @RequestParam(value="modStatus")Optional<String> modStatus, Model m) {
+	public String redirectToOrders(@ModelAttribute("orderId")Integer orderId, @ModelAttribute(value="modStatus")Optional<String> modStatus, Model m) {
 		OrderDTO orderDTO = orderService.findOrder(orderId);
 		if(orderDTO != null)
 			m.addAttribute("order", orderDTO);
@@ -91,7 +92,7 @@ public class OrderController {
     }
 	
 	@PostMapping("modifyOrderData")
-	public String modifyOrder(@ModelAttribute("orderDTO")OrderDTO orderDTO, Model m) {
+	public String modifyOrder(@ModelAttribute("orderDTO")OrderDTO orderDTO, RedirectAttributes redirects, Model m) {
 		String modStatus = null;
 		try {
 			if(!orderService.modifyOrder(orderDTO)) {
@@ -104,11 +105,14 @@ public class OrderController {
 			e.printStackTrace();
 			modStatus = "Error during modification";
 		}
-		return "redirect:redirectToModifyOrderPage?orderId="+orderDTO.getOrderId() +"&modStatus=" + modStatus;
+//		return "redirect:redirectToModifyOrderPage?orderId="+orderDTO.getOrderId() +"&modStatus=" + modStatus;
+		redirects.addFlashAttribute("orderId", orderDTO.getOrderId());
+		redirects.addFlashAttribute("modStatus", modStatus);
+		return "redirect:redirectToModifyOrderPage";
 	}
 	
 	@PostMapping("deleteOrderData")
-	public String deleteOrder(@ModelAttribute("orderDTO")OrderDTO orderDTO, Model m) {
+	public String deleteOrder(@ModelAttribute("orderDTO")OrderDTO orderDTO, RedirectAttributes redirects, Model m) {
 		String delStatus = null;
 		try{
 			if(!orderService.deleteOrder(orderDTO)) {
@@ -121,7 +125,9 @@ public class OrderController {
 			e.printStackTrace();
 			delStatus = "Error during deletion";
 		}
-		return "redirect:redirectToOrders?delStatus=" + delStatus;
+//		return "redirect:redirectToOrders?delStatus=" + delStatus;
+		redirects.addFlashAttribute("delStatus", delStatus);
+		return "redirect:redirectToOrders";
 	}
 	
 	@GetMapping("filterOrdersByStatus")

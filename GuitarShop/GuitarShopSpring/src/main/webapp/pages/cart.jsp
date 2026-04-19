@@ -29,7 +29,7 @@
     
     <c:if test="${!empty cartErrorStatus}">
 		<div class="error-container">
-			<span class="errorStatus">${cartErrorStatus}</span>
+			<span class="cartErrorStatus">${cartErrorStatus}</span>
 		</div>
 	</c:if>
 

@@ -426,13 +426,13 @@ input[type="hidden"] {
     margin-left: 1rem;
     color: #ef4444;
 }
-
+*/
 .error-container{
 	display: flex;
     justify-content: center;
 }
 
-span.errorStatus{
+span.cartErrorStatus{
 	display: inline-block;
 	margin-top: 1rem;
 	margin-bottom: 1rem;
@@ -441,7 +441,7 @@ span.errorStatus{
 	border-radius: 2rem;
 	color: #d90000;
 	font-weight: 500;
-}*/
+}
 
 
 /* Only show red when user has typed something (placeholder hidden) */

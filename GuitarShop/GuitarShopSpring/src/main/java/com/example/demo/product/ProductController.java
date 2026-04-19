@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.demo.user.UserDTO;
 import com.example.demo.user.UserHelper;
@@ -58,7 +59,7 @@ public class ProductController {
 		));
 	
 	@GetMapping("redirectToStorage")
-	public String redirectToStorage(@RequestParam(value="delStatus")Optional<String> delStatus, Model m, HttpServletResponse res) {
+	public String redirectToStorage(@ModelAttribute(value="delStatus")Optional<String> delStatus, Model m, HttpServletResponse res) {
 		
 		res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
 	    res.setHeader("Pragma", "no-cache");
@@ -72,7 +73,7 @@ public class ProductController {
 	}
 	
 	@GetMapping("redirectToModifyProductPage")
-	public String redirectToModifyProductPage(@RequestParam("prodId") Integer prodId, @RequestParam(value="modStatus")Optional<String> modStatus, Model m) {
+	public String redirectToModifyProductPage(@ModelAttribute("prodId") Integer prodId, @ModelAttribute(value="modStatus")Optional<String> modStatus, Model m) {
 		m.addAttribute("product", productService.findProdById(prodId));
 		if(modStatus.isPresent())
 			m.addAttribute("modStatus", modStatus.get());
@@ -80,7 +81,7 @@ public class ProductController {
 	}
 	
 	@PostMapping("modifyProductData")
-	public String modifyProduct(@ModelAttribute("productDTO")ProductDTO prodDTO, Model m) {
+	public String modifyProduct(@ModelAttribute("productDTO")ProductDTO prodDTO, RedirectAttributes redirects, Model m) {
 		String modStatus = null;
 		try {
 			if(!productService.modifyProduct(prodDTO)) {
@@ -93,11 +94,14 @@ public class ProductController {
 			e.printStackTrace();
 			modStatus = "Error during modification";
 		}
-		return "redirect:redirectToModifyProductPage?prodId="+prodDTO.getProdId() +"&modStatus=" + modStatus;
+//		return "redirect:redirectToModifyProductPage?prodId="+prodDTO.getProdId() +"&modStatus=" + modStatus;
+		redirects.addFlashAttribute("prodId", prodDTO.getProdId());
+		redirects.addFlashAttribute("modStatus", modStatus);
+		return "redirect:redirectToModifyProductPage";
 	}
 	
 	@PostMapping("deleteProductData")
-	public String changeproduct(@ModelAttribute("productDTO")ProductDTO prodDTO, Model m) {
+	public String changeproduct(@ModelAttribute("productDTO")ProductDTO prodDTO, RedirectAttributes redirects, Model m) {
 		String delStatus = null;
 		try{
 			if(!productService.deleteProduct(prodDTO)) {
@@ -110,7 +114,9 @@ public class ProductController {
 			e.printStackTrace();
 			delStatus = "Error during deletion";
 		}
-		return "redirect:redirectToStorage?delStatus=" + delStatus;
+//		return "redirect:redirectToStorage?delStatus=" + delStatus;
+		redirects.addFlashAttribute("delStatus", delStatus);
+		return "redirect:redirectToStorage";
 	}
 	
 	@ModelAttribute("productDTO")
@@ -135,12 +141,20 @@ public class ProductController {
 		
 	}
 	
+	@GetMapping("redirectToTypeCaller")
+	public String redirectToTypeCaller(@RequestParam(value = "type", required = false) Optional<String> type,
+								RedirectAttributes redirects) {
+		if(type.isPresent())
+			redirects.addFlashAttribute("type", type.get());
+		return "redirect:redirectToType";
+	}
+	
 	@GetMapping("redirectToType")
-	public String redirectToType(@RequestParam(value = "type", required = false) Optional<String> type,
-								@RequestParam(value = "prodId", required = false) Optional<Integer> prodId,
-								@RequestParam(value = "itemStatus", required = false) Optional<String> itemStatus,
-								HttpSession session,HttpServletRequest req, Model m) {
+	public String redirectToType(@ModelAttribute(value = "type") Optional<String> type,
+								HttpSession session, HttpServletRequest req, Model m) {
 		try {
+			String itemStatus = (String) m.getAttribute("itemStatus");
+		    Integer prodId = (Integer) m.getAttribute("addedProdId");
 //			Integer userId = (Integer) session.getAttribute("userId");
 			if(type.isPresent()) {
 				String formattedType = formatedTypes.get(type.get());
@@ -151,11 +165,11 @@ public class ProductController {
 			else {
 				m.addAttribute("products", productService.findProducts());
 			}
-			if(itemStatus.isPresent()) {
+			if(itemStatus != null) {
 				m.addAttribute("itemStatus", "Item was added to your cart!");
 			}
-			if(prodId.isPresent()) {
-				m.addAttribute("addedProdId", prodId.get());
+			if(prodId != null) {
+				m.addAttribute("addedProdId", prodId);
 			}
 		}catch(Exception e) {
 			e.printStackTrace();
@@ -165,10 +179,10 @@ public class ProductController {
 	
 	
 	@GetMapping("redirectToProductPage")
-	public String redirectToProduct(@RequestParam(value = "prodId", required = false) Optional<Integer> prodId,
-									@RequestParam(value = "overStatus", required = false) Optional<String> overStatus,
-									@RequestParam(value = "chatStatus", required = false) Optional<String> chatStatus,
-									@RequestParam(value = "itemStatus", required = false) Optional<String> itemStatus,
+	public String redirectToProduct(@ModelAttribute(value = "prodId") Optional<Integer> prodId,
+									@ModelAttribute(value = "overStatus") Optional<String> overStatus,
+									@ModelAttribute(value = "chatStatus") Optional<String> chatStatus,
+									@ModelAttribute(value = "itemStatus") Optional<String> itemStatus,
 									HttpServletRequest req, Model m) {
 		try {
 	
@@ -216,14 +230,18 @@ public class ProductController {
 	}
 	
 	@PostMapping("postOverview")
-	public String postOverview(@ModelAttribute("overviewDTO")OverviewDTO overDTO, @RequestParam("prodId")Integer prodId,
-							HttpSession session, Model m, HttpServletResponse res) {
+	public String postOverview(@ModelAttribute("overviewDTO")OverviewDTO overDTO,
+							@RequestParam("prodId")Integer prodId,
+							HttpSession session, Model m,
+							RedirectAttributes redirects, HttpServletResponse res) {
 		String overStatus = null;
 		Integer userId = (Integer) session.getAttribute("userId");
 		if(userId == null || userService.findById(userId).getType().contains("guest")) {
 			overStatus = "Guests cant write overviews";
 //			m.addAttribute("overStatus", overStatus);
-			return "redirect:redirectToProductPage?prodId="+prodId+"&overStatus="+overStatus;
+			redirects.addFlashAttribute("prodId", prodId);
+			redirects.addFlashAttribute("overStatus", overStatus);
+			return "redirect:redirectToProductPage";
 		}
 			
 		if(userId != null && overviewService.findOverview(userId, prodId) != null) {
@@ -247,7 +265,10 @@ public class ProductController {
 ////				m.addAttribute("overStatus", overStatus);
 //			}
 		}
-		return "redirect:redirectToProductPage?prodId="+prodId+"&overStatus="+overStatus;
+//		return "redirect:redirectToProductPage?prodId="+prodId+"&overStatus="+overStatus;
+		redirects.addFlashAttribute("prodId", prodId);
+		redirects.addFlashAttribute("overStatus", overStatus);
+		return "redirect:redirectToProductPage";
 	}
 	
 }

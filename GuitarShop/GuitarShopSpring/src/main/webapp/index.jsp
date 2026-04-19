@@ -36,22 +36,22 @@
 
 	<table>
     	<tr>
-    		<td colspan="3"><a href="${pageContext.request.contextPath}/product/redirectToType" class="all-products-link">← All products</a></td>
+    		<td colspan="3"><a href="${pageContext.request.contextPath}/product/redirectToTypeCaller" class="all-products-link">← All products</a></td>
     	</tr>
         <tr>
             <td>
-            	<a href="${pageContext.request.contextPath}/product/redirectToType?type=guitar" class="img-pan">
+            	<a href="${pageContext.request.contextPath}/product/redirectToTypeCaller?type=guitar" class="img-pan">
             		<img src="/GuitarShop/img/guitars-pan.webp" alt="GUITARS">
             		<span>Guitars</span>
            		</a>
          	</td>
             <td>
-            <a href="${pageContext.request.contextPath}/product/redirectToType?type=drums" class="img-pan">
+            <a href="${pageContext.request.contextPath}/product/redirectToTypeCaller?type=drums" class="img-pan">
             	<img src="/GuitarShop/img/drums-pan.webp" alt="GUITARS">
             		<span>Drums</span>
             	</a></td>
             <td>
-            	<a href="${pageContext.request.contextPath}/product/redirectToType?type=keys" class="img-pan">
+            	<a href="${pageContext.request.contextPath}/product/redirectToTypeCaller?type=keys" class="img-pan">
             		<img src="/GuitarShop/img/keys-pan.webp" alt="GUITARS">
             		<span>Keys</span>
            		</a>
@@ -59,19 +59,19 @@
         </tr>
         <tr>
             <td>
-            	<a href="${pageContext.request.contextPath}/product/redirectToType?type=microphone" class="img-pan">
+            	<a href="${pageContext.request.contextPath}/product/redirectToTypeCaller?type=microphone" class="img-pan">
             		<img src="/GuitarShop/img/micro-pan.webp" alt="GUITARS">
             		<span>Microphones</span>
             	</a>
             </td>
             <td>
-           		<a href="${pageContext.request.contextPath}/product/redirectToType?type=cable" class="img-pan">
+           		<a href="${pageContext.request.contextPath}/product/redirectToTypeCaller?type=cable" class="img-pan">
             		<img src="/GuitarShop/img/cables-pan.webp" alt="GUITARS">
             		<span>Cables & Connectors</span>
             	</a>
             </td>
             <td>
-            	<a href="${pageContext.request.contextPath}/product/redirectToType?type=soft" class="img-pan">
+            	<a href="${pageContext.request.contextPath}/product/redirectToTypeCaller?type=soft" class="img-pan">
             		<img src="/GuitarShop/img/soft-pan.webp" alt="GUITARS">
             		<span>Software</span>
             	</a>

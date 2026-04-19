@@ -56,7 +56,12 @@
 											<span class="added-item">${itemStatus}</span>
 										</div>
 									</c:if>
-									<button type="submit" class="add-to-cart">Add to cart</button>
+									<c:if test="${p.productStock != 0}">
+										<button type="submit" class="add-to-cart">Add to cart</button>
+									</c:if>
+									<c:if test="${p.productStock == 0}">
+										<button type="submit" class="add-to-cart" disabled>Add to cart</button>
+									</c:if>
 								</div>
 							</div>
 							</form>
@@ -71,22 +76,31 @@
     
     <script>
 	    (function() {
-	        // Save current scroll position before page unload (reload, form submit, navigation)
+	        const SCROLL_KEY = 'scrollPos';
+	        const PAGE_KEY = 'scrollPage';
+	
+	        // Сохраняем позицию и путь текущей страницы перед уходом
 	        window.addEventListener('beforeunload', function() {
-	            sessionStorage.setItem('scrollPos', window.scrollY);
+	            sessionStorage.setItem(SCROLL_KEY, window.scrollY);
+	            sessionStorage.setItem(PAGE_KEY, location.pathname); // можно заменить на location.href
 	        });
 	
-	        // Restore scroll position after page has fully loaded
+	        // Восстанавливаем только если вернулись на ту же страницу
 	        window.addEventListener('load', function() {
-	            var savedScroll = sessionStorage.getItem('scrollPos');
-	            if (savedScroll !== null) {
+	            const savedScroll = sessionStorage.getItem(SCROLL_KEY);
+	            const savedPage = sessionStorage.getItem(PAGE_KEY);
+	            const currentPage = location.pathname;
+	
+	            if (savedScroll !== null && savedPage === currentPage) {
 	                window.scrollTo({
 	                    top: parseInt(savedScroll, 10),
-	                    behavior: 'auto'   // 'instant' or 'smooth'
+	                    behavior: 'auto'
 	                });
-	                // Optional: remove the saved position after restoring
-	                sessionStorage.removeItem('scrollPos');
 	            }
+	
+	            // Очищаем хранилище в любом случае
+	            sessionStorage.removeItem(SCROLL_KEY);
+	            sessionStorage.removeItem(PAGE_KEY);
 	        });
 	    })();
 	</script>

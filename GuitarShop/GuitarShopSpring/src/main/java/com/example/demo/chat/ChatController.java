@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.demo.user.UserHelper;
 
@@ -49,7 +50,7 @@ public class ChatController {
 	@GetMapping("createChat")
 	public String createChat(@RequestParam(value="user2Username", required=false)Optional<String> user2Username,
 							@RequestParam(value="prodId", required=false)Optional<Integer> prodId,
-							HttpSession session) {
+							RedirectAttributes redirects, HttpSession session) {
 //		Integer user1Id = (Integer) session.getAttribute("user1Id");
 //		Integer user2Id = (Integer) session.getAttribute("user2Id");
 //		if(user1Id == null || user2Id == null)
@@ -66,11 +67,16 @@ public class ChatController {
 		if(newChat != null) {
 //			session.setAttribute("user1Id", newChat.getUser1Id());
 //			session.setAttribute("user2Id", newChat.getUser2Id());
-			return "redirect:redirectToChat?chatId="+newChat.getChatId();
+//			return "redirect:redirectToChat?chatId="+newChat.getChatId();
+			redirects.addFlashAttribute("chatId", newChat.getChatId());
+			return "redirect:redirectToChat";
 		}
 		else {
 			if(prodId.isPresent()) {
-				return "redirect:/product/redirectToProductPage?prodId="+prodId.get()+"&chatStatus="+"Error accured during creating of your chat";
+//				return "redirect:/product/redirectToProductPage?prodId="+prodId.get()+"&chatStatus="+"Error accured during creating of your chat";
+				redirects.addFlashAttribute("prodId", prodId.get());
+				redirects.addFlashAttribute("chatStatus", "Error accured during creating of your chat");
+				return "redirect:/product/redirectToProductPage";
 			}
 			return "pages/chats";
 		}
@@ -78,7 +84,7 @@ public class ChatController {
 	}
 	
 	@GetMapping("redirectToChat")
-	public String redirectToChat(@RequestParam(value="chatId", required=false)Optional<Integer> chatId,
+	public String redirectToChat(@ModelAttribute(value="chatId")Optional<Integer> chatId,
 								HttpSession session, HttpServletRequest req, Model m) {
 //		Integer userId = (Integer) session.getAttribute("userId");
 //		Integer user1Id = (Integer) session.getAttribute("user1Id");
@@ -111,18 +117,21 @@ public class ChatController {
 	
 	@PostMapping("sendMessage")
 	public String sendMessage(@ModelAttribute("messageDTO")MessageDTO messageDTO,
-							@ModelAttribute("chatDTO")ChatDTO chatDTO, Model m) {
+							@ModelAttribute("chatDTO")ChatDTO chatDTO,
+							RedirectAttributes redirects, Model m) {
 		if(chatDTO != null)
 			messageDTO.setChatId(chatDTO.getChatId());
 		
 		MessageDTO newMessage = messageService.saveMessage(messageDTO);
 		System.out.println(newMessage);
-		return "redirect:redirectToChat?chatId="+chatDTO.getChatId();
+//		return "redirect:redirectToChat?chatId="+chatDTO.getChatId();
+		redirects.addFlashAttribute("chatId", chatDTO.getChatId());
+		return "redirect:redirectToChat";
 //		return "pages/chat";
 	}
 	
 	@PostMapping("deleteChat")
-	public String deleteChat(@RequestParam("chatId")Integer chatId) {
+	public String deleteChat(@RequestParam("chatId")Integer chatId, RedirectAttributes redirects) {
 		String delStatus = null;
 		try {
 			if(!chatService.deleteChat(chatId))
@@ -133,6 +142,8 @@ public class ChatController {
 			e.printStackTrace();
 			delStatus = "Error accured during deletion";
 		}
-		return "redirect:redirectToChats?delStatus=" + delStatus;
+//		return "redirect:redirectToChats?delStatus=" + delStatus;
+		redirects.addFlashAttribute("delStatus", delStatus);
+		return "redirect:redirectToChats";
 	}
 }

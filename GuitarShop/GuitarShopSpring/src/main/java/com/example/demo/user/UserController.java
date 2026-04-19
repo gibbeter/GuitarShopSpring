@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.demo.cartitem.CartDTO;
 import com.example.demo.cartitem.CartService;
@@ -46,6 +48,12 @@ public class UserController {
 	@Autowired
 	UserHelper helper;
 	
+	@Value("${app.message.update-error}")
+	private String updateMessageErr;
+	
+	@Value("${app.message.update-succes}")
+	private String updateMessageSucc;
+	
 	@GetMapping("redirectToIndex")
 	public String redirectToIdx(HttpServletRequest req, HttpSession session) {
 		
@@ -55,12 +63,12 @@ public class UserController {
 			getUserData(userId, session, req);
 		}
 		
-		req.getSession().removeAttribute("updatePassStatus");
-		req.getSession().removeAttribute("updateMailStatus");
-		req.getSession().removeAttribute("updateUserNStatus");
-		req.getSession().removeAttribute("updateNameStatus");
-		req.getSession().removeAttribute("updateSurnameStatus");
-		req.getSession().removeAttribute("updatePhoneNumberStatus");
+//		req.getSession().removeAttribute("updatePassStatus");
+//		req.getSession().removeAttribute("updateMailStatus");
+//		req.getSession().removeAttribute("updateUserNStatus");
+//		req.getSession().removeAttribute("updateNameStatus");
+//		req.getSession().removeAttribute("updateSurnameStatus");
+//		req.getSession().removeAttribute("updatePhoneNumberStatus");
 		return "index";
 	}
 	
@@ -86,8 +94,8 @@ public class UserController {
 		}
 //		if(session.getAttribute("errorStatus") != null)
 //			session.removeAttribute("errorStatus");
-		if(req.getSession().getAttribute("regStatus") != null)
-			req.getSession().removeAttribute("regStatus");
+//		if(req.getSession().getAttribute("regStatus") != null)
+//			req.getSession().removeAttribute("regStatus");
 		return "pages/account";
 	}
 	
@@ -102,10 +110,14 @@ public class UserController {
 	}
 	
 	@PostMapping("login")
-	public String loginUser(@RequestParam("userName")String userN, @RequestParam("userPass")String userP, HttpSession session, HttpServletRequest req, Model m) {
+	public String loginUser(@RequestParam("userName")String userN,
+							@RequestParam("userPass")String userP,
+							HttpSession session, HttpServletRequest req,
+							RedirectAttributes redirects, Model m) {
 		if(userN.contains("guest")) {
-			req.getSession().setAttribute("errorStatus", "Username cant contain \"guest\"");
-			return "pages/account";
+//			req.getSession().setAttribute("errorStatus", "Username cant contain \"guest\"");
+			redirects.addFlashAttribute("loginStatus",  "Username cant contain \"guest\"");
+			return "redirect:redirectToAccount";
 		}
 		UserDTO user = userService.findUserByName(userN);
 		if(user != null) {
@@ -115,18 +127,22 @@ public class UserController {
 //				session.setAttribute("userName", user.getUserName());
 			}
 			else {
-				req.getSession().setAttribute("errorStatus", "Wrong password");
+//				req.getSession().setAttribute("errorStatus", "Wrong password");
+				redirects.addFlashAttribute("loginStatus", "Wrong password");
 			}
 		}
 		else {
-			req.getSession().setAttribute("errorStatus", "User with this login doesnt exist");
+//			req.getSession().setAttribute("errorStatus", "User with this login doesnt exist");
+			redirects.addFlashAttribute("loginStatus", "User with this login doesnt exist");
 		}
 		
 		return "redirect:redirectToAccount";
 	}
 	
 	@PostMapping("register")
-	public String registerUser(@Valid @ModelAttribute("userRegDTO")UserRegDTO userReg, BindingResult bindingResult, HttpServletRequest req, Model m, HttpServletResponse res) {
+	public String registerUser(@Valid @ModelAttribute("userRegDTO")UserRegDTO userReg,
+							BindingResult bindingResult, HttpServletRequest req, Model m,
+							RedirectAttributes redirects, HttpServletResponse res) {
 //		String currentPage = req.getRequestURI();
 //		return "/GuitarShop/";
 //		 try {
@@ -143,28 +159,32 @@ public class UserController {
 //	                .body("Internal server error");
 //	        }
 		if(bindingResult.hasErrors()) {
-			m.addAttribute("errorStatus", "Validation error during registration, check if you filled all fields");
+//			m.addAttribute("errorStatus", "Validation error during registration, check if you filled all fields");
+			redirects.addFlashAttribute("regStatus", "Validation error during registration, check if you filled all fields");
 			System.out.println(bindingResult.getAllErrors());
-			return "pages/account";
+			return "redirect:redirectToAccount";
 		}
 		else if(userReg.getUserName().contains("guest")) {
-			m.addAttribute("errorStatus", "Username cant contain \"guest\"");
+//			m.addAttribute("errorStatus", "Username cant contain \"guest\"");
+			redirects.addFlashAttribute("regStatus", "Username cant contain \"guest\"");
 			System.out.println(bindingResult.getAllErrors());
-			return "pages/account";
+			return "redirect:redirectToAccount";
 		}
 		else {
-			if(req.getAttribute("errorStatus") != null)
-				req.removeAttribute("errorStatus");
+//			if(req.getAttribute("loginStatus") != null)
+//				req.removeAttribute("loginStatus");
 			try {
 				if(!userService.saveUser(userReg)) {
-					m.addAttribute("regStatus", "Error during registration, try using different username");
+//					m.addAttribute("regStatus", "Error during registration, try using different username");
+					redirects.addFlashAttribute("regStatus", "Error during registration, try using different username");
 //					res.sendRedirect("redirectToAccount");
-					return "pages/account";
+					return "redirect:redirectToAccount";
 				}
 				else {
-					m.addAttribute("errorStatus", "New user has been registered");
+//					m.addAttribute("errorStatus", "New user has been registered");
+					redirects.addFlashAttribute("regStatus", "New user has been registered");
 //					req.getSession().setAttribute("userName", user.getUserName());
-					return "pages/account";
+					return "redirect:redirectToAccount";
 //					res.sendRedirect("redirectToIndex");
 				}
 					
@@ -214,27 +234,34 @@ public class UserController {
 //		    	userService.removeUser(u.getUserId());
 		    }
 		}
+		
+		//???
 		session.removeAttribute("userId");
 		session.removeAttribute("userName");
 		session.removeAttribute("userMail");
 		session.removeAttribute("userPassword");
 		session.removeAttribute("userType");
 		
-		req.getSession().removeAttribute("updatePassStatus");
-		req.getSession().removeAttribute("updateMailStatus");
-		req.getSession().removeAttribute("updateUserNStatus");
+//		req.getSession().removeAttribute("updatePassStatus");
+//		req.getSession().removeAttribute("updateMailStatus");
+//		req.getSession().removeAttribute("updateUserNStatus");
 		
 		return "redirect:redirectToAccount";
 	}
 	
 	@PostMapping("changeUserName")
-	public String changeUserName(@RequestParam("userName")String name, HttpSession session, HttpServletRequest req, HttpServletResponse res) {
+	public String changeUserName(@RequestParam("userName")String name,
+								HttpSession session, HttpServletRequest req,
+								RedirectAttributes redirects, HttpServletResponse res) {
 		Integer userId = (Integer) session.getAttribute("userId");
+		String atrName = "updateUserNStatus";
 		if(!userService.updateUserName(userId, name)) {
-			req.getSession().setAttribute("updateUserNStatus", "Error during update operation");
+//			req.getSession().setAttribute("updateUserNStatus", "Error during update operation");
+			redirects.addFlashAttribute(atrName, updateMessageErr);
 		}
 		else {
-			req.getSession().setAttribute("updateUserNStatus", "Successfull update!");
+//			req.getSession().setAttribute("updateUserNStatus", "Successfull update!");
+			redirects.addFlashAttribute(atrName, updateMessageSucc);
 		}
 		
 		getUserData(userId, session, req);
@@ -244,13 +271,18 @@ public class UserController {
 	}
 	
 	@PostMapping("changePass")
-	public String changePass(@RequestParam("userPass")String pass, HttpSession session, HttpServletRequest req, HttpServletResponse res) {
+	public String changePass(@RequestParam("userPass")String pass,
+							HttpSession session, HttpServletRequest req,
+							RedirectAttributes redirects, HttpServletResponse res) {
 		Integer userId = (Integer) session.getAttribute("userId");
+		String atrName = "updatePassStatus";
 		if(!userService.updatePass(userId, pass)) {
-			req.getSession().setAttribute("updatePassStatus", "Error during update operation");
+//			req.getSession().setAttribute("updatePassStatus", "Error during update operation");
+			redirects.addFlashAttribute(atrName, updateMessageErr);
 		}
 		else {
-			req.getSession().setAttribute("updatePassStatus", "Successfull update!");
+//			req.getSession().setAttribute("updatePassStatus", "Successfull update!");
+			redirects.addFlashAttribute(atrName, updateMessageSucc);
 		}
 		
 		getUserData(userId, session, req);
@@ -260,13 +292,18 @@ public class UserController {
 	}
 	
 	@PostMapping("changeMail")
-	public String changeMail(@RequestParam("userMail")String mail, HttpSession session, HttpServletRequest req, HttpServletResponse res) {
+	public String changeMail(@RequestParam("userMail")String mail,
+							HttpSession session, HttpServletRequest req,
+							RedirectAttributes redirects, HttpServletResponse res) {
 		Integer userId = (Integer) session.getAttribute("userId");
+		String atrName = "updateMailStatus";
 		if(!userService.updateMail(userId, mail)) {
-			req.getSession().setAttribute("updateMailStatus", "Error during update operation");
+//			req.getSession().setAttribute("updateMailStatus", "Error during update operation");
+			redirects.addFlashAttribute(atrName, updateMessageErr);
 		}
 		else {
-			req.getSession().setAttribute("updateMailStatus", "Successfull update!");
+//			req.getSession().setAttribute("updateMailStatus", "Successfull update!");
+			redirects.addFlashAttribute(atrName, updateMessageSucc);
 		}
 		
 		getUserData(userId, session, req);
@@ -276,13 +313,18 @@ public class UserController {
 	}
 	
 	@PostMapping("changeName")
-	public String changeName(@RequestParam("name")String name, HttpSession session, HttpServletRequest req, HttpServletResponse res) {
+	public String changeName(@RequestParam("name")String name,
+							HttpSession session, HttpServletRequest req,
+							RedirectAttributes redirects, HttpServletResponse res) {
 		Integer userId = (Integer) session.getAttribute("userId");
+		String atrName = "updateNameStatus";
 		if(!userService.updateName(userId, name)) {
-			req.getSession().setAttribute("updateNameStatus", "Error during update operation");
+//			req.getSession().setAttribute("updateNameStatus", "Error during update operation");
+			redirects.addFlashAttribute(atrName, updateMessageErr);
 		}
 		else {
-			req.getSession().setAttribute("updateNameStatus", "Successfull update!");
+//			req.getSession().setAttribute("updateNameStatus", "Successfull update!");
+			redirects.addFlashAttribute(atrName, updateMessageSucc);
 		}
 		
 		getUserData(userId, session, req);
@@ -292,13 +334,18 @@ public class UserController {
 	}
 	
 	@PostMapping("changeSurname")
-	public String changeSurname(@RequestParam("surname")String surname, HttpSession session, HttpServletRequest req, HttpServletResponse res) {
+	public String changeSurname(@RequestParam("surname")String surname,
+								HttpSession session, HttpServletRequest req,
+								RedirectAttributes redirects, HttpServletResponse res) {
 		Integer userId = (Integer) session.getAttribute("userId");
+		String atrName = "updateSurnameStatus";
 		if(!userService.updateSurname(userId, surname)) {
-			req.getSession().setAttribute("updateSurnameStatus", "Error during update operation");
+//			req.getSession().setAttribute("updateSurnameStatus", "Error during update operation");
+			redirects.addFlashAttribute(atrName, updateMessageErr);
 		}
 		else {
-			req.getSession().setAttribute("updateSurnameStatus", "Successfull update!");
+//			req.getSession().setAttribute("updateSurnameStatus", "Successfull update!");
+			redirects.addFlashAttribute(atrName, updateMessageSucc);
 		}
 		
 		getUserData(userId, session, req);
@@ -308,14 +355,19 @@ public class UserController {
 	}
 	
 	@PostMapping("changePhoneNumber")
-	public String changePhoneNumber(@RequestParam("phoneNumber")Integer phoneNumber, HttpSession session, HttpServletRequest req, HttpServletResponse res) {
+	public String changePhoneNumber(@RequestParam("phoneNumber")Integer phoneNumber,
+									HttpSession session, HttpServletRequest req,
+									RedirectAttributes redirects, HttpServletResponse res) {
 		
 		Integer userId = (Integer) session.getAttribute("userId");
+		String atrName = "updatePhoneNumberStatus";
 		if(!userService.updatePhoneNumber(userId, phoneNumber)) {
-			req.getSession().setAttribute("updatePhoneNumberStatus", "Error during update operation");
+//			req.getSession().setAttribute("updatePhoneNumberStatus", "Error during update operation");
+			redirects.addFlashAttribute(atrName, updateMessageErr);
 		}
 		else {
-			req.getSession().setAttribute("updatePhoneNumberStatus", "Successfull update!");
+//			req.getSession().setAttribute("updatePhoneNumberStatus", "Successfull update!");
+			redirects.addFlashAttribute(atrName, updateMessageSucc);
 		}
 		
 		getUserData(userId, session, req);
@@ -325,11 +377,12 @@ public class UserController {
 	}
 	
 	@ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public String handleTypeMismatch(MethodArgumentTypeMismatchException ex, HttpServletRequest req) {
+    public String handleTypeMismatch(MethodArgumentTypeMismatchException ex, HttpServletRequest req, RedirectAttributes redirects) {
         String error = String.format("Parameter " + ex.getName() + " has invalid value " + ex.getValue() + " - expected type " + ex.getRequiredType().getSimpleName());
 //        return ResponseEntity.badRequest().body(error);
         if(ex.getName().equalsIgnoreCase("phonenumber"))
-        	req.getSession().setAttribute("updatePhoneNumberStatus", "Number is too long");
+//        	req.getSession().setAttribute("updatePhoneNumberStatus", "Number is too long");
+        	redirects.addFlashAttribute("updatePhoneNumberStatus", "Number is too long");
         return "redirect:redirectToAccount";
     }
 	
