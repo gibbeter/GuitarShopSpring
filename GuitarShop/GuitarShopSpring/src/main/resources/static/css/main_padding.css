@@ -38,12 +38,21 @@ body {
 }
 
 /* style contact lines as block elements */
-.contacts:last-of-type a, .contacts:last-of-type span {
+.contacts:last-of-type a{
+	text-decoration: none;
 	display: inline-block;
 	margin-right: 2rem;
 	margin-bottom: 0.5rem;
 	font-size: 1.1rem;
-	color: #475569;
+	color: #0080c0;
+}
+
+.contacts:last-of-type span {
+	display: inline-block;
+	margin-right: 2rem;
+	margin-bottom: 0.5rem;
+	font-size: 1.1rem;
+	color: #464646;
 }
 
 .contacts:last-of-type span:last-child {

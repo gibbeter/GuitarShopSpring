@@ -10,12 +10,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import com.example.demo.cartitem.CartDTO;
 import com.example.demo.cartitem.CartService;
@@ -45,7 +47,14 @@ public class UserController {
 	UserHelper helper;
 	
 	@GetMapping("redirectToIndex")
-	public String redirectToIdx(HttpServletRequest req) {
+	public String redirectToIdx(HttpServletRequest req, HttpSession session) {
+		
+		Integer userId = (Integer) session.getAttribute("userId");
+
+		if(userId != null) {
+			getUserData(userId, session, req);
+		}
+		
 		req.getSession().removeAttribute("updatePassStatus");
 		req.getSession().removeAttribute("updateMailStatus");
 		req.getSession().removeAttribute("updateUserNStatus");
@@ -75,8 +84,8 @@ public class UserController {
 		if(userId != null) {
 			getUserData(userId, session, req);
 		}
-		if(req.getAttribute("errorStatus") != null)
-			req.removeAttribute("errorStatus");
+//		if(session.getAttribute("errorStatus") != null)
+//			session.removeAttribute("errorStatus");
 		if(req.getSession().getAttribute("regStatus") != null)
 			req.getSession().removeAttribute("regStatus");
 		return "pages/account";
@@ -202,7 +211,7 @@ public class UserController {
 				}catch(Exception e) {
 					e.printStackTrace();
 				}
-		    	userService.removeUser(u.getUserId());
+//		    	userService.removeUser(u.getUserId());
 		    }
 		}
 		session.removeAttribute("userId");
@@ -300,6 +309,7 @@ public class UserController {
 	
 	@PostMapping("changePhoneNumber")
 	public String changePhoneNumber(@RequestParam("phoneNumber")Integer phoneNumber, HttpSession session, HttpServletRequest req, HttpServletResponse res) {
+		
 		Integer userId = (Integer) session.getAttribute("userId");
 		if(!userService.updatePhoneNumber(userId, phoneNumber)) {
 			req.getSession().setAttribute("updatePhoneNumberStatus", "Error during update operation");
@@ -313,6 +323,15 @@ public class UserController {
 
 		return "redirect:redirectToAccount";
 	}
+	
+	@ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public String handleTypeMismatch(MethodArgumentTypeMismatchException ex, HttpServletRequest req) {
+        String error = String.format("Parameter " + ex.getName() + " has invalid value " + ex.getValue() + " - expected type " + ex.getRequiredType().getSimpleName());
+//        return ResponseEntity.badRequest().body(error);
+        if(ex.getName().equalsIgnoreCase("phonenumber"))
+        	req.getSession().setAttribute("updatePhoneNumberStatus", "Number is too long");
+        return "redirect:redirectToAccount";
+    }
 	
 	
 	

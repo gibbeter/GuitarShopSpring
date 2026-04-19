@@ -113,7 +113,7 @@
                 <form class="action-forms" action="changePhoneNumber" method="post">
                 	<table>
 	                   	<tr>
-	                        <td>Phone</td>
+	                        <td>Phone (+381)</td>
 	                        <td><input type="text" name="phoneNumber" value="${phoneNumber}"></td>
 	                        <c:if test="${userType != 'guest'}">
 	                            <td><input type="submit" value="Change"></td>
@@ -159,13 +159,6 @@
             </div>
         </c:otherwise>
     </c:choose>
-    <div class="contacts">
-        <p>📞 Contacts</p>
-        <span>📷 Instagram</span>
-        <span>📘 Facebook</span>
-        <span>💬 Viber</span>
-        <span>📱 WhatsApp</span>
-        <span>📞 +8888888888</span>
-    </div>
+    <%@ include file="/pages/contacts.jsp" %>
 </body>
 </html>

@@ -68,12 +68,15 @@ table {
 }
 
 td {
+	vertical-align: top;
+    width: 100px;
 	background-color: #ffffff;
 	border-radius: 1rem;
 	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 	transition: transform 0.2s, box-shadow 0.2s;
 	text-align: center;
-	padding: 0;
+	font-size: 1.1rem;
+	padding: 0rem;
 	border: 1px solid #f1f5f9;
 }
 
@@ -88,11 +91,47 @@ td a {
 	font-weight: 600;
 	color: #334155;
 	border-radius: 1rem;
+	min-height: 180px;  /* ensure equal height */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 td a:hover {
 	background-color: #f1f5f9;
 	color: #1e293b;
+}
+
+td.all-prods{
+	width: 100px;
+}
+
+.all-products-link{
+	min-height: 50px;
+}
+
+.img-pan {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    align-content: center;
+    gap: 0.5rem;
+    padding: 1rem;
+    text-decoration: none;
+    color: #334155;
+    font-weight: 600;
+}
+
+.img-pan img {
+    width: 350px;
+    height: 100px;
+    object-fit: cover;      /* ensures all images have same proportions */
+    border-radius: 12px;
+    transition: transform 0.2s;
+}
+
+.img-pan:hover img {
+    transform: scale(1.05);
 }
 
 /* Responsive adjustments */

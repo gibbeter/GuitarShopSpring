@@ -6,25 +6,25 @@ import org.springframework.validation.annotation.Validated;
 @Validated
 public class ProductDTO {
 	
-	private int prodId;
+	private Integer prodId;
 	
 	private String productDesc;
 
 	private String productName;
 
-	private int productStock;
+	private Integer productStock;
 
-	private int productTypeId;
+	private Integer productTypeId;
 	
 	private String productTypeName;
 	
-	private int productPrice;
+	private Integer productPrice;
 
-	public int getProdId() {
+	public Integer getProdId() {
 		return prodId;
 	}
 
-	public void setProdId(int prodId) {
+	public void setProdId(Integer prodId) {
 		this.prodId = prodId;
 	}
 
@@ -44,19 +44,19 @@ public class ProductDTO {
 		this.productName = productName;
 	}
 
-	public int getProductStock() {
+	public Integer getProductStock() {
 		return productStock;
 	}
 
-	public void setProductStock(int stok) {
+	public void setProductStock(Integer stok) {
 		this.productStock = stok;
 	}
 
-	public int getProductType() {
+	public Integer getProductType() {
 		return productTypeId;
 	}
 
-	public void setProductType(int type) {
+	public void setProductType(Integer type) {
 		this.productTypeId = type;
 	}
 	
@@ -68,8 +68,8 @@ public class ProductDTO {
 		this.productTypeName = productTypeName;
 	}
 
-	public ProductDTO(int prodId, String productDesc, String productName, int productStock, int productTypeId,
-			String productTypeName, int price) {
+	public ProductDTO(Integer prodId, String productDesc, String productName, Integer productStock, Integer productTypeId,
+			String productTypeName, Integer price) {
 		this.prodId = prodId;
 		this.productDesc = productDesc;
 		this.productName = productName;
@@ -91,11 +91,11 @@ public class ProductDTO {
 				+ productTypeName + ", price=" + productPrice + "]";
 	}
 
-	public int getProductPrice() {
+	public Integer getProductPrice() {
 		return productPrice;
 	}
 
-	public void setProductPrice(int price) {
+	public void setProductPrice(Integer price) {
 		this.productPrice = price;
 	}
 

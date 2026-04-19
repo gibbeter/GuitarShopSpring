@@ -1,0 +1,4 @@
+# ignore backup files
+GuitarShop/GuitarShopSpring/src/main/db_backups/orders/*
+GuitarShop/GuitarShopSpring/src/main/db_backups/products/*
+GuitarShop/GuitarShopSpring/src/main/db_backups/users/*

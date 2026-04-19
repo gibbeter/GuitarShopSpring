@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import com.example.demo.GuitarShopSpringApplication;
+import com.example.demo.files.BackUpService;
 import com.example.demo.product.ProductDTO;
 import com.example.demo.product.ProductRepo;
 
@@ -41,6 +43,9 @@ public class OrderService {
 	
 	@Autowired
 	OrderItemRepo orderItemRepo;
+	
+	@Autowired
+	BackUpService backupService;
 
 	public OrderDTO createOrder(OrderDTO order) {
 		try {
@@ -111,7 +116,14 @@ public class OrderService {
 			o.setShippingAdress(order.getShippingAdress());
 			o.setCompletionTime(order.getCompletionTime());
 			o = orderRepo.save(o);
-			return orderToDTO(o);
+			
+			try {
+				saveToCSV();
+				return orderToDTO(o);
+			}catch(Exception e) {
+				e.printStackTrace();
+				return null;
+			}
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
@@ -158,7 +170,14 @@ public class OrderService {
 			o.setShippingAdress(order.getShippingAdress());
 			o.setCompletionTime(order.getCompletionTime());
 			o = orderRepo.save(o);
-			return true;
+
+			try {
+				saveToCSV();
+				return true;
+			}catch(Exception e) {
+				e.printStackTrace();
+				return false;
+			}
 		}catch(Exception e) {
 			e.printStackTrace();
 			return false;
@@ -173,7 +192,15 @@ public class OrderService {
 				orderItemRepo.delete(i);
 			}
 			orderRepo.delete(o);
-			return true;
+
+			try {
+				saveToCSV();
+				return true;
+			}catch(Exception e) {
+				e.printStackTrace();
+				return false;
+			}
+			
 		}catch(Exception e) {
 			e.printStackTrace();
 			return false;
@@ -220,6 +247,52 @@ public class OrderService {
 			e.printStackTrace();
 			return null;
 		}	
+	}
+	
+	private void saveToCSV(){
+
+        try{
+        	List<OrderDTO> ordersList = ordersToDTO(orderRepo.findAll());
+    		String prefix = "orders";
+    		String fileName = "orders";
+            String[] header = {"order_id","order_status","order_date","user_id","order_type",
+            					"pu_adress","sp_adress","comp_time","summ","name","surname","phone_number"};
+            
+            Function<OrderDTO, String[]> orderMapper = order -> new String[]{
+            		safeString(order.getOrderId()),
+            	    safeString(order.getOrderStatus()),
+            	    safeString(order.getOrderDate()),
+            	    safeString(order.getUserId()),
+            	    safeString(order.getOrderType()),
+            	    safeString(order.getPickupAdress()),
+            	    safeString(order.getShippingAdress()),
+            	    safeString(order.getCompletionTime()),
+            	    safeString(order.getSumm()),
+            	    safeString(order.getName()),
+            	    safeString(order.getSurname()),
+            	    safeString(order.getPhoneNumber())
+            	};
+            backupService.saveBackup(ordersList, prefix, fileName, header, orderMapper);
+        } catch (Exception e) {
+            // Handle exception appropriately
+            e.printStackTrace();
+        }
+		
+	}
+	
+	private String safeString(Object obj) {
+	    return obj != null ? obj.toString() : "";
+	}
+
+	private List<OrderDTO> ordersToDTO(List<Order> list) {
+		List<OrderDTO> res = new ArrayList<>();
+		if(list != null) {
+			for(Order o : list) {
+				res.add(orderToDTO(o));
+			}
+			return res;
+		}
+		return null;
 	}
 
 }

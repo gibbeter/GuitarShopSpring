@@ -117,13 +117,6 @@
 		</table>
 	</c:if>
 	
-	<div class="contacts">
-        <p>📞 Contacts</p>
-        <span>📷 Instagram</span>
-        <span>📘 Facebook</span>
-        <span>💬 Viber</span>
-        <span>📱 WhatsApp</span>
-        <span>📞 +8888888888</span>
-    </div>
+	<%@ include file="/pages/contacts.jsp" %>
 </body>
 </html>

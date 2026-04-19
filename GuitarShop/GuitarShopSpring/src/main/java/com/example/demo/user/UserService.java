@@ -1,10 +1,18 @@
 package com.example.demo.user;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Function;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.example.demo.GuitarShopSpringApplication;
+import com.example.demo.files.BackUpService;
+import com.example.demo.order.OrderDTO;
+
 import jakarta.validation.ValidationException;
+import model.Order;
 import model.User;
 
 @Service
@@ -14,6 +22,10 @@ public class UserService {
 	
 	@Autowired
 	UserRepo userRepo;
+	
+	@Autowired
+	BackUpService backupService;
+
 
 //    UserService(GuitarShopSpringApplication guitarShopSpringApplication) {
 //        this.guitarShopSpringApplication = guitarShopSpringApplication;
@@ -36,12 +48,19 @@ public class UserService {
 			newUser.setSurname(user.getSurname());
 			newUser.setPhoneNumber(user.getPhoneNumber());
 			userRepo.save(newUser);
+			
+			try {
+				saveToCSV();
+				return true;
+			}catch(Exception e) {
+				e.printStackTrace();
+				return false;
+			}
 		}
 		catch(ValidationException e) {
 //			e.printStackTrace();
 			return false;
 		}
-		return true;
 	}
 	
 	public UserDTO findById(Integer userId) {
@@ -143,6 +162,7 @@ public class UserService {
 		u.setPassword("dummy");
 		try {
 			userRepo.save(u);
+			saveToCSV();
 		}catch(Exception e) {
 			e.printStackTrace();
 			return null;
@@ -154,6 +174,8 @@ public class UserService {
 		try {
 			User u = userRepo.findById(userId).get();
 			userRepo.delete(u);
+			
+			saveToCSV();
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
@@ -214,5 +236,49 @@ public class UserService {
 			e.printStackTrace();
 			return false;
 		}
+	}
+	
+	
+	
+	private void saveToCSV(){
+
+        try{
+        	List<UserDTO> usersList = usersToDTO(userRepo.findAll());
+    		String prefix = "users";
+    		String fileName = "users";
+            String[] header = {"user_id","type","user_name","password","name",
+            					"name","surname","phone_number","user_mail"};
+            
+            Function<UserDTO, String[]> userMapper = user -> new String[]{
+            		safeString(user.getUserId()),
+            		safeString(user.getType()),
+            	    safeString(user.getUserName()),
+            	    safeString(user.getUserPass()),
+            	    safeString(user.getUserMail()),
+            	    safeString(user.getName()),
+            	    safeString(user.getSurname()),
+            	    safeString(user.getPhoneNumber())
+            	};
+            backupService.saveBackup(usersList, prefix, fileName, header, userMapper);
+        } catch (Exception e) {
+            // Handle exception appropriately
+            e.printStackTrace();
+        }
+		
+	}
+	
+	private List<UserDTO> usersToDTO(List<User> list) {
+		List<UserDTO> res = new ArrayList<>();
+		if(list != null) {
+			for(User u : list) {
+				res.add(userToDTO(u));
+			}
+			return res;
+		}
+		return null;
+	}
+
+	private String safeString(Object obj) {
+	    return obj != null ? obj.toString() : "";
 	}
 }

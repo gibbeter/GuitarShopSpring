@@ -53,7 +53,7 @@
 				<div class="field-pair">
 					<span class="tag">OrderStatus</span><span class="meta">
 						<select class="selection" name="orderStatus">
-							<option selected disabled hidden="">${order.orderStatus}</option>
+							<option selected hidden="">${order.orderStatus}</option>
 							<option value="NEW">NEW</option>
 							<option value="SHIPPING">SHIPPING</option>
 							<option value="COMPLETE">COMPLETE</option>
@@ -67,6 +67,16 @@
 				<div class="field-pair">
 					<span class="tag">Completion Date (estimated)</span>
 					<span class="meta"><input type="datetime-local" name="completionTime" value="${order.completionTime}"></span>
+				</div>
+				<div class="field-pair">
+					<span class="tag">Order type</span>
+					<span class="meta">
+						<select class="selection" name="orderType">
+							<option selected hidden="">${order.orderType}</option>
+							<option value="SP">Shipping (DHL)</option>
+							<option value="PU">Pick-Up</option>
+						</select>
+					</span>
 				</div>
 				<div class="field-pair">
 					<span class="tag">Pick-Up Adress</span>

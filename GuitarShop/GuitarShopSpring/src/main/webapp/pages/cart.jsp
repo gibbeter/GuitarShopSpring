@@ -27,9 +27,9 @@
         <div class="cart-summary">${cartDTO.summ}$</div>
     </div>
     
-    <c:if test="${!empty errorStatus}">
+    <c:if test="${!empty cartErrorStatus}">
 		<div class="error-container">
-			<span class="errorStatus">${errorStatus}</span>
+			<span class="errorStatus">${cartErrorStatus}</span>
 		</div>
 	</c:if>
 
@@ -133,14 +133,7 @@
         <p class="empty-cart">Your cart is empty</p>
     </c:if>
     
-    <div class="contacts">
-        <p>📞 Contacts</p>
-        <span>📷 Instagram</span>
-        <span>📘 Facebook</span>
-        <span>💬 Viber</span>
-        <span>📱 WhatsApp</span>
-        <span>📞 +8888888888</span>
-    </div>
+    <%@ include file="/pages/contacts.jsp" %>
     
     <script>
 		document.addEventListener('DOMContentLoaded', function() {

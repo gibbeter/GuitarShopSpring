@@ -71,7 +71,15 @@
 			<c:forEach items="${orders}" var="o">
 				<tr>
 					<td><b>${o.orderId}</b></td>
-					<td class="status" title="${o.orderStatus}">${o.orderStatus}</td>
+					<c:if test="${o.orderStatus == 'NEW'}">
+						<td class="status" title="${o.orderStatus}">In progress</td>
+					</c:if>
+					<c:if test="${o.orderStatus == 'SHIPPING'}">
+						<td class="status" title="${o.orderStatus}">In shipping</td>
+					</c:if>
+					<c:if test="${o.orderStatus == 'COMPLETE'}">
+						<td class="status" title="${o.orderStatus}">Ready to pick-up</td>
+					</c:if>
 					<td>${o.userId}</td>
 					<td>${o.name}</td>
 					<td>${o.surname}</td>
@@ -80,10 +88,12 @@
 					<td>${o.pickupAdress}</td>
 					<td>${o.shippingAdress}</td>
 					<td>${o.completionTime}</td>
-					<td>${o.summ}</td>
+					<td>${o.summ}.00$</td>
 				</tr>
 			</c:forEach>
 		</c:if>
-		</table>
+	</table>
+		
+	<%@ include file="/pages/contacts.jsp" %>
 </body>
 </html>

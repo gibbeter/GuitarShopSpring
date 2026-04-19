@@ -36,27 +36,49 @@
 
 	<table>
     	<tr>
-    		<td colspan="3"><a href="${pageContext.request.contextPath}/product/redirectToType" class="all-products-link">← All Products</a></td>
+    		<td colspan="3"><a href="${pageContext.request.contextPath}/product/redirectToType" class="all-products-link">← All products</a></td>
     	</tr>
         <tr>
-            <td><a href="${pageContext.request.contextPath}/product/redirectToType?type=guitar">🎸 Guitars</a></td>
-            <td><a href="${pageContext.request.contextPath}/product/redirectToType?userId=${userId}&type=drums">🥁 Drums</a></td>
-            <td><a href="${pageContext.request.contextPath}/product/redirectToType?userId=${userId}&type=keys">🎹 Keys</a></td>
+            <td>
+            	<a href="${pageContext.request.contextPath}/product/redirectToType?type=guitar" class="img-pan">
+            		<img src="/GuitarShop/img/guitars-pan.webp" alt="GUITARS">
+            		<span>Guitars</span>
+           		</a>
+         	</td>
+            <td>
+            <a href="${pageContext.request.contextPath}/product/redirectToType?type=drums" class="img-pan">
+            	<img src="/GuitarShop/img/drums-pan.webp" alt="GUITARS">
+            		<span>Drums</span>
+            	</a></td>
+            <td>
+            	<a href="${pageContext.request.contextPath}/product/redirectToType?type=keys" class="img-pan">
+            		<img src="/GuitarShop/img/keys-pan.webp" alt="GUITARS">
+            		<span>Keys</span>
+           		</a>
+           	</td>
         </tr>
         <tr>
-            <td><a href="${pageContext.request.contextPath}/product/redirectToType?type=microphone">🎤 Microphones</a></td>
-            <td><a href="${pageContext.request.contextPath}/product/redirectToType?type=cable">🔌 Cables & Connectors</a></td>
-            <td><a href="${pageContext.request.contextPath}/product/redirectToType?type=soft">💻 Software</a></td>
+            <td>
+            	<a href="${pageContext.request.contextPath}/product/redirectToType?type=microphone" class="img-pan">
+            		<img src="/GuitarShop/img/micro-pan.webp" alt="GUITARS">
+            		<span>Microphones</span>
+            	</a>
+            </td>
+            <td>
+           		<a href="${pageContext.request.contextPath}/product/redirectToType?type=cable" class="img-pan">
+            		<img src="/GuitarShop/img/cables-pan.webp" alt="GUITARS">
+            		<span>Cables & Connectors</span>
+            	</a>
+            </td>
+            <td>
+            	<a href="${pageContext.request.contextPath}/product/redirectToType?type=soft" class="img-pan">
+            		<img src="/GuitarShop/img/soft-pan.webp" alt="GUITARS">
+            		<span>Software</span>
+            	</a>
+            </td>
         </tr>
     </table>
-
-    <div class="contacts">
-        <p>📞 Contacts</p>
-        <span>📷 Instagram</span>
-        <span>📘 Facebook</span>
-        <span>💬 Viber</span>
-        <span>📱 WhatsApp</span>
-        <span>📞 +8888888888</span>
-    </div>
+	<!--🎸 🥁 🎹 🎤 🔌 💻 -->
+    <%@ include file="/pages/contacts.jsp" %>
 </body>
 </html>

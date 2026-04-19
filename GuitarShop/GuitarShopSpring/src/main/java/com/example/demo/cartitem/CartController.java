@@ -75,14 +75,14 @@ public class CartController {
 	UserHelper helper;
 	
 	@GetMapping("redirectToCart")
-	public String redirectToCart(@RequestParam(value="errorStatus", required=false)Optional<String> errorStatus,HttpSession session, HttpServletRequest req, HttpServletResponse res, Model m) {
+	public String redirectToCart(@RequestParam(value="cartErrorStatus", required=false)Optional<String> cartErrorStatus,HttpSession session, HttpServletRequest req, HttpServletResponse res, Model m) {
 		
 		res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
 	    res.setHeader("Pragma", "no-cache");
 	    res.setDateHeader("Expires", 0);
 	    
-	    if(errorStatus.isPresent()) {
-	    	m.addAttribute("errorStatus", errorStatus.get());
+	    if(cartErrorStatus.isPresent()) {
+	    	m.addAttribute("cartErrorStatus", cartErrorStatus.get());
 	    }
 		
 		Integer userId = (Integer) session.getAttribute("userId");
@@ -256,9 +256,9 @@ public class CartController {
 		if(bindingResult.hasErrors()) {
 			saveFormFields(pformDTO, session);
 			System.out.println(pformDTO.toString());
-			String errorStatus = "Check if you have filled all fields";
-//			m.addAttribute("errorStatus", errorStatus);
-			redirectAttributes.addFlashAttribute("errorStatus", errorStatus);
+			String cartErrorStatus = "Check if you have filled all fields";
+//			m.addAttribute("cartErrorStatus", cartErrorStatus);
+			redirectAttributes.addFlashAttribute("cartErrorStatus", cartErrorStatus);
 			System.out.println(bindingResult.getAllErrors());
 			return "redirect:redirectToCart";
 		}
@@ -338,12 +338,12 @@ public class CartController {
 //	    CartDTO cartDTO = cartService.findCart(items.get(0).getId().getCartId());
 	    
 	    cartService.purchaseCart(cartDTO.getCartId());
-	    UserDTO user = userService.findById(cartDTO.getUserId());
-	    if(user.getType().equalsIgnoreCase("guest")) {
-	    	itemService.removeAllCartItems(cartDTO.getCartId());
-	    	cartService.removeCart(cartDTO.getCartId());
-	    	userService.removeUser(cartDTO.getUserId());
-	    }
+//	    UserDTO user = userService.findById(cartDTO.getUserId());
+//	    if(user.getType().equalsIgnoreCase("guest")) {
+//	    	itemService.removeAllCartItems(cartDTO.getCartId());
+//	    	cartService.removeCart(cartDTO.getCartId());
+//	    	userService.removeUser(cartDTO.getUserId());
+//	    }
 	    
 //	    if(cartDTO != null)
     	return "redirect:redirectToCheck";
