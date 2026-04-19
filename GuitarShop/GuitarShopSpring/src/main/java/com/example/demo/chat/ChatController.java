@@ -17,6 +17,7 @@ import com.example.demo.user.UserHelper;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 
 @Controller()
 @RequestMapping("chat")
@@ -110,22 +111,34 @@ public class ChatController {
 		return new MessageDTO();
 	}
 	
+	@ModelAttribute("createMessageDTO")
+	public CreateMessageDTO getCreateMessageDTO() {
+		return new CreateMessageDTO();
+	}
+	
 	@ModelAttribute("chatDTO")
 	public ChatDTO getChatDTO() {
 		return new ChatDTO();
 	}
 	
 	@PostMapping("sendMessage")
-	public String sendMessage(@ModelAttribute("messageDTO")MessageDTO messageDTO,
-							@ModelAttribute("chatDTO")ChatDTO chatDTO,
+	public String sendMessage(@Valid @ModelAttribute("createMessageDTO")CreateMessageDTO createMessageDTO,
 							RedirectAttributes redirects, Model m) {
-		if(chatDTO != null)
-			messageDTO.setChatId(chatDTO.getChatId());
+//		if(chatDTO != null)
+//		@Valid @ModelAttribute("chatDTO")ChatDTO chatDTO
+//		Integer chatId = (Integer) m.getAttribute("orderId");
+		MessageDTO messageDTO = new MessageDTO(
+				createMessageDTO.getMessageText(),
+				createMessageDTO.getChatId(),
+				createMessageDTO.getSenderId()
+			);
+//		messageDTO.setChatId(chatId);
+//		messageDTO.setChatId(chatDTO.getChatId());
 		
 		MessageDTO newMessage = messageService.saveMessage(messageDTO);
 		System.out.println(newMessage);
 //		return "redirect:redirectToChat?chatId="+chatDTO.getChatId();
-		redirects.addFlashAttribute("chatId", chatDTO.getChatId());
+		redirects.addFlashAttribute("chatId", createMessageDTO.getChatId());
 		return "redirect:redirectToChat";
 //		return "pages/chat";
 	}

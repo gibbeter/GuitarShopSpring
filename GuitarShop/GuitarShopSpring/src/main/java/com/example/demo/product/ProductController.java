@@ -81,7 +81,7 @@ public class ProductController {
 	}
 	
 	@PostMapping("modifyProductData")
-	public String modifyProduct(@ModelAttribute("productDTO")ProductDTO prodDTO, RedirectAttributes redirects, Model m) {
+	public String modifyProduct(@Valid @ModelAttribute("productDTO")ProductDTO prodDTO, RedirectAttributes redirects, Model m) {
 		String modStatus = null;
 		try {
 			if(!productService.modifyProduct(prodDTO)) {
@@ -101,7 +101,7 @@ public class ProductController {
 	}
 	
 	@PostMapping("deleteProductData")
-	public String changeproduct(@ModelAttribute("productDTO")ProductDTO prodDTO, RedirectAttributes redirects, Model m) {
+	public String changeproduct(@Valid @ModelAttribute("productDTO")ProductDTO prodDTO, RedirectAttributes redirects, Model m) {
 		String delStatus = null;
 		try{
 			if(!productService.deleteProduct(prodDTO)) {
@@ -124,17 +124,33 @@ public class ProductController {
 		return new ProductDTO();
 	}
 	
+	@ModelAttribute("createProductDTO")
+	public CreateProductDTO getCreateProductDTO() {
+		return new CreateProductDTO();
+	}
+	
 	@ModelAttribute("typeDTO")
 	public TypeDTO getTypeDTO() {
 		return new TypeDTO();
 	}
 	
 	@PostMapping("addProduct")
-	public String addProduct(@ModelAttribute("productDTO")ProductDTO prodDTO, @ModelAttribute("typeDTO")TypeDTO typeDTO, HttpServletRequest req, HttpServletResponse res) {
+	public String addProduct(@Valid @ModelAttribute("createProductDTO")CreateProductDTO createProdDTO,
+							@Valid @ModelAttribute("typeDTO")TypeDTO typeDTO,
+							HttpServletRequest req, HttpServletResponse res) {
 //		System.out.println(prodDTO);
 //		System.out.println(typeDTO);
 		Type type = productService.saveType(typeDTO);
-		prodDTO.setProductType(type.getTypeId());
+//		System.out.println(createProdDTO.getProductTypeName());
+		ProductDTO prodDTO = new ProductDTO(
+				createProdDTO.getProductName(),
+				createProdDTO.getProductDesc(),
+				type.getTypeId(),
+				type.getName(),
+				createProdDTO.getProductStock(),
+				createProdDTO.getProductPrice()
+				);
+//		prodDTO.setProductType(type.getTypeId());
 		productService.saveProduct(prodDTO);
 		
 		return "redirect:redirectToStorage";
@@ -224,13 +240,19 @@ public class ProductController {
 		return "pages/storage";
 	}
 	
-	@ModelAttribute("overviewDTO")
-	public OverviewDTO getOverviewDTO() {
-		return new OverviewDTO();
+//	@ModelAttribute("overviewDTO")
+//	public OverviewDTO getOverviewDTO() {
+//		return new OverviewDTO();
+//	}
+	
+	@ModelAttribute("createOverviewDTO")
+	public CreateOverviewDTO getCreateOverviewDTO() {
+		return new CreateOverviewDTO();
 	}
 	
+	
 	@PostMapping("postOverview")
-	public String postOverview(@ModelAttribute("overviewDTO")OverviewDTO overDTO,
+	public String postOverview(@Valid @ModelAttribute("createOverviewDTO")CreateOverviewDTO createOverDTO,
 							@RequestParam("prodId")Integer prodId,
 							HttpSession session, Model m,
 							RedirectAttributes redirects, HttpServletResponse res) {
@@ -251,8 +273,12 @@ public class ProductController {
 		}
 		else {
 			UserDTO user = userService.findById(userId);
-			overDTO.setUserName(user.getUserName());
-			overDTO.setId(new OverviewPK(userId, prodId));
+			OverviewDTO overDTO = new OverviewDTO(
+					new OverviewPK(userId, prodId),
+					createOverDTO.getRating(),
+					createOverDTO.getText(),
+					user.getUserName()
+					);
 			overDTO = overviewService.newOverview(overDTO);
 			
 			if(overDTO != null) {

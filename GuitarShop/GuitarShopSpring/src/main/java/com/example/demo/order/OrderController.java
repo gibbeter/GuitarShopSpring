@@ -70,7 +70,9 @@ public class OrderController {
 	}
 	
 	@GetMapping("redirectToModifyOrderPage")
-	public String redirectToOrders(@ModelAttribute("orderId")Integer orderId, @ModelAttribute(value="modStatus")Optional<String> modStatus, Model m) {
+	public String redirectToOrders(@ModelAttribute("orderId")Integer orderId,
+									@ModelAttribute(value="modStatus")Optional<String> modStatus,
+									Model m) {
 		OrderDTO orderDTO = orderService.findOrder(orderId);
 		if(orderDTO != null)
 			m.addAttribute("order", orderDTO);
@@ -92,7 +94,8 @@ public class OrderController {
     }
 	
 	@PostMapping("modifyOrderData")
-	public String modifyOrder(@ModelAttribute("orderDTO")OrderDTO orderDTO, RedirectAttributes redirects, Model m) {
+	public String modifyOrder(@Valid @ModelAttribute("orderDTO")OrderDTO orderDTO,
+								RedirectAttributes redirects, Model m) {
 		String modStatus = null;
 		try {
 			if(!orderService.modifyOrder(orderDTO)) {
@@ -112,7 +115,8 @@ public class OrderController {
 	}
 	
 	@PostMapping("deleteOrderData")
-	public String deleteOrder(@ModelAttribute("orderDTO")OrderDTO orderDTO, RedirectAttributes redirects, Model m) {
+	public String deleteOrder(@Valid @ModelAttribute("orderDTO")OrderDTO orderDTO,
+								RedirectAttributes redirects, Model m) {
 		String delStatus = null;
 		try{
 			if(!orderService.deleteOrder(orderDTO)) {

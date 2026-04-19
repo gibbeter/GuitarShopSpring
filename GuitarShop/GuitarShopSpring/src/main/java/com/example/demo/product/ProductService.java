@@ -49,6 +49,7 @@ public class ProductService {
 			newP.setProductDesc(productDTO.getProductDesc());
 			newP.setTypeBean(typeRepo.findById(productDTO.getProductType()).get());
 			newP.setStock(productDTO.getProductStock());
+			newP.setPrice(productDTO.getProductPrice());
 			productRepo.save(newP);
 			
 			try {

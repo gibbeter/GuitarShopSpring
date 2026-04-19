@@ -2,24 +2,39 @@ package com.example.demo.product;
 
 import org.springframework.validation.annotation.Validated;
 
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
 
 @Validated
 public class ProductDTO {
 	
+	@NotNull
 	private Integer prodId;
 	
+	@Size(min = 0, max = 65535, message="Description is too long")
 	private String productDesc;
 
+	@NotNull
+	@Size(min = 0, max = 255, message="Name is too long")
 	private String productName;
 
+	@NotNull
+	@Min(0)
 	private Integer productStock;
 
+	@NotNull
 	private Integer productTypeId;
 	
+	@NotNull
+	@Size(min = 0, max = 255, message="Type name is too long")
 	private String productTypeName;
 	
+	@NotNull
+	@Min(0)
 	private Integer productPrice;
-
+	
 	public Integer getProdId() {
 		return prodId;
 	}
@@ -71,11 +86,21 @@ public class ProductDTO {
 	public ProductDTO(Integer prodId, String productDesc, String productName, Integer productStock, Integer productTypeId,
 			String productTypeName, Integer price) {
 		this.prodId = prodId;
-		this.productDesc = productDesc;
 		this.productName = productName;
-		this.productStock = productStock;
+		this.productDesc = productDesc;
 		this.productTypeId = productTypeId;
 		this.productTypeName = productTypeName;
+		this.productStock = productStock;
+		this.productPrice = price;
+	}
+	
+	public ProductDTO(String productName,String productDesc, Integer productTypeId,
+			String productTypeName, Integer productStock, Integer price) {
+		this.productName = productName;
+		this.productDesc = productDesc;
+		this.productTypeId = productTypeId;
+		this.productTypeName = productTypeName;
+		this.productStock = productStock;
 		this.productPrice = price;
 	}
 

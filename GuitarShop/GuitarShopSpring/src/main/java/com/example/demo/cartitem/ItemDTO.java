@@ -7,6 +7,8 @@ import com.example.demo.product.ProductDTO;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import model.Cart;
 import model.CartitemPK;
 import model.Product;
@@ -15,12 +17,16 @@ import model.Product;
 @Validated
 public class ItemDTO {
 
+	@NotNull
 	private CartitemPK id;
 
+	@NotNull
+	@Min(0)
 	private int quantity;
 
 	//private CartDTO cart;
 
+	@NotNull
 	private ProductDTO product;
 	
 	public CartitemPK getId() {

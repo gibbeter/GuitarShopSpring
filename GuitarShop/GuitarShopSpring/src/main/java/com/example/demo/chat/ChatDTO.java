@@ -2,23 +2,35 @@ package com.example.demo.chat;
 
 import java.util.List;
 
+import org.springframework.validation.annotation.Validated;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import model.Message;
 
+@Validated
 public class ChatDTO {
 
+	@NotNull
 	private Integer chatId;
-
+	
+	@NotNull
 	private Integer user1Id;
 
+	@NotNull
 	private Integer user2Id;
 	
+	@NotNull
+	@Size(min=1, max=255, message="User name is too long/Cant be empty")
 	private String user1Username;
 	
+	@NotNull
+	@Size(min=1, max=255, message="User name is too long/Cant be empty")
 	private String user2Username;	
 	
 	public String getUser1Username() {

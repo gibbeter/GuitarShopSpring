@@ -1,11 +1,19 @@
 package com.example.demo.adress;
 
-import jakarta.persistence.Column;
+import org.springframework.validation.annotation.Validated;
 
+import jakarta.persistence.Column;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+
+@Validated
 public class StoreAdressDTO {
 	
+	@NotNull
 	private Integer storeId;
 
+	@Pattern(regexp = "^[A-Za-zÀ-ÖØ-öø-ÿ'’\\-\\.\\s]+,\\s*[A-Za-zÀ-ÖØ-öø-ÿ'’\\-\\.\\s]+,\\s*[A-Za-z0-9\\-]+,\\s*[A-Za-z0-9\\-]+$",
+            message = "Format must be: CITY, STREET, NUMBER, APARTMENT")
 	private String storeAdress;
 
 	public Integer getStoreId() {

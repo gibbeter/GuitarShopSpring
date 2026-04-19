@@ -4,18 +4,23 @@ import java.util.List;
 
 import org.springframework.validation.annotation.Validated;
 
+import jakarta.validation.constraints.NotNull;
 import model.Cartitem;
 
 
 @Validated
 public class CartDTO {
 	
+	@NotNull
 	private int cartId;
 	
+	@NotNull
 	private int summ;
 
+	@NotNull
 	private int userId;
 	
+	@NotNull
 	private List<ItemDTO> cartitems;
 
 

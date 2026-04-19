@@ -13,10 +13,10 @@ import jakarta.validation.constraints.Size;
 import model.Chat;
 
 @Validated
-public class MessageDTO {
+public class CreateMessageDTO {
 
-	@NotNull
-	private Integer messageId;
+//	@NotNull
+//	private Integer messageId;
 
 	@NotNull
 	@Size(min=1, max=255, message="Message text is too long/empty")
@@ -28,13 +28,13 @@ public class MessageDTO {
 	@NotNull
 	private Integer senderId;
 
-	public Integer getMessageId() {
-		return messageId;
-	}
-
-	public void setMessageId(Integer messageId) {
-		this.messageId = messageId;
-	}
+//	public Integer getMessageId() {
+//		return messageId;
+//	}
+//
+//	public void setMessageId(Integer messageId) {
+//		this.messageId = messageId;
+//	}
 
 	public String getMessageText() {
 		return messageText;
@@ -52,26 +52,20 @@ public class MessageDTO {
 		this.chatId = chatId;
 	}
 
-	public MessageDTO(Integer messageId, String messageText, Integer chatId, Integer senderId) {
-		this.messageId = messageId;
+	public CreateMessageDTO(String messageText, Integer chatId, Integer senderId) {
+//		this.messageId = messageId;
 		this.messageText = messageText;
 		this.chatId = chatId;
 		this.senderId = senderId;
 	}
 	
-	public MessageDTO(String messageText, Integer chatId, Integer senderId) {
-		this.messageText = messageText;
-		this.chatId = chatId;
-		this.senderId = senderId;
-	}
-	
-	public MessageDTO() {
+	public CreateMessageDTO() {
 
 	}
 
 	@Override
 	public String toString() {
-		return "MessageDTO [messageId=" + messageId + ", messageText=" + messageText + ", chat=" + chatId + "sender=" + senderId + "]";
+		return "MessageDTO [messageText=" + messageText + ", chat=" + chatId + "sender=" + senderId + "]";
 	}
 
 	public Integer getSenderId() {

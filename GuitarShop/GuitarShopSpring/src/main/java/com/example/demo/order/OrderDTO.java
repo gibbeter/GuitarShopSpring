@@ -12,7 +12,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.FutureOrPresent;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import model.Cartitem;
 import model.Orderitem;
 
@@ -34,18 +37,23 @@ public class OrderDTO {
 	private Integer userId;
 	
 	@NotNull
+	@Size(max=255, message="Name is too long")
 	private String name;
 	
 	@NotNull
+	@Size(max=255, message="Surname is too long")
 	private String surname;
 	
 	@NotNull
+	@Min(100000000)
+	@Max(999999999)
 	private Integer phoneNumber;
 	
 	@NotNull
 	private Integer summ;
 
 	@NotNull
+	@Size(min=2, max=2, message="Order type wrong format")
 	private String orderType;
 
 	@NotNull
