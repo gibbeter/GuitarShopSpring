@@ -15,6 +15,7 @@ import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import model.Cartitem;
 import model.Orderitem;
@@ -27,7 +28,7 @@ public class OrderDTO {
 	private Integer orderId;
 
 	@NotNull
-	@FutureOrPresent
+//	@FutureOrPresent
 	private Date orderDate;
 
 	@NotNull
@@ -45,26 +46,30 @@ public class OrderDTO {
 	private String surname;
 	
 	@NotNull
-	@Min(100000000)
-	@Max(999999999)
+	@Min(value=100000000, message="number is too short")
+	@Max(value=999999999, message="number is too long")
 	private Integer phoneNumber;
 	
 	@NotNull
 	private Integer summ;
 
 	@NotNull
-	@Size(min=2, max=2, message="Order type wrong format")
+//	@Size(min=2, max=2, message="Order type wrong format")
 	private String orderType;
 
 	@NotNull
+	@Pattern(regexp = "^[A-Za-zÀ-ÖØ-öø-ÿ'’\\-\\.\\s]+,\\s*[A-Za-zÀ-ÖØ-öø-ÿ'’\\-\\.\\s]+,\\s*[A-Za-z0-9\\-]+,\\s*[A-Za-z0-9\\-]+$",
+	message = "Format must be: CITY, STREET, NUMBER, APARTMENT")
 	private String pickupAdress;
 
 	@NotNull
+	@Pattern(regexp = "^[A-Za-zÀ-ÖØ-öø-ÿ'’\\-\\.\\s]+,\\s*[A-Za-zÀ-ÖØ-öø-ÿ'’\\-\\.\\s]+,\\s*[A-Za-z0-9\\-]+,\\s*[A-Za-z0-9\\-]+$",
+	message = "Format must be: CITY, STREET, NUMBER, APARTMENT")
 	private String shippingAdress;
 
 	private Date completionTime;
 	
-	@NotNull
+//	@NotNull
 	private List<OrderItemDTO> orderitems;
 
 	public Integer getOrderId() {

@@ -8,15 +8,22 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.cartitem.ItemDTO;
 import com.example.demo.cartitem.ItemRepo;
+import com.example.demo.exception.BusinessException;
+import com.example.demo.exception.EntityNotFoundException;
+import com.example.demo.exception.InvalidBackUpPathException;
 import com.example.demo.files.BackUpService;
 import com.example.demo.product.ProductDTO;
 import com.example.demo.product.ProductRepo;
+import com.example.demo.user.UserController;
 import com.opencsv.CSVWriter;
 
 import jakarta.validation.ValidationException;
@@ -41,6 +48,8 @@ public class ProductService {
 	
 	@Autowired
 	BackUpService backupService;
+	
+	private static final Logger log = LoggerFactory.getLogger(ProductService.class);
 
 	public boolean saveProduct(ProductDTO productDTO) {
 		try {
@@ -52,16 +61,17 @@ public class ProductService {
 			newP.setPrice(productDTO.getProductPrice());
 			productRepo.save(newP);
 			
-			try {
-				saveToCSV(productDTO);
-				return true;
-			}catch(Exception ex) {
-				return false;
-			}
-			
+			saveToCSV(productDTO);
+
+			return true;
 		}
 		catch(ValidationException e) {
-			return false;
+		    log.warn("Validation error saving product: {}", e.getMessage());
+		    throw new BusinessException("VALIDATION_ERROR", e.getMessage());
+		}
+		catch(Exception e) {
+			log.warn("Error saving product: {}", e.getMessage());
+			throw new BusinessException("PRODUCT_SAVE_ERROR", e.getMessage());
 		}
 	}
 	
@@ -81,10 +91,9 @@ public class ProductService {
             	    product.getProductDesc()
             	};
             backupService.saveBackup(productsList, prefix, fileName, header, productMapper);
-        } catch (Exception e) {
-            // Handle exception appropriately
-            e.printStackTrace();
-        }
+        } catch(InvalidBackUpPathException e) {
+			log.error("Backup error: {}", e.getMessage());
+		}
 	}
 	
 	
@@ -105,19 +114,18 @@ public class ProductService {
 	@Transactional
 	public boolean modifyProduct(ProductDTO productDTO) {
 		try {
-			Product newP = productRepo.findById(productDTO.getProdId()).get();
+			Product newP = productRepo.findById(productDTO.getProdId())
+    								.orElseThrow(() -> new EntityNotFoundException("Product", productDTO.getProdId()));
+			Type type = typeRepo.findById(productDTO.getProductType())
+    							.orElseThrow(() -> new EntityNotFoundException("Type", productDTO.getProductType()));
 			newP.setProductName(productDTO.getProductName());
 			newP.setProductDesc(productDTO.getProductDesc());
-			newP.setTypeBean(typeRepo.findById(productDTO.getProductType()).get());
+			newP.setTypeBean(type);
 			newP.setStock(productDTO.getProductStock());
 			productRepo.save(newP);
 			
-			try {
-				saveToCSV(productDTO);
-				return true;
-			}catch(Exception ex) {
-				return false;
-			}
+			saveToCSV(productDTO);
+			return true;
 		}
 		catch(ValidationException e) {
 			e.printStackTrace();
@@ -137,23 +145,22 @@ public class ProductService {
 
 	public Type saveType(TypeDTO typeDTO) { // save new one or return existing type
 		try {
-			try {
-				if(typeRepo.findByName(typeDTO.getTypeName()) != null) {
-					return typeRepo.findByName(typeDTO.getTypeName());
-				}
-			}catch(Exception e) {
-				e.printStackTrace();
+			Type t = typeRepo.findByName(typeDTO.getTypeName());
+			if(t != null) {
+				return t;
 			}
+
 			Type newType = new Type();
 			newType.setName(typeDTO.getTypeName());
 			return typeRepo.save(newType);
-		}catch(Exception e) {
-			e.printStackTrace();
-			return null;
+			
+		}catch(DataAccessException e) {
+			log.error("Database error: {}", e.getMessage());
+			throw new BusinessException("DB_ERROR", "Database error: " + e.getMessage());
 		}
 	}
 
-	public Object findTypes() {
+	public List<TypeDTO> findTypes() {
 		List<TypeDTO> res = new ArrayList<TypeDTO>();
 		List<Type> list = typeRepo.findAll();
 		for(Type t : list) {
@@ -172,8 +179,9 @@ public class ProductService {
 		return res;
 	}
 
-	public ProductDTO findProdById(Integer id) {
-		Product p = productRepo.findById(id).get();
+	public ProductDTO findProdById(Integer prodId) {
+		Product p = productRepo.findById(prodId)
+        		.orElseThrow(() -> new EntityNotFoundException("Product", prodId));
 		ProductDTO pDTO= new ProductDTO(p.getProdId(), p.getProductDesc(), p.getProductName(), p.getStock(),
 									p.getTypeBean().getTypeId(), p.getTypeBean().getName(), p.getPrice());
 		return pDTO;
@@ -181,9 +189,11 @@ public class ProductService {
 	
 	public boolean changeStock(Integer prodId, Integer q) {
 		try {
-			Product prod = productRepo.findById(prodId).get();
-			prod.setStock(prod.getStock() - q);
-			return productRepo.save(prod) != null;
+			Product p = productRepo.findById(prodId)
+			        				.orElseThrow(() -> new EntityNotFoundException("Product", prodId));
+			p.setStock(p.getStock() - q);
+			productRepo.save(p);
+			return true;
 		}catch(Exception e) {
 			e.printStackTrace();
 			return false;
@@ -196,15 +206,13 @@ public class ProductService {
 			itemRepo.deleteAllByProductId(productDTO.getProdId());
 			overRepo.deleteAllByProductId(productDTO.getProdId());
 			
-			Product p = productRepo.findById(productDTO.getProdId()).get();
+			Product p = productRepo.findById(productDTO.getProdId())
+			        				.orElseThrow(() -> new EntityNotFoundException("Product", productDTO.getProdId()));
 			productRepo.delete(p);
 			
-			try {
-				saveToCSV(productDTO);
-				return true;
-			}catch(Exception ex) {
-				return false;
-			}
+			saveToCSV(productDTO);
+			return true;
+
 		}catch(Exception e) {
 			e.printStackTrace();
 		}

@@ -3,9 +3,13 @@ package com.example.demo.order;
 import java.util.List;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.exception.BusinessException;
 import com.example.demo.product.ProductDTO;
 import com.example.demo.product.ProductRepo;
 
@@ -28,6 +32,8 @@ public class OrderItemService {
 	
 	@Autowired
 	ProductRepo prodRepo;
+	
+	private static final Logger log = LoggerFactory.getLogger(OrderItemService.class);
 
 	public OrderItemDTO saveItem(OrderItemDTO orderItemDTO) {
 		try {
@@ -37,10 +43,10 @@ public class OrderItemService {
 			i.setQuantity(orderItemDTO.getQuantity());
 			i = orderItemRepo.save(i);
 			return itemToDTO(i);
-		}catch(Exception e) {
-			e.printStackTrace();
+		}catch(DataAccessException e) {
+		    log.error("Database error: {}", e.getMessage());
+		    throw new BusinessException("DB_ERROR", "Database error: " + e.getMessage());
 		}
-		return null;
 	}
 	
 	public OrderItemDTO itemToDTO(Orderitem o) {

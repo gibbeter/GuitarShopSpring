@@ -6,6 +6,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -20,6 +22,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.demo.adress.StoreAdressService;
+import com.example.demo.exception.BusinessException;
+import com.example.demo.exception.EntityNotFoundException;
 import com.example.demo.order.OrderDTO;
 import com.example.demo.order.OrderItemDTO;
 import com.example.demo.order.OrderItemService;
@@ -40,6 +44,7 @@ import model.CartitemPK;
 import model.OrderitemPK;
 import model.Product;
 import model.Type;
+import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
@@ -62,17 +67,19 @@ public class CartController {
 	@Autowired
 	UserService userService;
 	
-	@Autowired
-	OrderService orderService;
+//	@Autowired
+//	OrderService orderService;
 	
-	@Autowired
-	OrderItemService orderItemService;
+//	@Autowired
+//	OrderItemService orderItemService;
 	
 	@Autowired
 	StoreAdressService adressService;
 	
 	@Autowired
 	UserHelper helper;
+	
+	private static final Logger log = LoggerFactory.getLogger(CartController.class);
 	
 	@GetMapping("redirectToCart")
 	public String redirectToCart(@RequestParam(value="cartErrorStatus", required=false)Optional<String> cartErrorStatus,HttpSession session, HttpServletRequest req, HttpServletResponse res, Model m) {
@@ -92,7 +99,6 @@ public class CartController {
 			UserDTO guest = createGuest();
 			userId = guest.getUserId();
 			session.setAttribute("userId", guest.getUserId());
-//			session.setAttribute("userName", guest.getUserName());
 
 			return "redirect:/cart/redirectToCart";
 		}
@@ -107,44 +113,27 @@ public class CartController {
 		if(userDTO.getPhoneNumber() != null)
 			session.setAttribute("userPhoneTemp", userDTO.getPhoneNumber());
 		
-//		if(session.getAttribute("userNameTemp") != null)
-//			m.addAttribute("userNameTemp", session.getAttribute("userNameTemp"));
-//		
-//		if(session.getAttribute("userSurnameTemp") != null)
-//			m.addAttribute("userSurnameTemp", session.getAttribute("userSurnameTemp"));
 		
-//		if(session.getAttribute("userNameTemp") != null)
-//			session.setAttribute("userPhoneTemp", pformDTO.getUserPhone());
-//		if(session.getAttribute("userNameTemp") != null)
-//			session.setAttribute("shippingTypeTemp", pformDTO.getShippingType());
-//		if(session.getAttribute("userNameTemp") != null)
-//			session.setAttribute("SPAdressTemp", pformDTO.getSPAdress());
-//		if(session.getAttribute("userNameTemp") != null)
-//			session.setAttribute("PUAdressTemp", pformDTO.getPUAdress());
-		
-		
-		if(userService.findById(userId).getType().contains("guest"))
+		if(userDTO.getType().contains("guest"))
 			req.getSession().setAttribute("guestStatus", "You are buying as guest");
 		else
 			req.getSession().removeAttribute("guestStatus");
 
-		
-		CartDTO cartDTO = cartService.findCartByUser(userId);
-		
-		if(cartDTO == null) {
+		CartDTO cartDTO = new CartDTO();
+		try {
+			cartDTO = cartService.findCartByUser(userId);
+		}catch(EntityNotFoundException e) {
 			cartDTO = cartService.newCart(userId);
-		}else {
+		}finally {
 			cartService.updateSumm(userId);
 			cartDTO = cartService.findCartByUser(userId);
 		}
 		
+
+		
 		List<ItemDTO> items = cartDTO.getCartitems();
-//			List<ProductDTO> products = new ArrayList<>();
-//			for(Cartitem item: items) {
-//				products.add(productService.findProdById(item.getId().getProdId()));
-//			}
+
 		m.addAttribute("cartDTO", cartDTO);
-//		session.setAttribute("cartDTO", cartDTO);
 		session.setAttribute("items", items);
 		m.addAttribute("pickAdresses", adressService.findAllStores());
 		
@@ -170,7 +159,7 @@ public class CartController {
 							HttpSession session, HttpServletRequest req,
 							RedirectAttributes redirects, HttpServletResponse res) {
 		if(stock > 0) {
-			Integer userId = (Integer) req.getSession().getAttribute("userId");
+			Integer userId = (Integer) session.getAttribute("userId");
 			if(userId == null) {
 				UserDTO guest = createGuest();
 				userId = guest.getUserId();
@@ -178,10 +167,10 @@ public class CartController {
 				session.setAttribute("userName", guest.getUserName());
 			}
 			//cart
-			CartDTO cartDTO = updateCart(userId);
+			CartDTO cartDTO = cartService.updateCart(userId);
 			
 			//item add
-			ItemDTO itemDTO = updateCartitem(cartDTO, prodId);
+			ItemDTO itemDTO = cartService.updateCartitem(cartDTO, prodId);
 		}
 		if(type.isPresent()) {
 			redirects.addFlashAttribute("prodId", prodId);
@@ -192,30 +181,17 @@ public class CartController {
 			}
 			else {
 //				return "redirect:/product/redirectToType?type="+type.get()+"&prodId=" + prodId+"&itemStatus=added";
-				redirects.addFlashAttribute("type", type.get());
-				return "redirect:/product/redirectToType";
+//				redirects.addFlashAttribute("type", type.get());
+				return "redirect:/product/redirectToType?type=" + type.get();
 			}
 				
 		}
 //		return "redirect:/product/redirectToProductPage?itemStatus=added&prodId=" + prodId;
-		return "redirect:/product/redirectToProductPage";
+//		redirects.addFlashAttribute("prodId", prodId);
+		redirects.addFlashAttribute("itemStatus", "added");
+		return "redirect:/product/redirectToProductPage?itemStatus=added&prodId=" + prodId;
 	}
 	
-	public CartDTO updateCart(Integer userId) {
-		CartDTO cartDTO = cartService.findCartByUser(userId);
-		if(cartDTO == null) {
-			cartDTO = cartService.newCart(userId);
-		}
-		return cartDTO;
-	}
-	
-	public ItemDTO updateCartitem(CartDTO cartDTO, Integer prodId) {
-		ItemDTO itemDTO = cartService.findItemInCart(cartDTO.getCartId(), prodId);
-		if(itemDTO == null) {
-			itemDTO = itemService.saveItem(cartDTO.getCartId(), prodId);
-		}
-		return itemDTO;
-	}
 	
 	@ModelAttribute("cartDTO")
 	public CartDTO getCartDTO() {
@@ -247,10 +223,7 @@ public class CartController {
 				session.removeAttribute("PUAdressTemp");
 			}
 		}
-//		if(pformDTO.getSPAdress() != null)
-//			session.setAttribute("SPAdressTemp", pformDTO.getSPAdress());
-//		if(pformDTO.getPUAdress() != null)
-//			session.setAttribute("PUAdressTemp", pformDTO.getPUAdress());
+
 	}
 	
 	@PostMapping("purchaseCart")
@@ -260,136 +233,55 @@ public class CartController {
 			            @Valid @ModelAttribute("pformDTO") PurchaseFormDTO pformDTO,
 			            BindingResult bindingResult, HttpSession session,
 			            HttpServletResponse res, Model m,
-			            RedirectAttributes redirectAttributes) {
-//		if(req.getSession().getAttribute("check") != null)
-//			req.getSession().setAttribute("check", req.getSession().getAttribute("check"));
+			            RedirectAttributes redirects) {
+
 		
 		if(bindingResult.hasErrors()) {
 			saveFormFields(pformDTO, session);
-			System.out.println(pformDTO.toString());
+			log.debug("Purchase form: {}", pformDTO.toString());
 			String cartErrorStatus = "Check if you have filled all fields";
-//			m.addAttribute("cartErrorStatus", cartErrorStatus);
-			redirectAttributes.addFlashAttribute("cartErrorStatus", cartErrorStatus);
-			System.out.println(bindingResult.getAllErrors());
+			redirects.addFlashAttribute("cartErrorStatus", cartErrorStatus);
+			log.warn("Binding result: {}", bindingResult.getAllErrors());
 			return "redirect:redirectToCart";
 		}
 		
 		saveFormFields(pformDTO, session);
 		
-	    Integer userId = (Integer) session.getAttribute("userId");// to the start of method
+	    Integer userId = (Integer) session.getAttribute("userId");
+	    CartDTO cartDTO = cartService.findCart(cartIds[0]);
+
 		
-		List<ItemDTO> items = new ArrayList<>();
-		CartDTO cartDTO = cartService.findCart(cartIds[0]);
-//		System.out.println(cartDTO);
-		
-		//check
-	    JasperPrint report = getCheck(cartDTO.getUserId(), pformDTO, res, m);
-	    if(report != null) {
-	    	System.out.println(session.getAttribute("check"));
-	    	session.setAttribute("check", report);
+		try {
+			JasperPrint report = getCheck(cartDTO.getUserId(), pformDTO, res, redirects, m);
+			OrderDTO order = cartService.createPurchase(userId, cartIds, productIds, quantities, pformDTO);
+	        if(report != null)
+	        	session.setAttribute("check", report);
+		}catch(BusinessException e) {
+	        log.error("Purchase error: {}", e.getMessage());
+	        redirects.addFlashAttribute("cartErrorStatus", "Error during purchase");
+	        return "redirect:redirectToCart";
 	    }
-		
-	    
-	    //order
-	    OrderDTO order = new OrderDTO();
-	    order.setUserId(userId);
-	    order.setOrderDate(new Date());
-	    order.setOrderStatus("NEW");
-	    
-	    order = orderService.createOrder(order);
-	    List<OrderItemDTO> orderItems = new ArrayList<>();
-	    
-	    for (int i = 0; i < productIds.length; i++) {
-	    	//order
-	    	ProductDTO product = productService.findProdById(productIds[i]);
-	    	OrderItemDTO orderItem = new OrderItemDTO(new OrderitemPK(order.getOrderId(), productIds[i]), product.getProductPrice(), quantities[i]);
-	    	orderItemService.saveItem(orderItem);
-	    	orderItems.add(orderItem);
-	    	
-	    	
-	    	//delete items from user cart
-	        ItemDTO item = new ItemDTO();
-	        item.setId(new CartitemPK(cartIds[i], productIds[i]));
-	        item.setQuantity(quantities[i]);
-//	        item.setProduct(products[i]);
-	        item.setProduct(product);
-	        items.add(item);
-	        System.out.println(item);
-	        //change stock
-	        productService.changeStock(productIds[i], quantities[i]);
-	        //remove cartitem
-	        itemService.removeItem(item.getId());
-	    }
-	   
-	    
-	    
-	    
-	    order.setOrderitems(orderItems);
-	    order.setSumm(cartDTO.getSumm());
-	    if(pformDTO.getShippingType().contains("Pick")) {
-	    	order.setOrderType("PU");
-	    	order.setPickupAdress(pformDTO.getPUAdress());
-	    }
-	    else {
-	    	order.setOrderType("SP");
-	    	order.setShippingAdress(pformDTO.getSPAdress());
-	    }
-	    
-	    order.setName(pformDTO.getUserName());
-	    order.setSurname(pformDTO.getUserSurname());
-	    order.setPhoneNumber(pformDTO.getUserPhone());
-	    
-	    order = orderService.saveOrder(order);
-	    
-	    if(order == null) {
-	    	throw new NullPointerException("order save error");
-	    }
-	    
-	    
-//	    CartDTO cartDTO = cartService.findCart(items.get(0).getId().getCartId());
-	    
-	    cartService.purchaseCart(cartDTO.getCartId());
-//	    UserDTO user = userService.findById(cartDTO.getUserId());
-//	    if(user.getType().equalsIgnoreCase("guest")) {
-//	    	itemService.removeAllCartItems(cartDTO.getCartId());
-//	    	cartService.removeCart(cartDTO.getCartId());
-//	    	userService.removeUser(cartDTO.getUserId());
-//	    }
-	    
-//	    if(cartDTO != null)
+
     	return "redirect:redirectToCheck";
-//	    else
-//	    	return "redirect:redirectToCart";
-//	    return "redirect:/cart/redirectToCheck?userId=" + cartDTO.getUserId();
-//		try {
-//			res.sendRedirect("/GuitarShop/cart/redirectToCart?userId=" + cartDTO.getUserId());
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
+
 	}
 	
 	@GetMapping("redirectToCheck")
-	public String redirectToCheckPage(HttpServletRequest req, HttpServletResponse res) {
-		
-//		if(checkStatus.isPresent())
-//			req.setAttribute("checkStatus", checkStatus.get());
+	public String redirectToCheckPage() {
 		return "pages/check";
 	}
 	
 	
 	
-//	if(req.getSession().getAttribute("check") != null)
-//		postCheck((JasperPrint)req.getSession().getAttribute("check"), res);
-	
 	@GetMapping("check")
-	public JasperPrint getCheck(Integer userId, PurchaseFormDTO pformDTO, HttpServletResponse response, Model m) {
+	public JasperPrint getCheck(Integer userId, PurchaseFormDTO pformDTO, HttpServletResponse response, RedirectAttributes redirects, Model m) {
 		try {
 			JasperPrint jasperReport = cartService.createCheck(userId, pformDTO);
 			return jasperReport;
-		} catch(Exception e) {
-			e.printStackTrace();
+		} catch(JRException | IOException e) {
+			log.error("Purchase error: {}", e.getMessage());
+	        throw new BusinessException("CHECK_REPORT_ERROR", "Jasperreport error");
 		}
-		return null;
 	}
 	
 	@GetMapping("downloadCheck")
@@ -400,7 +292,6 @@ public class CartController {
 			return "index";
 		}
 		else {
-//			return "redirect:redirectToCheck?checkStatus=Check was deleted from session";
 			redirects.addFlashAttribute("checkStatus", "Check was deleted from session");
 			return "redirect:redirectToCheck";
 		}
@@ -415,7 +306,8 @@ public class CartController {
 			JasperExportManager.exportReportToPdfStream(jasperReport, out);
 			out.close();
 		} catch(Exception e) {
-			e.printStackTrace();
+			log.error("Purchase error: {}", e.getMessage());
+	        throw new BusinessException("CHECK_REPORT_ERROR", "Jasperreport error");
 		}
 		
 	}
@@ -423,24 +315,17 @@ public class CartController {
 	@PostMapping("changeQuantity")
 	public String changeQuantity(@RequestParam("cartId") Integer cartId,
 							@RequestParam("productId") Integer productId,
-				            @RequestParam("quantity") Integer quantity,
-				            HttpServletResponse res,
-				            HttpServletRequest req) {
-
+				            @RequestParam("quantity") Integer quantity) {
 
 		itemService.saveItemQuantity(cartId, productId, quantity);
-
 		return "redirect:/cart/redirectToCart";
 	}
 	
 	@PostMapping("deleteItem")
 	public String deleteItem(@RequestParam("cartId") Integer cartId,
-							@RequestParam("productId") Integer productId,
-				            HttpServletResponse res,
-				            HttpServletRequest req) {
+							@RequestParam("productId") Integer productId) {
 
 		itemService.deleteItemFromCart(cartId, productId);
-
 		return "redirect:/cart/redirectToCart";
 	}
 	
@@ -449,8 +334,8 @@ public class CartController {
 			UserDTO guest = userService.createGuestUser();
 			return guest;
 		}catch(Exception e) {
-			e.printStackTrace();
-			return null;
-		}
+	        log.error("Error creating guest user: {}", e.getMessage());
+	        throw new BusinessException("GUEST_ERROR", "Could not create guest session");
+	    }
 	}
 }

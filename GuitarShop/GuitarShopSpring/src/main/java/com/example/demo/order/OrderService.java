@@ -10,15 +10,23 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import com.example.demo.GuitarShopSpringApplication;
+import com.example.demo.cartitem.CartController;
+import com.example.demo.exception.BusinessException;
+import com.example.demo.exception.EntityNotFoundException;
+import com.example.demo.exception.InvalidBackUpPathException;
 import com.example.demo.files.BackUpService;
 import com.example.demo.product.ProductDTO;
 import com.example.demo.product.ProductRepo;
+import com.example.demo.user.UserService;
 
 import jakarta.validation.ValidationException;
 import model.Cart;
@@ -46,6 +54,9 @@ public class OrderService {
 	
 	@Autowired
 	BackUpService backupService;
+	
+	private static final Logger log = LoggerFactory.getLogger(OrderService.class);
+
 
 	public OrderDTO createOrder(OrderDTO order) {
 		try {
@@ -59,13 +70,13 @@ public class OrderService {
 //			    throw new IllegalArgumentException("User ID must not be null");
 //			}
 //			o.setUserId(1);
-			System.out.println("UserID: " +  o.getUserId());
+//			System.out.println("UserID: " +  o.getUserId());
 			o = orderRepo.save(o);
 			return orderToDTO(o);
-		}catch(Exception e) {
-			e.printStackTrace();
+		}catch(DataAccessException e) {
+		    log.error("Database error: {}", e.getMessage());
+		    throw new BusinessException("DB_ERROR", "Database error: " + e.getMessage());
 		}
-		return null;
 	}
 	
 	public OrderDTO orderToDTO(Order o) {
@@ -117,17 +128,14 @@ public class OrderService {
 			o.setCompletionTime(order.getCompletionTime());
 			o = orderRepo.save(o);
 			
-			try {
-				saveToCSV();
-				return orderToDTO(o);
-			}catch(Exception e) {
-				e.printStackTrace();
-				return null;
-			}
-		}catch(Exception e) {
-			e.printStackTrace();
+
+			saveToCSV();
+			return orderToDTO(o);
+
+		}catch(DataAccessException e) {
+		    log.error("Database error: {}", e.getMessage());
+		    throw new BusinessException("DB_ERROR", "Database error: " + e.getMessage());
 		}
-		return null;
 	}
 	
 	
@@ -140,26 +148,40 @@ public class OrderService {
 				res.add(orderToDTO(o));
 			}
 			return res;
-		}catch(Exception e) {
-			e.printStackTrace();
-			return null;
-		}		
+		}catch(DataAccessException e) {
+		    log.error("Database error: {}", e.getMessage());
+		    throw new BusinessException("DB_ERROR", "Database error: " + e.getMessage());
+		}	
 	}
 
 	public OrderDTO findOrder(Integer orderId) {
 		try {
-			Order o = orderRepo.findById(orderId).get();
-			return orderToDTO(o);
-		}catch(Exception e) {
-			e.printStackTrace();
-			return null;
+			Optional<Order> existing = orderRepo.findById(orderId);
+			
+			if(existing.isEmpty()) {
+				log.warn("Order not found with id: {}", orderId);
+				throw new EntityNotFoundException("Order", orderId);
+			}
+			
+			return orderToDTO(existing.get());
+		}catch(DataAccessException e) {
+		    log.error("Database error: {}", e.getMessage());
+		    throw new BusinessException("DB_ERROR", "Database error: " + e.getMessage());
 		}
 	}
 
 	@Transactional
 	public boolean modifyOrder(OrderDTO order) {
 		try {
-			Order o = orderRepo.findById(order.getOrderId()).get();
+			Integer orderId = order.getOrderId();
+			Optional<Order> existing = orderRepo.findById(orderId);
+			
+			if(existing.isEmpty()) {
+				log.warn("Order not found with id: {}", orderId);
+				throw new EntityNotFoundException("Order", orderId);
+			}
+			
+			Order o = existing.get();
 			o.setName(order.getName());
 			o.setSurname(order.getSurname());
 			o.setPhoneNumber(order.getPhoneNumber());
@@ -171,39 +193,40 @@ public class OrderService {
 			o.setCompletionTime(order.getCompletionTime());
 			o = orderRepo.save(o);
 
-			try {
-				saveToCSV();
-				return true;
-			}catch(Exception e) {
-				e.printStackTrace();
-				return false;
-			}
-		}catch(Exception e) {
-			e.printStackTrace();
-			return false;
+
+			saveToCSV();
+			return true;
+
+		}catch(DataAccessException e) {
+		    log.error("Database error: {}", e.getMessage());
+		    throw new BusinessException("DB_ERROR", "Database error: " + e.getMessage());
 		}
 	}
 
 	@Transactional
 	public boolean deleteOrder(OrderDTO order) {
 		try {
-			Order o = orderRepo.findById(order.getOrderId()).get();
+			Integer orderId = order.getOrderId();
+			Optional<Order> existing = orderRepo.findById(orderId);
+			
+			if(existing.isEmpty()) {
+				log.warn("Order not found with id: {}", orderId);
+				throw new EntityNotFoundException("Order", orderId);
+			}
+			
+			Order o = existing.get();
+			
 			for(Orderitem i : o.getOrderitems()) {
 				orderItemRepo.delete(i);
 			}
 			orderRepo.delete(o);
 
-			try {
-				saveToCSV();
-				return true;
-			}catch(Exception e) {
-				e.printStackTrace();
-				return false;
-			}
+			saveToCSV();
+			return true;
 			
-		}catch(Exception e) {
-			e.printStackTrace();
-			return false;
+		}catch(DataAccessException e) {
+		    log.error("Database error: {}", e.getMessage());
+		    throw new BusinessException("DB_ERROR", "Database error: " + e.getMessage());
 		}
 	}
 
@@ -215,10 +238,10 @@ public class OrderService {
 				res.add(orderToDTO(o));
 			}
 			return res;
-		}catch(Exception e) {
-			e.printStackTrace();
-			return null;
-		}	
+		}catch(DataAccessException e) {
+		    log.error("Database error: {}", e.getMessage());
+		    throw new BusinessException("DB_ERROR", "Database error: " + e.getMessage());
+		}
 	}
 
 	public List<OrderDTO> findAllUserOrders(Integer userId) {
@@ -229,10 +252,10 @@ public class OrderService {
 				res.add(orderToDTO(o));
 			}
 			return res;
-		}catch(Exception e) {
-			e.printStackTrace();
-			return null;
-		}	
+		}catch(DataAccessException e) {
+		    log.error("Database error: {}", e.getMessage());
+		    throw new BusinessException("DB_ERROR", "Database error: " + e.getMessage());
+		}
 	}
 
 	public Object findUserOrderByStatus(Integer userId, String status) {
@@ -243,10 +266,10 @@ public class OrderService {
 				res.add(orderToDTO(o));
 			}
 			return res;
-		}catch(Exception e) {
-			e.printStackTrace();
-			return null;
-		}	
+		}catch(DataAccessException e) {
+		    log.error("Database error: {}", e.getMessage());
+		    throw new BusinessException("DB_ERROR", "Database error: " + e.getMessage());
+		}
 	}
 	
 	private void saveToCSV(){
@@ -273,10 +296,9 @@ public class OrderService {
             	    safeString(order.getPhoneNumber())
             	};
             backupService.saveBackup(ordersList, prefix, fileName, header, orderMapper);
-        } catch (Exception e) {
-            // Handle exception appropriately
-            e.printStackTrace();
-        }
+        } catch(InvalidBackUpPathException e) {
+			log.error("Backup error: {}", e.getMessage());
+		}
 		
 	}
 	

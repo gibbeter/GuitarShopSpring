@@ -3,8 +3,10 @@ package com.example.demo.user;
 import org.springframework.validation.annotation.Validated;
 
 import jakarta.persistence.Column;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 
 @Validated
 public class UserDTO {
@@ -14,6 +16,7 @@ public class UserDTO {
 
 	@NotNull
 	@NotEmpty
+	@Pattern(regexp = "^(?!.*guest).*$", message = "Username can't contain \"guest\"")
 	private String userName;
 	@NotNull
 	@NotEmpty
@@ -21,6 +24,7 @@ public class UserDTO {
 	@NotNull
 	private String type;
 	@NotNull
+	@Email(message = "Invalid email format")
 	private String userMail;
 	@NotNull
 	private String name;

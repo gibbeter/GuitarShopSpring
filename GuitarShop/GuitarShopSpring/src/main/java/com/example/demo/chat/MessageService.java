@@ -2,9 +2,17 @@ package com.example.demo.chat;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
+
+import com.example.demo.exception.BusinessException;
+import com.example.demo.exception.DuplicateEntityException;
+import com.example.demo.exception.EntityNotFoundException;
 
 import model.Chat;
 import model.Message;
@@ -17,22 +25,31 @@ public class MessageService {
 	
 	@Autowired
 	ChatRepo chatRepo;
+	
+	private static final Logger log = LoggerFactory.getLogger(MessageService.class);
 
 	public MessageDTO saveMessage(MessageDTO messageDTO) {
 		try {
 			Message m = new Message();
-			Chat chat = chatRepo.findById(messageDTO.getChatId()).get();
-			m.setChat(chat);
+			Optional<Chat> chat = chatRepo.findById(messageDTO.getChatId());
+			if(chat.isEmpty()) {
+				log.warn("Entity not found with id: {}", messageDTO.getChatId());
+				throw new EntityNotFoundException("Chat", messageDTO.getChatId());
+			}
+			Chat c = chat.get();
+			
+			m.setChat(c);
 			m.setMessageText(messageDTO.getMessageText());
 			m.setSenderId(messageDTO.getSenderId());
 			
-			chat.getMessages().add(m);
-			
-			return messageToDTO(messageRepo.save(m));
-		}catch(Exception e) {
-			e.printStackTrace();
+			c.getMessages().add(m);
+//			chatRepo.save(c);
+			m = messageRepo.save(m);
+			return messageToDTO(m);
+		}catch(DataAccessException e) {
+			log.error("Database error: {}", e.getMessage());
+			throw new BusinessException("DB_ERROR", "Database error: " + e.getMessage());
 		}
-		return null;
 	}
 	
 	private MessageDTO messageToDTO(Message m) {

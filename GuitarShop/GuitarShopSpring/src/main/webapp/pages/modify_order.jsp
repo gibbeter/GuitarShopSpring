@@ -29,6 +29,12 @@
 			<span class="modStatus" data-content="${modStatus}">${modStatus}</span>
 		</div>
 	</c:if>
+	<c:if test="${!empty validMessage}">
+		<div class="mod-conteiner">
+			<span class="validMessage" data-content="${validMessage}">${validMessage}</span>
+		</div>
+	</c:if>
+	
 	
 	<form action="dummy" method="post">
 	<c:if test="${!empty order}">
@@ -37,6 +43,7 @@
 			<div class="fields-grid">
 				<div class="field-pair">
 					<span class="tag">User ID</span><span class="meta"><input type="number" name="userId" value="${order.userId}" disabled></span>
+					<input type="hidden" name="userId" value="${order.userId}">
 				</div>
 				<div class="field-pair">
 					<span class="tag">Name</span><span class="meta"><input type="text" name="name" value="${order.name}"></span>
@@ -48,7 +55,8 @@
 					<span class="tag">Phone number</span><span class="meta"><input type="number" name="phoneNumber" value="${order.phoneNumber}"></span>
 				</div>
 				<div class="field-pair">
-					<span class="tag">Order Date</span><span class="meta"><input type="datetime-local" name="completionTime" value="${order.orderDate}" disabled></span>
+					<span class="tag">Order Date</span><span class="meta"><input type="datetime-local" name="orderDate" value="${order.orderDate}" disabled></span>
+					<input type="datetime-local" name="orderDate" value="${order.orderDate}" hidden="">
 				</div>
 				<div class="field-pair">
 					<span class="tag">OrderStatus</span><span class="meta">

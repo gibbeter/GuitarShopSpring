@@ -166,6 +166,17 @@ span.delStatus[data-content="Chat successfully deleted"]{
 	font-weight: 500;
 }
 
+span.delStatus{
+	display: inline-block;
+	margin-top: 1rem;
+	margin-bottom: 1rem;
+	padding: 0.5rem 1rem;
+	background: #ff8080;
+	border-radius: 2rem;
+	color: #d90000;
+	font-weight: 500;
+}
+
 /* Адаптивность для мобильных */
 @media ( max-width : 640px) {
 	body {

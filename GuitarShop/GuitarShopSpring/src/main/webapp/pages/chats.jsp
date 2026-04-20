@@ -5,10 +5,18 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
-<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/main_padding.css">
-<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/chats.css">
+	<meta charset="UTF-8">
+	<title>Insert title here</title>
+	<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/main_padding.css">
+	<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/chats.css">
+	
+	<script>
+		window.addEventListener('pageshow', function(event) {
+			if (event.persisted) {
+				window.location.reload();
+			}
+		});
+	</script>
 </head>
 <body>
 	<div class="header">

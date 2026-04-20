@@ -2,23 +2,28 @@ package com.example.demo.user;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.example.demo.GuitarShopSpringApplication;
+import com.example.demo.exception.BusinessException;
+import com.example.demo.exception.DuplicateEntityException;
+import com.example.demo.exception.EntityNotFoundException;
+import com.example.demo.exception.InvalidBackUpPathException;
+import com.example.demo.exception.InvalidPasswordException;
+import com.example.demo.exception.UserNameTakenException;
 import com.example.demo.files.BackUpService;
-import com.example.demo.order.OrderDTO;
-
-import jakarta.validation.ValidationException;
-import model.Order;
 import model.User;
 
 @Service
 public class UserService {
 
-//    private final GuitarShopSpringApplication guitarShopSpringApplication;
+	private static final Logger log = LoggerFactory.getLogger(UserService.class);
 	
 	@Autowired
 	UserRepo userRepo;
@@ -27,18 +32,20 @@ public class UserService {
 	BackUpService backupService;
 
 
-//    UserService(GuitarShopSpringApplication guitarShopSpringApplication) {
-//        this.guitarShopSpringApplication = guitarShopSpringApplication;
-//    }
     
     public UserDTO userToDTO(User u) {
     	return new UserDTO(u.getUserId(), u.getUserName(), u.getPassword(), u.getType(), u.getUserMail(), u.getName(), u.getSurname(), u.getPhoneNumber());
     }
 
-	public boolean saveUser(UserRegDTO user) {
+	public UserDTO saveUser(UserRegDTO user) {
 		try {
-			if(userRepo.findUserByUserName(user.getUserName()) != null)
-				return false;
+			Optional<User> existing = userRepo.findUserByUserName(user.getUserName());
+			
+			if (existing.isPresent()) {
+				log.warn("User already exists: {}", user.getUserName());
+			    throw new DuplicateEntityException("Username already taken");
+			}
+			
 			User newUser = new User();
 			newUser.setUserName(user.getUserName());
 			newUser.setPassword(user.getUserPass());
@@ -47,109 +54,187 @@ public class UserService {
 			newUser.setName(user.getName());
 			newUser.setSurname(user.getSurname());
 			newUser.setPhoneNumber(user.getPhoneNumber());
-			userRepo.save(newUser);
+			newUser = userRepo.save(newUser);
 			
-			try {
-				saveToCSV();
-				return true;
-			}catch(Exception e) {
-				e.printStackTrace();
-				return false;
-			}
-		}
-		catch(ValidationException e) {
-//			e.printStackTrace();
-			return false;
+			saveToCSV();
+			log.info("New user saved: {}", newUser.getUserName());
+			return userToDTO(newUser);
+		}catch(DataAccessException e) {
+			log.error("Database error: {}", e.getMessage());
+			throw new BusinessException("DB_ERROR", "Database error: " + e.getMessage());
 		}
 	}
 	
 	public UserDTO findById(Integer userId) {
 		try {
-			UserDTO userDTO = new UserDTO();
-			User user = userRepo.findById(userId).get();
+			Optional<User> user = userRepo.findById(userId);
 			
-			if(user == null)
-				return null;
+			if (!user.isPresent()) {
+				log.warn("User not found with id: {}", userId);
+			    throw new EntityNotFoundException("User", userId);
+			}
 			
-			userDTO = userToDTO(user);
-//			userDTO.setUserId(user.getUserId());
-//			userDTO.setUserName(user.getUserName());
-//			userDTO.setUserPass(user.getPassword());
-//			userDTO.setUserMail(user.getUserMail());
-//			userDTO.setType(user.getType());
 			
-			return userDTO;
-		}catch(Exception e) {
-			e.printStackTrace();
-		}
-		
-		return null;
-		
+			return userToDTO(user.get());
+		}catch(DataAccessException e) {
+			log.error("Database error: {}", e.getMessage());
+			throw new BusinessException("DB_ERROR", "Database error: " + e.getMessage());
+		}	
 	}
 
 	public UserDTO findUserByName(String name) {
-		UserDTO userDTO = null;
 		try {
-			userDTO = new UserDTO();
-			User user = userRepo.findUserByUserName(name);
-			if(user == null)
-				return null;
+			UserDTO userDTO = new UserDTO();
+			Optional<User> user = userRepo.findUserByUserName(name);
 			
-			userDTO = userToDTO(user);
-//			userDTO.setUserId(user.getUserId());
-//			userDTO.setUserName(user.getUserName());
-//			userDTO.setUserPass(user.getPassword());
-//			userDTO.setUserMail(user.getUserMail());
-//			userDTO.setType(user.getType());
-		}catch(Exception e) {
-			e.printStackTrace();
+			if (!user.isPresent()) {
+				log.warn("User not found with name: {}", name);
+			    throw new EntityNotFoundException("User", name);
+			}
+			
+			userDTO = userToDTO(user.get());
+
+			return userDTO;
+		}catch(DataAccessException e) {
+			log.error("Database error: {}", e.getMessage());
+			throw new BusinessException("DB_ERROR", "Database error: " + e.getMessage());
 		}
-		
-		return userDTO;
 	}
 
 	@Transactional
 	public boolean updateUserName(Integer userId, String name) {
 		try{
-			User user = userRepo.findById(userId).get();
-			if(user.getUserName() != name) {
-				user.setUserName(name);
-				return userRepo.save(user) != null;
+			Optional<User> user = userRepo.findById(userId);
+			if(user.isEmpty()) {
+				log.warn("User not found with id: {}", userId);
+				throw new EntityNotFoundException("User", userId);
 			}
+				
+			if(!user.get().getUserName().equalsIgnoreCase(name)) {
+				if(userRepo.findUserByUserName(name).isPresent())
+					throw new UserNameTakenException(user.get().getUserName());
+				user.get().setUserName(name);
+				userRepo.save(user.get());
+				return true;
+			}
+
 			return false;
-		}catch(Exception e) {
-			e.printStackTrace();
-			return false;
+		}catch(DataAccessException e) {
+			log.error("Database error: {}", e.getMessage());
+			throw new BusinessException("DB_ERROR", "Database error: " + e.getMessage());
 		}
 	}
 
 	@Transactional
 	public boolean updatePass(Integer userId, String pass) {
 		try{
-			User user = userRepo.findById(userId).get();
-			if(user.getPassword() != pass) {
-				user.setPassword(pass);
-				return userRepo.save(user) != null;
+			Optional<User> user = userRepo.findById(userId);
+			if(user.isEmpty()) {
+				log.warn("User not found with id: {}", userId);
+				throw new EntityNotFoundException("User", userId);
 			}
-			return false;
-		}catch(Exception e) {
-			e.printStackTrace();
-			return false;
+			
+			
+			if(pass.length() < 6) {
+				log.warn("Password is too short (min 6 symbols): {}", pass);
+				throw new InvalidPasswordException("Password is too short (min 6 symbols)");
+			}
+			
+			if(user.get().getPassword().equals(pass)) {
+				log.info("Same password: {}", pass);
+				return false;
+			}
+			
+			user.get().setPassword(pass);
+			userRepo.save(user.get());
+			return true;
+
+		}catch(DataAccessException e) {
+			log.error("Database error: {}", e.getMessage());
+			throw new BusinessException("DB_ERROR", "Database error: " + e.getMessage());
 		}
 	}
 	
 	@Transactional
 	public boolean updateMail(Integer userId, String mail) {
 		try{
-			User user = userRepo.findById(userId).get();
-			if(user.getUserMail() != mail) {
-				user.setUserMail(mail);
-				return userRepo.save(user) != null;
+			Optional<User> user = userRepo.findById(userId);
+			if(user.isEmpty()) {
+				log.warn("User not found with id: {}", userId);
+				throw new EntityNotFoundException("User", userId);
+			}
+			
+			if(!user.get().getUserMail().equals(mail)) {
+				user.get().setUserMail(mail);
+				userRepo.save(user.get());
+				return true;
 			}
 			return false;
-		}catch(Exception e) {
-			e.printStackTrace();
+		}catch(DataAccessException e) {
+			log.error("Database error: {}", e.getMessage());
+			throw new BusinessException("DB_ERROR", "Database error: " + e.getMessage());
+		}
+	}
+	
+	@Transactional
+	public boolean updateName(Integer userId, String name) {
+		try{
+			Optional<User> user = userRepo.findById(userId);
+			if(user.isEmpty()) {
+				log.warn("User not found with id: {}", userId);
+				throw new EntityNotFoundException("User", userId);
+			}
+			
+			if(!user.get().getName().equals(name)) {
+				user.get().setName(name);
+				userRepo.save(user.get());
+				return true;
+			}
 			return false;
+		}catch(DataAccessException e) {
+			log.error("Database error: {}", e.getMessage());
+			throw new BusinessException("DB_ERROR", "Database error: " + e.getMessage());
+		}
+	}
+
+	@Transactional
+	public boolean updateSurname(Integer userId, String surname) {
+		try{
+			Optional<User> user = userRepo.findById(userId);
+			if(user.isEmpty()) {
+				log.warn("User not found with id: {}", userId);
+				throw new EntityNotFoundException("User", userId);
+			}
+			
+			if(!user.get().getSurname().equals(surname)) {
+				user.get().setSurname(surname);
+				userRepo.save(user.get());
+				return true;
+			}
+			return false;
+		}catch(DataAccessException e) {
+			log.error("Database error: {}", e.getMessage());
+			throw new BusinessException("DB_ERROR", "Database error: " + e.getMessage());
+		}
+	}
+
+	@Transactional
+	public boolean updatePhoneNumber(Integer userId, Integer phoneNumber) {
+		try{
+			Optional<User> user = userRepo.findById(userId);
+			if(user.isEmpty()) {
+				log.warn("User not found with id: {}", userId);
+				throw new EntityNotFoundException("User", userId);
+			}
+			
+			if(!user.get().getPhoneNumber().equals(phoneNumber)) {
+				user.get().setPhoneNumber(phoneNumber);
+				return userRepo.save(user.get()) != null;
+			}
+			return false;
+		}catch(DataAccessException e) {
+			log.error("Database error: {}", e.getMessage());
+			throw new BusinessException("DB_ERROR", "Database error: " + e.getMessage());
 		}
 	}
 
@@ -163,80 +248,46 @@ public class UserService {
 		try {
 			userRepo.save(u);
 			saveToCSV();
-		}catch(Exception e) {
-			e.printStackTrace();
-			return null;
+			return userToDTO(u);
+		}catch(DataAccessException e) {
+			log.error("Database error: {}", e.getMessage());
+			throw new BusinessException("DB_ERROR", "Database error: " + e.getMessage());
 		}
-		return userToDTO(u);
 	}
 
 	public void removeUser(int userId) {
 		try {
-			User u = userRepo.findById(userId).get();
-			userRepo.delete(u);
+			Optional<User> user = userRepo.findById(userId);
+			if(user.isEmpty()) {
+				log.warn("User not found with id: {}", userId);
+				throw new EntityNotFoundException("User", userId);
+			}
 			
+			userRepo.delete(user.get());
 			saveToCSV();
-		}catch(Exception e) {
-			e.printStackTrace();
+			
+		}catch(DataAccessException e) {
+			log.error("Database error: {}", e.getMessage());
+			throw new BusinessException("DB_ERROR", "Database error: " + e.getMessage());
 		}
 		
 	}
 
 	public String getUserNameAndMail(Integer userId) {
 		try {
-			User u = userRepo.findById(userId).get();
-			return u.getUserMail()+":"+u.getUserName();
-		}catch(Exception e) {
-			e.printStackTrace();
-		}
-		
-		return null;
-	}
-
-	@Transactional
-	public boolean updateName(Integer userId, String name) {
-		try{
-			User user = userRepo.findById(userId).get();
-			if(user.getName() != name) {
-				user.setName(name);
-				return userRepo.save(user) != null;
+			Optional<User> user = userRepo.findById(userId);
+			
+			if(user.isEmpty()) {
+				log.warn("User not found with id: {}", userId);
+				throw new EntityNotFoundException("User", userId);
 			}
-			return false;
-		}catch(Exception e) {
-			e.printStackTrace();
-			return false;
+			
+			return user.get().getUserMail()+":"+user.get().getUserName();
+			
+		}catch(DataAccessException e) {
+			log.error("Database error: {}", e.getMessage());
+			throw new BusinessException("DB_ERROR", "Database error: " + e.getMessage());
 		}
-	}
-
-	@Transactional
-	public boolean updateSurname(Integer userId, String surname) {
-		try{
-			User user = userRepo.findById(userId).get();
-			if(user.getSurname() != surname) {
-				user.setSurname(surname);
-				return userRepo.save(user) != null;
-			}
-			return false;
-		}catch(Exception e) {
-			e.printStackTrace();
-			return false;
-		}
-	}
-
-	@Transactional
-	public boolean updatePhoneNumber(Integer userId, Integer phoneNumber) {
-		try{
-			User user = userRepo.findById(userId).get();
-			if(user.getPhoneNumber() != phoneNumber) {
-				user.setPhoneNumber(phoneNumber);
-				return userRepo.save(user) != null;
-			}
-			return false;
-		}catch(Exception e) {
-			e.printStackTrace();
-			return false;
-		}
-		//throw Exc on short number
 	}
 	
 	
@@ -260,11 +311,12 @@ public class UserService {
             	    safeString(user.getSurname()),
             	    safeString(user.getPhoneNumber())
             	};
+            
             backupService.saveBackup(usersList, prefix, fileName, header, userMapper);
-        } catch (Exception e) {
-            // Handle exception appropriately
-            e.printStackTrace();
-        }
+            
+        }catch(InvalidBackUpPathException e) {
+			log.error("Backup error: {}", e.getMessage());
+		}
 		
 	}
 	
@@ -274,12 +326,12 @@ public class UserService {
 			for(User u : list) {
 				res.add(userToDTO(u));
 			}
-			return res;
 		}
-		return null;
+		return res;
 	}
 
 	private String safeString(Object obj) {
 	    return obj != null ? obj.toString() : "";
 	}
+	
 }

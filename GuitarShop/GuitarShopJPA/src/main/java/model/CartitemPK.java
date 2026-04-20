@@ -61,4 +61,11 @@ public class CartitemPK implements Serializable {
 		
 		return hash;
 	}
+
+	@Override
+	public String toString() {
+		return "CartitemPK [cartId=" + cartId + ", prodId=" + prodId + "]";
+	}
+	
+	
 }

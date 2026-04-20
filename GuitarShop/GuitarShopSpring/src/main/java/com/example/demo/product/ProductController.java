@@ -21,6 +21,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.example.demo.exception.AccessDeniedException;
+import com.example.demo.exception.BusinessException;
+import com.example.demo.exception.DuplicateEntityException;
 import com.example.demo.user.UserDTO;
 import com.example.demo.user.UserHelper;
 import com.example.demo.user.UserService;
@@ -73,8 +76,14 @@ public class ProductController {
 	}
 	
 	@GetMapping("redirectToModifyProductPage")
-	public String redirectToModifyProductPage(@ModelAttribute("prodId") Integer prodId, @ModelAttribute(value="modStatus")Optional<String> modStatus, Model m) {
-		m.addAttribute("product", productService.findProdById(prodId));
+	public String redirectToModifyProductPage(@ModelAttribute("prodId") Optional<Integer> prodId, @ModelAttribute(value="modStatus")Optional<String> modStatus, Model m) {
+		if(prodId.isPresent()) {
+			m.addAttribute("product", productService.findProdById(prodId.get()));
+		}
+		else {
+		    return "redirect:redirectToStorage";
+		}
+		
 		if(modStatus.isPresent())
 			m.addAttribute("modStatus", modStatus.get());
 		return "pages/modify_product";
@@ -137,7 +146,7 @@ public class ProductController {
 	@PostMapping("addProduct")
 	public String addProduct(@Valid @ModelAttribute("createProductDTO")CreateProductDTO createProdDTO,
 							@Valid @ModelAttribute("typeDTO")TypeDTO typeDTO,
-							HttpServletRequest req, HttpServletResponse res) {
+							HttpServletRequest req, RedirectAttributes redirects, HttpServletResponse res) {
 //		System.out.println(prodDTO);
 //		System.out.println(typeDTO);
 		Type type = productService.saveType(typeDTO);
@@ -151,55 +160,55 @@ public class ProductController {
 				createProdDTO.getProductPrice()
 				);
 //		prodDTO.setProductType(type.getTypeId());
-		productService.saveProduct(prodDTO);
+		try{
+			productService.saveProduct(prodDTO);
+			redirects.addFlashAttribute("delStatus", "Product added successfully");
+		}catch(BusinessException e) {
+		    redirects.addFlashAttribute("delStatus", e.getMessage());
+		}
 		
 		return "redirect:redirectToStorage";
-		
 	}
 	
-	@GetMapping("redirectToTypeCaller")
-	public String redirectToTypeCaller(@RequestParam(value = "type", required = false) Optional<String> type,
-								RedirectAttributes redirects) {
-		if(type.isPresent())
-			redirects.addFlashAttribute("type", type.get());
-		return "redirect:redirectToType";
-	}
+//	@GetMapping("redirectToTypeCaller")
+//	public String redirectToTypeCaller(@RequestParam(value = "type", required = false) Optional<String> type,
+//								RedirectAttributes redirects) {
+//		if(type.isPresent())
+//			redirects.addFlashAttribute("type", type.get());
+//		return "redirect:redirectToType";
+//	}
 	
 	@GetMapping("redirectToType")
-	public String redirectToType(@ModelAttribute(value = "type") Optional<String> type,
-								HttpSession session, HttpServletRequest req, Model m) {
-		try {
-			String itemStatus = (String) m.getAttribute("itemStatus");
-		    Integer prodId = (Integer) m.getAttribute("addedProdId");
-//			Integer userId = (Integer) session.getAttribute("userId");
-			if(type.isPresent()) {
-				String formattedType = formatedTypes.get(type.get());
-				m.addAttribute("filter",type.get());
-				m.addAttribute("type", formattedType);
-				m.addAttribute("products", productService.findProdByType(type.get()));
-			}
-			else {
-				m.addAttribute("products", productService.findProducts());
-			}
-			if(itemStatus != null) {
-				m.addAttribute("itemStatus", "Item was added to your cart!");
-			}
-			if(prodId != null) {
-				m.addAttribute("addedProdId", prodId);
-			}
-		}catch(Exception e) {
-			e.printStackTrace();
+	public String redirectToType(@RequestParam(value = "type") Optional<String> type,
+								HttpServletRequest req, Model m) {
+		String itemStatus = (String) m.getAttribute("itemStatus");
+	    Integer prodId = (Integer) m.getAttribute("addedProdId");
+
+		if(type.isPresent()) {
+			String formattedType = formatedTypes.get(type.get());
+			m.addAttribute("filter",type.get());
+			m.addAttribute("type", formattedType);
+			m.addAttribute("products", productService.findProdByType(type.get()));
+		}
+		else {
+			m.addAttribute("products", productService.findProducts());
+		}
+		if(itemStatus != null) {
+			m.addAttribute("itemStatus", "Item was added to your cart!");
+		}
+		if(prodId != null) {
+			m.addAttribute("addedProdId", prodId);
 		}
 		return "pages/products";
 	}
 	
 	
 	@GetMapping("redirectToProductPage")
-	public String redirectToProduct(@ModelAttribute(value = "prodId") Optional<Integer> prodId,
+	public String redirectToProduct(@RequestParam(value = "prodId") Optional<Integer> prodId,
 									@ModelAttribute(value = "overStatus") Optional<String> overStatus,
 									@ModelAttribute(value = "chatStatus") Optional<String> chatStatus,
 									@ModelAttribute(value = "itemStatus") Optional<String> itemStatus,
-									HttpServletRequest req, Model m) {
+									Model m) {
 		try {
 	
 			if(prodId.isPresent()) {
@@ -219,6 +228,7 @@ public class ProductController {
 				m.addAttribute("chatStatus", chatStatus.get());
 			}
 			if(itemStatus.isPresent()) {
+				System.out.println(itemStatus);
 				m.addAttribute("itemStatus", "Item was added to your cart!");
 			}
 		}catch(Exception e) {
@@ -258,40 +268,18 @@ public class ProductController {
 							RedirectAttributes redirects, HttpServletResponse res) {
 		String overStatus = null;
 		Integer userId = (Integer) session.getAttribute("userId");
-		if(userId == null || userService.findById(userId).getType().contains("guest")) {
-			overStatus = "Guests cant write overviews";
-//			m.addAttribute("overStatus", overStatus);
+		try {
+			overviewService.postOverview(userId, prodId, createOverDTO);
+			overStatus = "You overview was posted";
 			redirects.addFlashAttribute("prodId", prodId);
 			redirects.addFlashAttribute("overStatus", overStatus);
 			return "redirect:redirectToProductPage";
+		}catch(AccessDeniedException | DuplicateEntityException e) {
+			overStatus = e.getMessage();
 		}
-			
-		if(userId != null && overviewService.findOverview(userId, prodId) != null) {
-			overStatus = "You already left your overview for this product";
-//			m.addAttribute("overStatus", overStatus);
-			
+		catch(NullPointerException e) {
+			overStatus = "Internal error";
 		}
-		else {
-			UserDTO user = userService.findById(userId);
-			OverviewDTO overDTO = new OverviewDTO(
-					new OverviewPK(userId, prodId),
-					createOverDTO.getRating(),
-					createOverDTO.getText(),
-					user.getUserName()
-					);
-			overDTO = overviewService.newOverview(overDTO);
-			
-			if(overDTO != null) {
-				overStatus = "You overview was posted";
-//				m.addAttribute("overStatus", overStatus);
-				
-			}
-//			else {
-//				overStatus = "Error occured during posting of your overview";
-////				m.addAttribute("overStatus", overStatus);
-//			}
-		}
-//		return "redirect:redirectToProductPage?prodId="+prodId+"&overStatus="+overStatus;
 		redirects.addFlashAttribute("prodId", prodId);
 		redirects.addFlashAttribute("overStatus", overStatus);
 		return "redirect:redirectToProductPage";

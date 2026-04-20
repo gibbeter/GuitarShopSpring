@@ -134,6 +134,14 @@ td.all-prods{
     transform: scale(1.05);
 }
 
+span.tag{
+	font-weight: 700;
+}
+
+span.message{
+	color: red;
+}
+
 /* Responsive adjustments */
 @media ( max-width : 640px) {
 	body {

@@ -106,6 +106,20 @@ h1 a:hover {
     line-height: 1.5;
 }
 
+.field-pair .meta input:disabled,
+.field-pair .meta select:disabled {
+    width: 100%;
+    min-width: 50%;
+    padding: 12px 14px;
+    border: 1px solid #cbd5e1;
+    border-radius: 1rem;
+    font-size: 0.95rem;
+    background: #d8d8d8;
+    box-sizing: border-box;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    line-height: 1.5;
+}
+
 .field-pair .meta input:focus {
     border-color: #3b82f6;
     box-shadow: 0 0 0 3px rgba(59,130,246,0.2);
@@ -113,7 +127,7 @@ h1 a:hover {
 }
 
 .field-pair .meta input[type="select"] {
-    padding-right: 40px; /* Дополнительный отступ справа для стрелочки */
+    padding-right: 40px;
 }
 
 button.modify, button.delete{
@@ -186,6 +200,17 @@ span.modStatus[data-content="Order was successfully modificated"]{
 	background: #fbf5ce;
 	border-radius: 2rem;
 	color: #cea413;
+	font-weight: 500;
+}
+
+span.validMessage{
+	display: inline-block;
+	margin-top: 1rem;
+	margin-bottom: 1rem;
+	padding: 0.5rem 1rem;
+	background: #ff8080;
+	border-radius: 2rem;
+	color: #d90000;
 	font-weight: 500;
 }
 

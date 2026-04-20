@@ -240,7 +240,7 @@ input[type="submit"]:hover {
 /* Статус сообщения об отзыве */
 .status-message {
 	display: inline-block;
-	margin-top: 1rem;
+	margin-bottom: 1rem;
 	padding: 0.5rem 1rem;
 	background: #e6f7e6;
 	border-radius: 2rem;

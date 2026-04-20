@@ -14,6 +14,6 @@ public interface ChatRepo extends JpaRepository<Chat, Integer>{
 	List<Chat> findAllByUser(Integer userId);
 
 	@Query("select c from Chat c where (c.user1Id =?1 and c.user2Id =?2) or (c.user2Id =?1 and c.user1Id =?2)")
-	Chat findByUsers(int user1Id, int user2Id);
+	Optional<Chat> findByUsers(int user1Id, int user2Id);
 
 }

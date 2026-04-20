@@ -12,6 +12,7 @@ import java.util.function.Function;
 
 import org.springframework.stereotype.Service;
 
+import com.example.demo.exception.InvalidBackUpPathException;
 import com.opencsv.CSVWriter;
 
 @Service
@@ -28,23 +29,22 @@ public class BackUpService {
 			try {
 				Files.createDirectories(prefixPath);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				throw new InvalidBackUpPathException(e.getMessage());
 			}
 	    
 	    
 	    try (CSVWriter writer = new CSVWriter(new FileWriter(targetPath))) {
-	        // Write header
+
 	        writer.writeNext(headers);
-	        // Write data rows
+
 	        for (T item : dataList) {
 	            String[] row = mapper.apply(item);
 	            writer.writeNext(row);
 	        }
 	        return true;
+	        
 	    } catch (IOException e) {
-	        e.printStackTrace();
-	        return false;
+	    	throw new InvalidBackUpPathException(e.getMessage());
 	    }
 	}
 }
