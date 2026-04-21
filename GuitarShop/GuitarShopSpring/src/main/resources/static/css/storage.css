@@ -1,23 +1,8 @@
-/* storage-table.css — современный стиль для страницы склада (классическая таблица) */
 
-/** {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
 
-body {
-    font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
-    background: #f1f5f9;
-    color: #1e293b;
-    line-height: 1.6;
-    padding: 2rem 1.5rem;
-    max-width: 1400px;
-    margin: 0 auto;
-    min-height: 100vh;
-}*/
 
-/* Градиентный заголовок */
+
+
 h1 a {
     text-decoration: none;
     font-size: 2.5rem;
@@ -36,7 +21,7 @@ h1 a:hover {
     opacity: 0.85;
 }
 
-/* Фильтр и селект */
+
 form[action="addProduct"] {
     display: flex;
     flex-wrap: wrap;
@@ -97,7 +82,7 @@ select:focus {
     box-shadow: 0 0 0 3px rgba(59,130,246,0.2);
 }
 
-/* Сообщение о фильтре */
+
 c\:if[test] {
     display: inline-block;
     background: #e2e8f0;
@@ -108,7 +93,7 @@ c\:if[test] {
     margin-left: 1rem;
 }
 
-/* Таблица */
+
 table {
     width: 100%;
     border-collapse: collapse;
@@ -119,7 +104,7 @@ table {
     border: 1px solid #e2e8f0;
 }
 
-/* Фиксированная ширина колонок */
+
 table {
     table-layout: fixed;
 }
@@ -131,7 +116,7 @@ th, td {
     border-bottom: 1px solid #e2e8f0;
 }
 
-/* Заголовок таблицы */
+
 thead tr, table tr:first-child {
     background: #f8fafc;
     font-weight: 600;
@@ -139,7 +124,7 @@ thead tr, table tr:first-child {
     border-bottom: 2px solid #cbd5e1;
 }
 
-/* Пропорции колонок (подберите под свои данные) */
+
 th:nth-child(1), td:nth-child(1) { width: 5%; }
 th:nth-child(2), td:nth-child(2) { width: 25%; }
 th:nth-child(3), td:nth-child(3) { width: 20%; }
@@ -149,18 +134,18 @@ th:nth-child(6), td:nth-child(6) { width: 10%; }
 th:nth-child(7), td:nth-child(7) { width: 10%; }
 
 
-/* Чередование строк */
+
 tbody tr:nth-child(even) {
     background-color: #f8fafc;
 }
 
-/* Строка добавления товара (вторая строка) */
+
 tr:nth-child(2) td {
     background: #ffffff;
     border-bottom: 2px solid #cbd5e1;
 }
 
-/* Поля ввода в строке добавления */
+
 input[type="text"], input[type="number"], select {
     width: 100%;
     padding: 0.6rem;
@@ -178,7 +163,7 @@ input[type="text"]:focus, input[type="number"]:focus, select:focus {
     background: #ffffff;
 }
 
-/* Кнопка Add */
+
 input[type="submit"][value="Add"] {
     background: #10b981;
     color: white;
@@ -197,7 +182,7 @@ input[type="submit"][value="Add"]:hover {
     transform: translateY(-2px);
 }
 
-/* Скрытые опции в селекте типов */
+
 select option:disabled {
     color: #94a3b8;
 }
@@ -207,7 +192,7 @@ select option:disabled {
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 200px;
-    width: 200px; /* фиксированная ширина для надёжности */
+    width: 200px; 
 }
 
 .del-conteiner{
@@ -238,7 +223,7 @@ span.delStatus[data-content="Product was successfully deleted"]{
 }
 
 
-/* Адаптивность: на узких экранах таблица скроллируется */
+
 @media (max-width: 768px) {
     table {
         display: block;
@@ -246,7 +231,7 @@ span.delStatus[data-content="Product was successfully deleted"]{
         white-space: nowrap;
     }
 
-    /* Отменяем фиксированные ширины, чтобы таблица могла сжиматься */
+    
     th, td {
         white-space: normal;
     }
@@ -260,7 +245,7 @@ span.delStatus[data-content="Product was successfully deleted"]{
         width: 100%;
     }
 
-    /* Немного уменьшаем отступы */
+    
     th, td {
         padding: 0.75rem;
     }

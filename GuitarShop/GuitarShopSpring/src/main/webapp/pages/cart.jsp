@@ -34,7 +34,7 @@
 	</c:if>
 
     <sf:form action="purchaseCart" method="post" class="purchase-form" modelAttribute="pformDTO">
-    	
+    	<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
     	<div class="form-header">
 	        <c:forEach items="${items}" var="item">
 	            <input type="hidden" name="cartIds" value="${item.id.cartId}">

@@ -9,6 +9,7 @@ import jakarta.persistence.*;
  * 
  */
 @Entity
+@Table(name="StoreAdress")
 @NamedQuery(name="Storeadress.findAll", query="SELECT s FROM Storeadress s")
 public class Storeadress implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -18,8 +19,8 @@ public class Storeadress implements Serializable {
 	@Column(name="store_id")
 	private int storeId;
 
-	@Column(name="stroe_adress")
-	private String stroeAdress;
+	@Column(name="store_adress")
+	private String storeAdress;
 
 	public Storeadress() {
 	}
@@ -32,12 +33,12 @@ public class Storeadress implements Serializable {
 		this.storeId = storeId;
 	}
 
-	public String getStroeAdress() {
-		return this.stroeAdress;
+	public String getStoreAdress() {
+		return this.storeAdress;
 	}
 
-	public void setStroeAdress(String stroeAdress) {
-		this.stroeAdress = stroeAdress;
+	public void setStoreAdress(String storeAdress) {
+		this.storeAdress = storeAdress;
 	}
 
 }

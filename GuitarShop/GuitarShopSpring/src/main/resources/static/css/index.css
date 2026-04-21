@@ -1,23 +1,5 @@
 @charset "UTF-8";
 
-/* Modern CSS for GuitarShop */
-/** {
-	margin: 0;
-	padding: 0;
-	box-sizing: border-box;
-}
-
-body {
-	font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont,
-		Roboto, sans-serif;
-	background-color: #f8fafc;
-	color: #1e293b;
-	line-height: 1.6;
-	padding: 2rem 1.5rem;
-	max-width: 1200px;
-	margin: 0 auto;
-}*/
-
 h1 .nameTag{
 	font-size: 2.5rem;
 	font-weight: 700;
@@ -39,7 +21,7 @@ a:hover {
 	color: #1d4ed8;
 }
 
-/* User account link */
+
 .user-link {
 	display: inline-block;
 	background-color: #ffffff;
@@ -59,7 +41,7 @@ a:hover {
 	color: #3b82f6;
 }
 
-/* Navigation / category table */
+
 table {
 	width: 100%;
 	border-collapse: separate;
@@ -91,7 +73,7 @@ td a {
 	font-weight: 600;
 	color: #334155;
 	border-radius: 1rem;
-	min-height: 180px;  /* ensure equal height */
+	min-height: 180px;  
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -125,7 +107,7 @@ td.all-prods{
 .img-pan img {
     width: 350px;
     height: 100px;
-    object-fit: cover;      /* ensures all images have same proportions */
+    object-fit: cover;      
     border-radius: 12px;
     transition: transform 0.2s;
 }
@@ -142,7 +124,6 @@ span.message{
 	color: red;
 }
 
-/* Responsive adjustments */
 @media ( max-width : 640px) {
 	body {
 		padding: 1rem;

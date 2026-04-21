@@ -1,5 +1,5 @@
 @charset "UTF-8";
-/* checkout-success.css — стиль для страницы подтверждения покупки */
+
 * {
 	margin: 0;
 	padding: 0;
@@ -20,7 +20,7 @@ body {
 	padding: 2rem 1.5rem;
 }
 
-/* Градиентная ссылка на корзину (возврат) */
+
 h1 a {
 	text-decoration: none;
 	font-size: 2.5rem;
@@ -39,7 +39,7 @@ h1 a:hover {
 	opacity: 0.85;
 }
 
-/* Иконка успеха (можно заменить на свою картинку) */
+
 img {
 	display: block;
 	width: 120px;
@@ -53,7 +53,7 @@ img {
 	border: 1px solid #e2e8f0;
 }
 
-/* Форма и кнопка скачивания */
+
 form {
 	background: #ffffff;
 	border-radius: 2rem;
@@ -84,7 +84,7 @@ input[type="submit"]:hover {
 	transform: translateY(-2px);
 }
 
-/* Адаптивность */
+
 @media ( max-width : 480px) {
 	h1 a {
 		font-size: 2rem;

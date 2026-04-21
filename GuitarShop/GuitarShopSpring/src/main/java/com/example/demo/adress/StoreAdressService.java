@@ -36,6 +36,6 @@ public class StoreAdressService {
 	}
 	
 	public StoreAdressDTO adressToDTO(Storeadress a) {
-		return new StoreAdressDTO(a.getStoreId(), a.getStroeAdress());
+		return new StoreAdressDTO(a.getStoreId(), a.getStoreAdress());
 	}
 }

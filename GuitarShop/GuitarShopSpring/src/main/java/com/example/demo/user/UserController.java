@@ -113,54 +113,53 @@ public class UserController {
 	}
 	
 	@PostMapping("login")
-	public String loginUser(@RequestParam("userName")String userN,
-							@RequestParam("userPass")String userP,
-							HttpSession session, HttpServletRequest req, HttpServletResponse res,
-							RedirectAttributes redirects, Model m) {
-		
-		UserDetails userDetails;
+	public String loginUser(@RequestParam("userName") String userN,
+	                        @RequestParam("userPass") String userP,
+	                        HttpServletRequest req, HttpServletResponse res,
+	                        RedirectAttributes redirects) {
+
+	    if(userN.contains("guest")) {
+	        redirects.addFlashAttribute("loginStatus", "Username can't contain \"guest\"");
+	        return "redirect:redirectToAccount";
+	    }
+
+	    UserDetails userDetails;
 	    try {
 	        userDetails = customUserDetailsService.loadUserByUsername(userN);
-	    } catch (UsernameNotFoundException e) {
+	    } catch(UsernameNotFoundException e) {
 	        redirects.addFlashAttribute("loginStatus", "User with this login doesn't exist");
 	        return "redirect:redirectToAccount";
 	    }
-		
-		if(userN.contains("guest")) {
-			redirects.addFlashAttribute("loginStatus",  "Username cant contain \"guest\"");
-			return "redirect:redirectToAccount";
-		}
-		
-		UserDTO user = userService.findUserByName(userN);
-		if(user != null) {
-			if (passwordEncoder.matches(userP, user.getUserPass())) {
-	            getUserData(user.getUserId(), session);
-	        } else {
-	            redirects.addFlashAttribute("loginStatus", "Wrong password");
-	        }
-		}
-		else {
-			redirects.addFlashAttribute("loginStatus", "User with this login doesnt exist");
-		}
-		
-		try {
+
+	    UserDTO user = userService.findUserByName(userN);
+	    if(!passwordEncoder.matches(userP, user.getUserPass())) {
+	        redirects.addFlashAttribute("loginStatus", "Wrong password");
+	        return "redirect:redirectToAccount";
+	    }
+
+	    try {
 	        Authentication authentication = new UsernamePasswordAuthenticationToken(
 	                userDetails,
 	                userDetails.getPassword(),
 	                userDetails.getAuthorities()
 	        );
-	
 	        SecurityContext context = SecurityContextHolder.createEmptyContext();
 	        context.setAuthentication(authentication);
 	        SecurityContextHolder.setContext(context);
-	
 	        securityContextRepository.saveContext(context, req, res);
-		}catch(AuthenticationException e) {
-	        redirects.addFlashAttribute("loginStatus", "Invalid username or password");
+
+	        HttpSession newSession = req.getSession(false);
+	        if(newSession != null) {
+	            getUserData(user.getUserId(), newSession);
+	        }
+
+	    } catch(AuthenticationException e) {
+//	        log.warn("Authentication failed for: {}", userN);
+	        redirects.addFlashAttribute("loginStatus", "Authentication error");
 	        return "redirect:redirectToAccount";
 	    }
-		
-		return "redirect:redirectToAccount";
+
+	    return "redirect:redirectToAccount";
 	}
 	
 	@PostMapping("register")

@@ -18,7 +18,7 @@ h1 a:hover {
     opacity: 0.85;
 }
 
-/* Основной контейнер формы */
+
 .form-container {
     max-width: 800px;
     margin: 30px auto;
@@ -30,7 +30,7 @@ h1 a:hover {
 }
 
 .field-pair .meta {
-    flex: 1;                  /* поле занимает оставшееся место */
+    flex: 1;                  
 }
 
 .field-pair .meta input,
@@ -58,7 +58,7 @@ h1 a:hover {
     font-family: "Helvetica", Arial, sans-serif;
 }
 
-/* Сетка 2×2 для последних четырёх полей */
+
 .fields-grid {
     display: flex;
     flex-direction: column;
@@ -86,9 +86,9 @@ h1 a:hover {
     font-weight: 600;
     color: #1c2837;
     justify-self: start;
-    white-space: normal;  /* разрешить перенос */
-    word-wrap: break-word;  /* переносить длинные слова */
-    word-break: break-word;  /* переносить при необходимости */
+    white-space: normal;  
+    word-wrap: break-word;  
+    word-break: break-word;  
     line-height: 1.5;
 }
 
@@ -175,7 +175,7 @@ button.modify:active {
     transform: translateY(0);
 }
 
-/* Контейнер уведомления */
+
 .mod-conteiner{
 	display: flex;
     justify-content: center;
@@ -214,7 +214,7 @@ span.validMessage{
 	font-weight: 500;
 }
 
-/* Адаптация для мобильных */
+
 @media (max-width: 700px) {
     .field-row {
         flex-direction: column;
@@ -227,7 +227,7 @@ span.validMessage{
         text-align: left;
     }
     .fields-grid {
-        grid-template-columns: 1fr;  /* вертикальный список */
+        grid-template-columns: 1fr;  
         gap: 12px;
     }
     .fields-grid .tag {

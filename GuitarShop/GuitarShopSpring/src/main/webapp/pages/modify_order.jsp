@@ -95,6 +95,7 @@
 					<span class="tag">Shipping Adress</span>
 					<span class="meta"><textarea name="shippingAdress" class="auto-resize">${order.shippingAdress}</textarea></span>
 				</div>
+				<p>City, Street, 2, 1</p>
 			</div>
 			<div class="field-row">
 				

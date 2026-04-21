@@ -1,7 +1,7 @@
 @charset "UTF-8";
 
 * {
-    margin: 0;
+    margin: 0; 
     padding: 0;
     box-sizing: border-box;
 }
@@ -34,10 +34,10 @@ body {
 }
 
 .contacts br {
-	display: none; /* use block layout instead */
+	display: none; 
 }
 
-/* style contact lines as block elements */
+
 .contacts:last-of-type a{
 	text-decoration: none;
 	display: inline-block;
@@ -63,7 +63,7 @@ body {
 	border-radius: 2rem;
 }
 
-/* Ссылка на корзину чуть меньше */
+
 h1+h1 a {
 	font-size: 2rem;
 	background: linear-gradient(135deg, #10b981, #3b82f6);
@@ -71,8 +71,8 @@ h1+h1 a {
 
 h1 .cart-link {
 	font-size: 1.8rem;
-	color: #2563eb; /* обычный синий */
-	background: none; /* отключаем градиент */
+	color: #2563eb; 
+	background: none; 
 	-webkit-background-clip: unset;
 	-webkit-text-fill-color: unset;
 	background-clip: unset;
@@ -80,14 +80,14 @@ h1 .cart-link {
 
 .header {
     display: flex;
-    justify-content: space-between;  /* заголовок слева, блок справа */
-    align-items: center;             /* выравнивание по вертикали */
-    margin-bottom: 20px;             /* отступ снизу, если нужно */
+    justify-content: space-between;  
+    align-items: center;             
+    margin-bottom: 20px;             
 }
 
 .header-right {
     display: flex;
     align-items: center;
-    gap: 20px;                       /* расстояние между корзиной и аккаунтом */
+    gap: 20px;                       
 }
 

@@ -9,6 +9,11 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -20,9 +25,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.example.demo.CustomUserDetailsService;
 import com.example.demo.adress.StoreAdressService;
 import com.example.demo.exception.BusinessException;
 import com.example.demo.exception.EntityNotFoundException;
+import com.example.demo.order.OrderDTO;
 import com.example.demo.product.ProductService;
 import com.example.demo.user.UserDTO;
 import com.example.demo.user.UserHelper;
@@ -35,6 +42,9 @@ import jakarta.validation.Valid;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperPrint;
+
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 
 @Controller
 @RequestMapping("cart")
@@ -64,6 +74,12 @@ public class CartController {
 	@Autowired
 	UserHelper helper;
 	
+	@Autowired
+	CustomUserDetailsService customUserDetailsService;
+	
+	@Autowired
+	private HttpSessionSecurityContextRepository securityContextRepository;
+	
 	private static final Logger log = LoggerFactory.getLogger(CartController.class);
 	
 	@GetMapping("redirectToCart")
@@ -81,7 +97,7 @@ public class CartController {
 		if(userId == null || helper.checkIsUserAlive(userId) == null) {
 			session.removeAttribute("userId");
 			req.getSession().setAttribute("guestStatus", "You are buying as guest");
-			UserDTO guest = createGuest();
+			UserDTO guest = createGuest(req, res);
 			userId = guest.getUserId();
 			session.setAttribute("userId", guest.getUserId());
 
@@ -146,7 +162,7 @@ public class CartController {
 		if(stock > 0) {
 			Integer userId = (Integer) session.getAttribute("userId");
 			if(userId == null) {
-				UserDTO guest = createGuest();
+				UserDTO guest = createGuest(req, res);
 				userId = guest.getUserId();
 				session.setAttribute("userId", guest.getUserId());
 				session.setAttribute("userName", guest.getUserName());
@@ -155,7 +171,7 @@ public class CartController {
 			CartDTO cartDTO = cartService.updateCart(userId);
 			
 			//item add
-//			ItemDTO itemDTO = cartService.updateCartitem(cartDTO, prodId);
+			cartService.updateCartitem(cartDTO, prodId);
 		}
 		if(type.isPresent()) {
 			redirects.addFlashAttribute("prodId", prodId);
@@ -252,7 +268,7 @@ public class CartController {
 		
 		try {
 			JasperPrint report = getCheck(cartDTO.getUserId(), pformDTO, res, redirects, m);
-//			OrderDTO order = cartService.createPurchase(userId, cartIds, productIds, quantities, pformDTO);
+			OrderDTO order = cartService.createPurchase(userId, cartIds, productIds, quantities, pformDTO);
 	        if(report != null)
 	        	session.setAttribute("check", report);
 		}catch(BusinessException e) {
@@ -328,9 +344,29 @@ public class CartController {
 		return "redirect:/cart/redirectToCart";
 	}
 	
-	public UserDTO createGuest() {
+	public UserDTO createGuest(HttpServletRequest req, HttpServletResponse res) {
 		try {
 			UserDTO guest = userService.createGuestUser();
+			
+			UserDetails guestDetails = customUserDetailsService.loadUserByUsername(guest.getUserName());
+
+	        // 3. Сохранить в SecurityContext
+	        Authentication authentication = new UsernamePasswordAuthenticationToken(
+	                guestDetails,
+	                guestDetails.getPassword(),
+	                guestDetails.getAuthorities()
+	        );
+	        SecurityContext context = SecurityContextHolder.createEmptyContext();
+	        context.setAuthentication(authentication);
+	        SecurityContextHolder.setContext(context);
+	        securityContextRepository.saveContext(context, req, res);
+
+	        HttpSession newSession = req.getSession(false);
+	        if(newSession != null) {
+	            newSession.setAttribute("userId", guest.getUserId());
+	            newSession.setAttribute("userName", guest.getUserName());
+	        }
+			
 			return guest;
 		}catch(Exception e) {
 	        log.error("Error creating guest user: {}", e.getMessage());
