@@ -1,7 +1,7 @@
 package com.example.demo.cartitem;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.io.OutputStream;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -9,14 +9,13 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -24,11 +23,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.example.demo.adress.StoreAdressService;
 import com.example.demo.exception.BusinessException;
 import com.example.demo.exception.EntityNotFoundException;
-import com.example.demo.order.OrderDTO;
-import com.example.demo.order.OrderItemDTO;
-import com.example.demo.order.OrderItemService;
-import com.example.demo.order.OrderService;
-import com.example.demo.product.ProductDTO;
 import com.example.demo.product.ProductService;
 import com.example.demo.user.UserDTO;
 import com.example.demo.user.UserHelper;
@@ -38,18 +32,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
-import jakarta.validation.ValidationException;
-import model.Cartitem;
-import model.CartitemPK;
-import model.OrderitemPK;
-import model.Product;
-import model.Type;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperPrint;
-import net.sf.jasperreports.engine.JasperReport;
-
-import java.io.OutputStream;
 
 @Controller
 @RequestMapping("cart")
@@ -170,11 +155,12 @@ public class CartController {
 			CartDTO cartDTO = cartService.updateCart(userId);
 			
 			//item add
-			ItemDTO itemDTO = cartService.updateCartitem(cartDTO, prodId);
+//			ItemDTO itemDTO = cartService.updateCartitem(cartDTO, prodId);
 		}
 		if(type.isPresent()) {
 			redirects.addFlashAttribute("prodId", prodId);
-			redirects.addFlashAttribute("itemStatus", "added");
+			redirects.addFlashAttribute("itemsStatus", "added");
+			redirects.addFlashAttribute("addedId", prodId);
 			if(type.get().equals("")) {
 //				return "redirect:/product/redirectToType?prodId=" + prodId+"&itemStatus=added";
 				return "redirect:/product/redirectToType";
@@ -188,8 +174,8 @@ public class CartController {
 		}
 //		return "redirect:/product/redirectToProductPage?itemStatus=added&prodId=" + prodId;
 //		redirects.addFlashAttribute("prodId", prodId);
-		redirects.addFlashAttribute("itemStatus", "added");
-		return "redirect:/product/redirectToProductPage?itemStatus=added&prodId=" + prodId;
+		redirects.addFlashAttribute("itemStatus", "Item was added to your cart!");
+		return "redirect:/product/redirectToProductPage?&prodId=" + prodId;
 	}
 	
 	
@@ -238,9 +224,22 @@ public class CartController {
 		
 		if(bindingResult.hasErrors()) {
 			saveFormFields(pformDTO, session);
-			log.debug("Purchase form: {}", pformDTO.toString());
-			String cartErrorStatus = "Check if you have filled all fields";
-			redirects.addFlashAttribute("cartErrorStatus", cartErrorStatus);
+			List<FieldError> errors = bindingResult.getFieldErrors();
+
+			for(FieldError f : errors) {
+				if(f.getField().equals("userName"))
+					redirects.addFlashAttribute("cartErrorStatus", "Wrong name format " + f.getDefaultMessage());
+				if(f.getField().equals("userSurname"))
+					redirects.addFlashAttribute("cartErrorStatus", "Wrong surname format " + f.getDefaultMessage());
+				if(f.getField().equals("userPhone"))
+					redirects.addFlashAttribute("cartErrorStatus", "Wrong phone format " + f.getDefaultMessage());
+				if(f.getField().equals("shippingType"))
+					redirects.addFlashAttribute("cartErrorStatus", "Wrong shipping type format " + f.getDefaultMessage());
+				if(f.getField().equals("pickupAdress"))
+					redirects.addFlashAttribute("cartErrorStatus", "Wrong pick up adress format " + f.getDefaultMessage());
+				if(f.getField().equals("shippingAdress"))
+					redirects.addFlashAttribute("cartErrorStatus", "Wrong shipping adress format " + f.getDefaultMessage());
+			}
 			log.warn("Binding result: {}", bindingResult.getAllErrors());
 			return "redirect:redirectToCart";
 		}
@@ -253,7 +252,7 @@ public class CartController {
 		
 		try {
 			JasperPrint report = getCheck(cartDTO.getUserId(), pformDTO, res, redirects, m);
-			OrderDTO order = cartService.createPurchase(userId, cartIds, productIds, quantities, pformDTO);
+//			OrderDTO order = cartService.createPurchase(userId, cartIds, productIds, quantities, pformDTO);
 	        if(report != null)
 	        	session.setAttribute("check", report);
 		}catch(BusinessException e) {

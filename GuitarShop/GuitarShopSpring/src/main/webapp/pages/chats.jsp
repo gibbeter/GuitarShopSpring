@@ -53,6 +53,7 @@
 								</c:otherwise>
 							</c:choose>
 							<form action="deleteChat?chatId=${c.chatId}" method="post" class="delete-form">
+								<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
 		                        <button type="submit" class="delete-btn">Delete</button>
 	                    	</form>
 	                   	</div>

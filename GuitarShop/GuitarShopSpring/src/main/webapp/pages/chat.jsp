@@ -43,6 +43,7 @@
     </c:if>
 
     <form action="sendMessage" method="post">
+    	<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
         <textarea name="messageText" rows="4" cols="50" placeholder="New message"></textarea>
         <br>
         <input type="hidden" name="senderId" value="${userId}">

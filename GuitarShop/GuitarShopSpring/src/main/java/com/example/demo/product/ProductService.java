@@ -1,11 +1,7 @@
 package com.example.demo.product;
 
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Function;
 
 import org.slf4j.Logger;
@@ -15,19 +11,13 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.demo.cartitem.ItemDTO;
 import com.example.demo.cartitem.ItemRepo;
 import com.example.demo.exception.BusinessException;
 import com.example.demo.exception.EntityNotFoundException;
 import com.example.demo.exception.InvalidBackUpPathException;
 import com.example.demo.files.BackUpService;
-import com.example.demo.product.ProductDTO;
-import com.example.demo.product.ProductRepo;
-import com.example.demo.user.UserController;
-import com.opencsv.CSVWriter;
 
 import jakarta.validation.ValidationException;
-import model.Cartitem;
 import model.Product;
 import model.Type;
 

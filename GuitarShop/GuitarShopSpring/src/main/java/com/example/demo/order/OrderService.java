@@ -1,12 +1,7 @@
 package com.example.demo.order;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -16,32 +11,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.GetMapping;
 
-import com.example.demo.GuitarShopSpringApplication;
-import com.example.demo.cartitem.CartController;
 import com.example.demo.exception.BusinessException;
 import com.example.demo.exception.EntityNotFoundException;
 import com.example.demo.exception.InvalidBackUpPathException;
 import com.example.demo.files.BackUpService;
-import com.example.demo.product.ProductDTO;
-import com.example.demo.product.ProductRepo;
-import com.example.demo.user.UserService;
 
-import jakarta.validation.ValidationException;
-import model.Cart;
-import model.Cartitem;
-import model.CartitemPK;
 import model.Order;
 import model.Orderitem;
-import model.Product;
-import model.Type;
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperCompileManager;
-import net.sf.jasperreports.engine.JasperFillManager;
-import net.sf.jasperreports.engine.JasperPrint;
-import net.sf.jasperreports.engine.JasperReport;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 @Service
 public class OrderService {

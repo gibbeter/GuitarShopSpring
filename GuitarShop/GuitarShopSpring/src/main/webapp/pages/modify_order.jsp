@@ -37,6 +37,7 @@
 	
 	
 	<form action="dummy" method="post">
+	<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
 	<c:if test="${!empty order}">
 		<div class="form-conteiner">
 			<input type="hidden" name ="orderId" value="${order.orderId}">

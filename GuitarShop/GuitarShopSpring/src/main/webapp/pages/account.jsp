@@ -46,6 +46,7 @@
             </c:if>
 
             <form class="action-forms" action="changeUserName" method="post">
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
                 <table>
                     <tr>
                         <td colspan="3">User "${userName}" data:</td>
@@ -63,6 +64,7 @@
 
             <c:if test="${userType != 'guest'}">
                 <form class="action-forms" action="changePass" method="post">
+                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
                     <table>
                         <tr>
                             <td>Password</td>
@@ -74,6 +76,7 @@
                 </form>
 
                 <form class="action-forms" action="changeMail" method="post">
+                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
                     <table>
                         <tr>
                             <td>Mail</td>
@@ -85,6 +88,7 @@
                 </form>
                 
                 <form class="action-forms" action="changeName" method="post">
+                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
                 	<table>
 	                   	<tr>
 	                        <td>Name</td>
@@ -98,6 +102,7 @@
 	            </form>
 	            
 	            <form class="action-forms" action="changeSurname" method="post">
+	            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
                 	<table>
 	                   	<tr>
 	                        <td>Surname</td>
@@ -111,6 +116,7 @@
 	            </form>
 	            
                 <form class="action-forms" action="changePhoneNumber" method="post">
+                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
                 	<table>
 	                   	<tr>
 	                        <td>Phone (+381)</td>
@@ -135,6 +141,7 @@
         <c:otherwise>
             <div>
                 <form class="action-forms" action="defaultAction" method="post">
+                	<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
                     <table>
                         <tr>
                             <td colspan="2"><input type="text" name="userName" placeholder="Username"></td>

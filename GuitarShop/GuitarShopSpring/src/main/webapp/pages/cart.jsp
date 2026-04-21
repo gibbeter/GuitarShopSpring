@@ -34,6 +34,7 @@
 	</c:if>
 
     <sf:form action="purchaseCart" method="post" class="purchase-form" modelAttribute="pformDTO">
+    	
     	<div class="form-header">
 	        <c:forEach items="${items}" var="item">
 	            <input type="hidden" name="cartIds" value="${item.id.cartId}">
@@ -109,6 +110,7 @@
                     </div>
 
                     <form action="changeQuantity" method="post" class="quantity-form">
+                    	<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
                         <select name="quantity">
                             <c:forEach begin="1" end="${item.product.productStock}" var="i">
                                 <option value="${i}" ${i == item.quantity ? 'selected' : ''}>${i}</option>
@@ -120,6 +122,8 @@
                     </form>
                     
                     <form action="deleteItem" method="post" class="delete-form">
+                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+                    	<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
                     	<input type="hidden" name="cartId" value="${item.id.cartId}">
                         <input type="hidden" name="productId" value="${item.id.prodId}">
                         <button type="submit" formaction="deleteItem" class="delete-btn">Delete</button>

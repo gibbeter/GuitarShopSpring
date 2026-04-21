@@ -2,6 +2,8 @@ package com.example.demo.cartitem;
 
 import org.springframework.validation.annotation.Validated;
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -16,6 +18,8 @@ public class PurchaseFormDTO {
 	@NotBlank
 	private String userSurname;
 	@NotNull
+	@Min(value=100000000, message="number is too short")
+	@Max(value=999999999, message="number is too long")
 	private Integer userPhone;
 	@NotNull
 	@NotBlank
@@ -28,6 +32,8 @@ public class PurchaseFormDTO {
 	private String SPAdress;
 //	@NotNull
 //	@NotBlank
+    @Pattern(regexp = "^[A-Za-zÀ-ÖØ-öø-ÿ'’\\-\\.\\s]+,\\s*[A-Za-zÀ-ÖØ-öø-ÿ'’\\-\\.\\s]+,\\s*[A-Za-z0-9\\-]+,\\s*[A-Za-z0-9\\-]+$",
+            message = "Format must be: CITY, STREET, NUMBER, APARTMENT")
 	private String PUAdress;
 	
 	public String getUserName() {

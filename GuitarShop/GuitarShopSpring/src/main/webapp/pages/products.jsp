@@ -24,9 +24,9 @@
 	</div>
 	
 	<h2>${type}</h2>
-	<c:if test="${!empty itemStatus}">
+	<c:if test="${!empty itemsStatus}">
 		<div class="added-cont">
-			<span class="added-item">${itemStatus}</span>
+			<span class="added-item">${itemsStatus}</span>
 		</div>
 	</c:if>
 		<table>
@@ -40,6 +40,7 @@
 						</th>
 						<th colspan="5">
 							<form action="${pageContext.request.contextPath}/cart/addItem?prodId=${p.prodId}&stock=${p.productStock}&type=${filter}" method="post">
+							<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
 							<div class="product-card">
 								<div class="product-name">
 									<a href="${pageContext.request.contextPath}/product/redirectToProductPage?prodId=${p.prodId}">${p.productName}</a>
@@ -51,9 +52,9 @@
 									<span class="product-price">${p.productPrice}$</span>
 								</div>
 								<div class="product-add">
-									<c:if test="${!empty itemStatus && !empty addedProdId && addedProdId == p.prodId}">
+									<c:if test="${!empty itemsStatus && !empty addedId && addedId == p.prodId}">
 										<div class="added-cont">
-											<span class="added-item">${itemStatus}</span>
+											<span class="added-item">${itemsStatus}</span>
 										</div>
 									</c:if>
 									<c:if test="${p.productStock != 0}">
@@ -79,13 +80,11 @@
 	        const SCROLL_KEY = 'scrollPos';
 	        const PAGE_KEY = 'scrollPage';
 	
-	        // Сохраняем позицию и путь текущей страницы перед уходом
 	        window.addEventListener('beforeunload', function() {
 	            sessionStorage.setItem(SCROLL_KEY, window.scrollY);
-	            sessionStorage.setItem(PAGE_KEY, location.pathname); // можно заменить на location.href
+	            sessionStorage.setItem(PAGE_KEY, location.pathname);
 	        });
 	
-	        // Восстанавливаем только если вернулись на ту же страницу
 	        window.addEventListener('load', function() {
 	            const savedScroll = sessionStorage.getItem(SCROLL_KEY);
 	            const savedPage = sessionStorage.getItem(PAGE_KEY);
@@ -97,8 +96,7 @@
 	                    behavior: 'auto'
 	                });
 	            }
-	
-	            // Очищаем хранилище в любом случае
+
 	            sessionStorage.removeItem(SCROLL_KEY);
 	            sessionStorage.removeItem(PAGE_KEY);
 	        });

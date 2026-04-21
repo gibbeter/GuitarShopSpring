@@ -30,19 +30,18 @@
 	</c:if>
 
 	<c:if test="${!empty product}">
-		<form
-			action="${pageContext.request.contextPath}/cart/addItem?prodId=${product.prodId}&stock=${product.productStock}"
+		<form action="${pageContext.request.contextPath}/cart/addItem?prodId=${product.prodId}&stock=${product.productStock}"
 			method="post" class="product-form">
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
 			<div class="product-card">
 				<c:if test="${!empty productImages}">
 					<div class="product-image carousel">
-						<%-- Радио-кнопки переключения --%>
+
 						<c:forEach items="${productImages}" var="img" varStatus="status">
 							<input type="radio" name="carousel" id="slide${status.index + 1}"
 								${status.first ? 'checked' : ''}>
 						</c:forEach>
 
-						<%-- Контейнер слайдов --%>
 						<div class="slides">
 							<c:forEach items="${productImages}" var="img" varStatus="status">
 								<div class="slide">
@@ -51,7 +50,6 @@
 							</c:forEach>
 						</div>
 
-						<%-- Навигационные точки --%>
 						<div class="carousel-nav">
 							<c:forEach items="${productImages}" var="img" varStatus="status">
 								<label for="slide${status.index + 1}"></label>
@@ -61,7 +59,7 @@
 				</c:if>
 				<div class="product-info">
 					<div class="product-row">
-						<!--<span class="label">Product name:</span>-->
+
 						<span class="value product-name">${product.productName}</span>
 						<c:if test="${product.productStock != 0}">
 							<button type="submit" class="add-to-cart">Add to cart</button>
@@ -71,7 +69,7 @@
 						</c:if>
 					</div>
 					<div class="product-row">
-						<!--<span class="label">Product description:</span>-->
+
 						<span class="value">${product.productDesc}</span>
 					</div>
 					<div class="product-row">
@@ -83,6 +81,7 @@
 		</form>
 	</c:if>
 	<form action="postOverview" method="post">
+	<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
 			<p>Overview:</p>
 			<textarea name="text" rows="4" cols="50" placeholder="Your thoughts on this product..."></textarea>
 			<br>

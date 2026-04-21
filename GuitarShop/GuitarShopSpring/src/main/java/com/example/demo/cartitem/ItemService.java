@@ -1,20 +1,16 @@
 package com.example.demo.cartitem;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.example.demo.product.ProductDTO;
 import com.example.demo.product.ProductRepo;
 
-import jakarta.validation.ValidationException;
 import model.Cart;
 import model.Cartitem;
 import model.CartitemPK;
 import model.Product;
-import model.Type;
 
 @Service
 public class ItemService {

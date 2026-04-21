@@ -7,8 +7,6 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.example.demo.GuitarShopSpringApplication;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,12 +16,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class FileUploadController {
-
-    private final GuitarShopSpringApplication guitarShopSpringApplication;
-
-    FileUploadController(GuitarShopSpringApplication guitarShopSpringApplication) {
-        this.guitarShopSpringApplication = guitarShopSpringApplication;
-    }
 
     @Value("${app.images.base-dir}")  // same folder as before, e.g. /path/to/png/folder
     private String baseDir;

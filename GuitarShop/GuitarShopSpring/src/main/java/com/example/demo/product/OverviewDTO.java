@@ -2,7 +2,6 @@ package com.example.demo.product;
 
 import org.springframework.validation.annotation.Validated;
 
-import jakarta.persistence.EmbeddedId;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import model.OverviewPK;

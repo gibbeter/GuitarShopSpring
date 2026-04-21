@@ -1,20 +1,14 @@
 package com.example.demo.order;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -24,7 +18,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -32,18 +25,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.example.demo.exception.AccessDeniedException;
 import com.example.demo.exception.BusinessException;
 import com.example.demo.exception.EntityNotFoundException;
-import com.example.demo.product.ProductDTO;
-import com.example.demo.user.UserDTO;
-import com.example.demo.user.UserHelper;
-import com.example.demo.user.UserService;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
-import jakarta.validation.ValidationException;
-import model.OverviewPK;
-import model.Type;
 
 @Controller
 @RequestMapping("order")
@@ -57,6 +41,7 @@ public class OrderController {
 	
 	private static final Logger log = LoggerFactory.getLogger(OrderController.class);
 
+	
 	@GetMapping("redirectToOrders")
 	public String redirectToOrders(@ModelAttribute(value="delStatus")Optional<String> delStatus, Model m) {
 		m.addAttribute("orders", orderService.findAllOrders());

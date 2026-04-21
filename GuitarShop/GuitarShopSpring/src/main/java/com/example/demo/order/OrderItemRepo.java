@@ -1,20 +1,15 @@
 package com.example.demo.order;
 
-import java.util.Collection;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import model.Cartitem;
 import model.CartitemPK;
 import model.Orderitem;
 import model.OrderitemPK;
-import model.Product;
-import model.User;
 
 public interface OrderItemRepo extends JpaRepository<Orderitem, OrderitemPK>{
 

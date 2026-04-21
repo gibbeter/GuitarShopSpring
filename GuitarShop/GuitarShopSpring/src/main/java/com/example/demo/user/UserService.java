@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import com.example.demo.exception.BusinessException;
 import com.example.demo.exception.DuplicateEntityException;
 import com.example.demo.exception.EntityNotFoundException;
@@ -18,6 +19,7 @@ import com.example.demo.exception.InvalidBackUpPathException;
 import com.example.demo.exception.InvalidPasswordException;
 import com.example.demo.exception.UserNameTakenException;
 import com.example.demo.files.BackUpService;
+
 import model.User;
 
 @Service
@@ -30,7 +32,6 @@ public class UserService {
 	
 	@Autowired
 	BackUpService backupService;
-
 
     
     public UserDTO userToDTO(User u) {

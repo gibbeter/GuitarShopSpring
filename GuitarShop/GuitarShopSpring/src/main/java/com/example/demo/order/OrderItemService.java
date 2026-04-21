@@ -1,8 +1,5 @@
 package com.example.demo.order;
 
-import java.util.List;
-import java.util.Optional;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,16 +7,9 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.exception.BusinessException;
-import com.example.demo.product.ProductDTO;
 import com.example.demo.product.ProductRepo;
 
-import jakarta.validation.ValidationException;
-import model.Cart;
-import model.Cartitem;
-import model.CartitemPK;
 import model.Orderitem;
-import model.Product;
-import model.Type;
 
 @Service
 public class OrderItemService {

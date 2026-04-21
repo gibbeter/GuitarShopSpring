@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.validation.annotation.Validated;
 
 import jakarta.validation.constraints.NotNull;
-import model.Cartitem;
 
 
 @Validated

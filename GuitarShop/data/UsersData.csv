@@ -1,0 +1,3 @@
+user_id,type,user_name,password,name,surname,phone_number,user_mail
+1,admin,admin,$2a$10$jR5antqyl37u6WZo8Fvu/.nCkwhDj3v4Tt2UOX18RGGRLLZehkw.m,NULL,NULL,NULL,admin@email.com
+2,user,login,$2a$10$hgmI8YRa19MearoF33Fa9eoOmSZ60I.u3399vr9BIXiqvA5lLbQqS,NULL,NULL,NULL,empty@mail.em

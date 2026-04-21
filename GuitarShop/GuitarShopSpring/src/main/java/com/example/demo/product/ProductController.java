@@ -1,6 +1,5 @@
 package com.example.demo.product;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -9,14 +8,11 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -24,7 +20,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.example.demo.exception.AccessDeniedException;
 import com.example.demo.exception.BusinessException;
 import com.example.demo.exception.DuplicateEntityException;
-import com.example.demo.user.UserDTO;
 import com.example.demo.user.UserHelper;
 import com.example.demo.user.UserService;
 
@@ -32,8 +27,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
-import jakarta.validation.ValidationException;
-import model.OverviewPK;
 import model.Type;
 
 @Controller
@@ -76,7 +69,7 @@ public class ProductController {
 	}
 	
 	@GetMapping("redirectToModifyProductPage")
-	public String redirectToModifyProductPage(@ModelAttribute("prodId") Optional<Integer> prodId, @ModelAttribute(value="modStatus")Optional<String> modStatus, Model m) {
+	public String redirectToModifyProductPage(@RequestParam("prodId") Optional<Integer> prodId, @ModelAttribute(value="modStatus")Optional<String> modStatus, Model m) {
 		if(prodId.isPresent()) {
 			m.addAttribute("product", productService.findProdById(prodId.get()));
 		}
@@ -104,9 +97,9 @@ public class ProductController {
 			modStatus = "Error during modification";
 		}
 //		return "redirect:redirectToModifyProductPage?prodId="+prodDTO.getProdId() +"&modStatus=" + modStatus;
-		redirects.addFlashAttribute("prodId", prodDTO.getProdId());
+//		redirects.addFlashAttribute("prodId", prodDTO.getProdId());
 		redirects.addFlashAttribute("modStatus", modStatus);
-		return "redirect:redirectToModifyProductPage";
+		return "redirect:redirectToModifyProductPage?prodId=" + prodDTO.getProdId();
 	}
 	
 	@PostMapping("deleteProductData")
@@ -181,7 +174,7 @@ public class ProductController {
 	@GetMapping("redirectToType")
 	public String redirectToType(@RequestParam(value = "type") Optional<String> type,
 								HttpServletRequest req, Model m) {
-		String itemStatus = (String) m.getAttribute("itemStatus");
+		String itemStatus = (String) m.getAttribute("itemsStatus");
 	    Integer prodId = (Integer) m.getAttribute("addedProdId");
 
 		if(type.isPresent()) {
@@ -194,7 +187,8 @@ public class ProductController {
 			m.addAttribute("products", productService.findProducts());
 		}
 		if(itemStatus != null) {
-			m.addAttribute("itemStatus", "Item was added to your cart!");
+			System.out.println(itemStatus);
+			m.addAttribute("itemsStatus", "Item was added to your cart!");
 		}
 		if(prodId != null) {
 			m.addAttribute("addedProdId", prodId);
@@ -208,7 +202,7 @@ public class ProductController {
 									@ModelAttribute(value = "overStatus") Optional<String> overStatus,
 									@ModelAttribute(value = "chatStatus") Optional<String> chatStatus,
 									@ModelAttribute(value = "itemStatus") Optional<String> itemStatus,
-									Model m) {
+									RedirectAttributes redirects, Model m) {
 		try {
 	
 			if(prodId.isPresent()) {
@@ -226,10 +220,6 @@ public class ProductController {
 			}
 			if(chatStatus.isPresent()) {
 				m.addAttribute("chatStatus", chatStatus.get());
-			}
-			if(itemStatus.isPresent()) {
-				System.out.println(itemStatus);
-				m.addAttribute("itemStatus", "Item was added to your cart!");
 			}
 		}catch(Exception e) {
 			e.printStackTrace();
@@ -271,18 +261,18 @@ public class ProductController {
 		try {
 			overviewService.postOverview(userId, prodId, createOverDTO);
 			overStatus = "You overview was posted";
-			redirects.addFlashAttribute("prodId", prodId);
+//			redirects.addFlashAttribute("prodId", prodId);
 			redirects.addFlashAttribute("overStatus", overStatus);
-			return "redirect:redirectToProductPage";
+			return "redirect:redirectToProductPage?prodId=" + prodId;
 		}catch(AccessDeniedException | DuplicateEntityException e) {
 			overStatus = e.getMessage();
 		}
 		catch(NullPointerException e) {
 			overStatus = "Internal error";
 		}
-		redirects.addFlashAttribute("prodId", prodId);
+//		redirects.addFlashAttribute("prodId", prodId);
 		redirects.addFlashAttribute("overStatus", overStatus);
-		return "redirect:redirectToProductPage";
+		return "redirect:redirectToProductPage?prodId=" + prodId;
 	}
 	
 }

@@ -31,6 +31,7 @@
 	</c:if>
 		
 	<form action="addProduct" method="post">
+	<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
 	<div>
 		<input type="submit" formaction="filterStoreByType" value="Filter">
 	</div>

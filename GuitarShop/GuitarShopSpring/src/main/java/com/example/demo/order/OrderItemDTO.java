@@ -2,17 +2,9 @@ package com.example.demo.order;
 
 import org.springframework.validation.annotation.Validated;
 
-import com.example.demo.product.ProductDTO;
-
-import jakarta.persistence.EmbeddedId;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotNull;
-import model.Cart;
-import model.CartitemPK;
 import model.Order;
 import model.OrderitemPK;
-import model.Product;
 
 
 @Validated

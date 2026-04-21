@@ -54,6 +54,7 @@
 		    </div>
 		    
 		    <form action="${pageContext.request.contextPath}/uploadImages" method="post" enctype="multipart/form-data">
+		    	<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
 		        <input type="file" name="webpFiles" accept="image/webp" multiple required />
 		        <input type="hidden" name="prodId" value="${product.prodId}"/>
 		        <input type="hidden" name="prodType" value="${product.productTypeName}"/>
@@ -66,6 +67,7 @@
 	</c:if>
 	
 	<form action="dummy" method="post">
+	<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
 	<c:if test="${!empty product}">
 		<div class="form-conteiner">
 			<input type="hidden" name ="prodId" value="${product.prodId}">

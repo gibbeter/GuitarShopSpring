@@ -13,19 +13,12 @@ import org.springframework.stereotype.Service;
 import com.example.demo.exception.AccessDeniedException;
 import com.example.demo.exception.BusinessException;
 import com.example.demo.exception.DuplicateEntityException;
-import com.example.demo.exception.EntityNotFoundException;
-import com.example.demo.product.ProductDTO;
-import com.example.demo.product.ProductRepo;
-import com.example.demo.user.UserController;
 import com.example.demo.user.UserDTO;
 import com.example.demo.user.UserService;
 
 import jakarta.validation.Valid;
-import jakarta.validation.ValidationException;
 import model.Overview;
 import model.OverviewPK;
-import model.Product;
-import model.Type;
 
 @Service
 public class OverviewService {

@@ -2,11 +2,11 @@ package com.example.demo.user;
 
 import org.springframework.validation.annotation.Validated;
 
-import jakarta.persistence.Column;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
 @Validated
 public class UserDTO {
@@ -20,6 +20,7 @@ public class UserDTO {
 	private String userName;
 	@NotNull
 	@NotEmpty
+	@Size(min=6, message="Password should be minimum 6 symbols long")
 	private String userPass;
 	@NotNull
 	private String type;

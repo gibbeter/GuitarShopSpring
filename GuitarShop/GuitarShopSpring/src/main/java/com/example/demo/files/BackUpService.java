@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.function.Function;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.exception.InvalidBackUpPathException;
@@ -18,7 +19,9 @@ import com.opencsv.CSVWriter;
 @Service
 public class BackUpService {
 
-	private String basePath = "E:/Java/GuitarShopSpring/GuitarShop/GuitarShopSpring/src/main/db_backups/";
+	@Value("${app.backup.base-dir}")
+	private String basePath;
+//	private String basePath = "E:/Java/GuitarShopSpring/GuitarShop/GuitarShopSpring/src/main/db_backups/";
 	
 	public <T> boolean saveBackup(List<T> dataList, String prefix, String fileName, String[] headers, Function<T, String[]> mapper) {
 		String timestamp = new SimpleDateFormat("ddMMyyyy_HHmmss").format(new Date());

@@ -20,7 +20,6 @@ import com.example.demo.user.UserService;
 
 import model.Chat;
 import model.Message;
-import model.User;
 
 @Service
 public class ChatService {

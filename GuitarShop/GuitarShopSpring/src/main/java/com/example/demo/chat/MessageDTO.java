@@ -2,15 +2,8 @@ package com.example.demo.chat;
 
 import org.springframework.validation.annotation.Validated;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import model.Chat;
 
 @Validated
 public class MessageDTO {
